@@ -35,10 +35,14 @@ function pollutant_details(code){
 }
 
 
-function add_marker(map,lat,long,open_aq_id,param){
+
+function add_marker(map,lat,long,open_aq_id,param,site){
 	console.log("adding marker for OpenAQ cite id "+open_aq_id+' coordinates'+lat+' '+long)
 	var station_id = document.createAttribute("station_id");  
 	var parameter = document.createAttribute("parameter");       
+	var location_name = document.createAttribute("location_name");       
+	var observation_value = document.createAttribute("observation_value");       
+	var current_observation_unit = document.createAttribute("current_observation_unit");       
 	station_id.value = open_aq_id;
 	parameter.value = param;
 	var site = [lat, long];
@@ -47,6 +51,9 @@ function add_marker(map,lat,long,open_aq_id,param){
 	el_open_aq_id.className += " btn-floating pulse launch-local-forecasts";
 	el_open_aq_id.setAttributeNode(station_id);
 	el_open_aq_id.setAttributeNode(parameter);
+	el_open_aq_id.setAttributeNode(location_name);
+	el_open_aq_id.setAttributeNode(observation_value);
+	el_open_aq_id.setAttributeNode(current_observation_unit);
 	new mapboxgl.Marker(el_open_aq_id)
 	.setLngLat(site)
 	.addTo(map);
@@ -144,7 +151,7 @@ function create_map(sites,param){
 	$( ".pollutants-banner" ).html( $('<div class="pollutant-banner-o row gx-md-8 gy-8  swiper-desactivated"> </div>') );
 	sites.forEach((element) => {
 
-		add_marker(map,element.site_data.longitude,element.site_data.latitude,element.site_data.openaq_id,param);
+		add_marker(map,element.site_data.longitude,element.site_data.latitude,element.site_data.openaq_id,param,element);
 		add_locations_banner(element,param);
 	});
 
