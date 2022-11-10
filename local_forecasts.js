@@ -247,7 +247,7 @@ function get_all_sites_data(sites,param){
 			$(".messages").html(message)}, 100);
 		var st_id=$(this).attr("station_id");
 		var param=$(this).attr("parameter");
-		$(".forecasts_container").load("vues/data-handle.php?st="+st_id+'&param='+param, function(){
+		$(".forecasts_container").load("vues/data-handle.html?st="+st_id+'&param='+param, function(){
 			$(this).fadeOut(10);
 			$(this).fadeIn(10);
 			$(".forecasts_container").addClass("noussair_animations zoom_in");
