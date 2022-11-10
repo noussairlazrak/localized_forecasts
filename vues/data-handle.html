@@ -1,0 +1,58 @@
+<script src="parametres/jquery-3.6.0.min.js"></script>
+<script src="parametres/d3-dsv@3.js"></script>
+
+<div class="container forecasts-box">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content text-center">
+            <div class="modal-body">
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="row text-center">
+                    <h3 class="module_title">Upload Your Own Data
+                    </h3>
+                    <p>Tell us bit about your local data</p>
+                    <form action="local_data/data-handler.php" method="POST" enctype="multipart/form-data">
+                        <div class="form-group">
+
+                            <div class="row">
+                                <div class="col">
+                                    <label for="exampleInputEmail1">Location name</label>
+                                    <input type="text" class="form-control" placeholder="Enter location name" />
+                                </div>
+                                <div class="col">
+                                    <label for="exampleInputEmail1">Longitude</label>
+                                    <input type="text" class="form-control" placeholder="Enter longitude" />
+                                </div>
+                                <div class="col">
+                                    <label for="exampleInputEmail1">Latitude</label>
+                                    <input type="text" class="form-control" placeholder="Enter latitude" />
+                                </div>
+                                <div class="col">
+                                    <label for="exampleInputEmail1">Source of the data</label>
+                                    <input type="text" class="form-control"
+                                        placeholder="Enter the source of the data" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+                            <div class="row">
+                                <div class="col">
+                                    <label for="exampleInputEmail1">Observation file</label>
+                                    <input type="file" class="form-control" name="image" required />
+                                </div>
+                                <div class="col">
+                                    <label for="exampleInputEmail1">Parameter Code</label>
+                                    <input type="text" class="form-control"
+                                        placeholder="Enter parameter code (e.g pm25, O3)" />
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
