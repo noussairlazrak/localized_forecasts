@@ -1,0 +1,170 @@
+
+
+<div class="container forecasts-box">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content text-center">
+            <div class="modal-body">
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="row text-center">
+                    <h3 class="module_title location_parameter_name">
+                    </h3>
+                    <h3 class="sub-title site-name11">Location: <span class="current_location_name"></span>
+                    </h3>
+                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home"
+                                aria-selected="true">Observations</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
+                                aria-selected="false">Forecasts</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact"
+                                aria-selected="false">Intervals</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                            aria-labelledby="pills-home-tab">
+                            <div class="col-md-12">
+                                <div class="row align-items-center counter-wrapper gy-4 gy-md-0">
+                                    <div class="col-md-4">
+                                            <div class="">
+                                                <h5 class="current_param">Observations</h5>
+                                                <h1 class="observation_value current_observation_value">ppm<span class="observation_unit  current_observation_unit_span">ppm</span>
+                                                </h1>
+                                            </div>
+                                    </div>
+
+                                    <div id="observations_only"></div>
+                                    <p class="caption">
+                                        Source: <a href="https://openaq.org/#/">OpenAQ</a>
+                                    </p>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="tab-pane fade" id="pills-profile" role="tabpanel"
+                            aria-labelledby="pills-profile-tab">
+                            <div class="row">
+                                <div class="col-lg-12 position-relative">
+                                    <div id='myDiv' class='lf_full_plot'></div>
+                                    <p class="caption">
+                                        Source: NASA's GMAO GEOS-CF
+                                    </p>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-xl-5 mx-auto">
+                                    <h2 class="display-4 mb-3 text-center">Train your own model for this location</h2>
+                                    <a href="#" class="btn btn-primary rounded-pill train_model">Train Model</a>
+                                </div>
+                                <!-- /column -->
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="pills-contact" role="tabpanel"
+                            aria-labelledby="pills-contact-tab">
+                            <div class="col-lg-12">
+                                <h3 class="sub-title">Confidence intervals</h3>
+                                <div id='intervals' class='lf_full_plot'></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="parametres/jquery-3.6.0.min.js"></script>
+    <script src='parametres/plotly-2.12.1.min.js'></script>
+    <script src="parametres/d3-dsv@3.js"></script>
+    
+    <script>
+    d3.csv("./vues/10812-intervals.csv", function(err, rows) {
+
+function unpack(rows, key) {
+    return rows.map(function(row) {
+        return row[key];
+    });
+}
+
+console.log('unpacked!');
+console.log(unpack(rows, 'timestamp'));
+
+
+var trace1 = {
+    type: "scatter",
+    mode: "lines",
+    x: unpack(rows, 'timestamp'),
+    y: unpack(rows, 'value'),
+    line: {
+        color: 'red'
+    },
+    name: 'Observation',
+    type: "scatter",
+    fill: "tonexty",
+    fillcolor: "white",
+}
+
+var trace2 = {
+    type: "scatter",
+    mode: "lines",
+    x: unpack(rows, 'timestamp'),
+    y: unpack(rows, 'upper'),
+    line: {
+        color: 'blue'
+    },
+    name: 'Upper Quantile',
+    type: "scatter",
+    fill: "tonexty",
+    fillcolor: "rgba(68, 68, 68, 0.3)",
+}
+
+var trace3 = {
+    type: "scatter",
+    mode: "lines",
+    x: unpack(rows, 'timestamp'),
+    y: unpack(rows, 'lower'),
+    line: {
+        color: 'green'
+    },
+    name: 'Lower Quantile',
+    type: "scatter",
+    fill: "tonexty",
+    fillcolor: "rgba(68, 68, 68, 0.3)",
+}
+
+var pred = [trace1];
+
+var intervals = [trace1, trace2, trace3];
+
+var layout = {
+    // title: 'Bias Corrected Model',
+    font: {
+        family: 'Helvetica, sans-serif',
+        size: 18,
+        color: '#7f7f7f'
+    },
+    xaxis: {
+        // range: ['2021-06-10', '2021-06-30'],
+        type: 'date'
+    },
+
+    yaxis: {
+        autorange: true,
+        range: [86.8700008333, 138.870004167],
+        type: 'linear',
+
+    }
+};
+
+Plotly.newPlot('intervals', intervals, layout);
+});
+    </script>
