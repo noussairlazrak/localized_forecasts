@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    
+    <title>Localized Forecasts</title>
+    <link rel="shortcut icon" href="./assets/img/favicon.png">
+    <link rel="stylesheet" href="./parametres/style.css">
+
+    <link rel="preload" href="./parametres/local-forecasts.css" as="style" onload="this.rel='stylesheet'">
+    
+    
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css' rel='stylesheet' />
+    <script src="parametres/d3-dsv@3.js"></script>
+
+</head>
+
+<body>
+    <div class="loading_div">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="messages"> Connecting....</div>
+    </div>
+    <div class="content-wrapper">
+        <header class="wrapper bg-soft-primary">
+            <nav class="navbar navbar-expand-lg center-logo transparent position-absolute navbar-dark">
+                <div class="container justify-content-between align-items-center">
+                    <div class="d-flex flex-row w-100 justify-content-between align-items-center d-lg-none">
+                        <div class="navbar-brand-title"><a href="index">
+                                GEOS CF Localised Forecasts
+                            </a></div>
+                        <div class="navbar-other ms-auto">
+                            <ul class="navbar-nav flex-row align-items-center">
+                                <li class="nav-item d-lg-none">
+                                    <button class="hamburger offcanvas-nav-btn"><span></span></button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="navbar-collapse-wrapper d-flex flex-row align-items-center w-100">
+                        <div class="navbar-collapse offcanvas offcanvas-nav offcanvas-start">
+                            <div class="offcanvas-header mx-lg-auto order-0 order-lg-1 d-lg-flex px-lg-15">
+                                <a href="#" class="transition-none d-none d-lg-flex"><img class="logo-dark"
+                                        src="parametres/haqast_logo.png" srcset="parametres/haqast_logo.png 2x" alt="" />
+                                    <img class="logo-light" src="parametres/haqast_logo.png"
+                                        srcset="parametres/haqast_logo.png 2x" alt="" /></a>
+                                <h3 class="text-white fs-30 mb-0 d-lg-none"></h3>
+                                <button type="button" class="btn-close btn-close-white d-lg-none" data-bs-dismiss="offcanvas"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="w-100 order-1 order-lg-0 d-lg-flex offcanvas-body">
+                                <ul class="navbar-nav ms-lg-auto">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">About</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">Data</a>
+                                    </li>
+        
+                                </ul>
+                            </div>
+                            <div class="w-100 order-3 order-lg-2 d-lg-flex offcanvas-body">
+                                <ul class="navbar-nav me-lg-auto">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">Publications</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">Documentation</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link btn btn-primary upload-your-data">Upload Your Local Data</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="offcanvas-body d-lg-none order-4 mt-auto">
+                                <div class="offcanvas-footer">
+                                    <div>
+                                        <a href="mailto:" class="link-inverse">info@email.com</a>
+                                        <br /> 00 (123) 456 78 90 <br />
+                                        <nav class="nav social social-white mt-4">
+                                            <a href="#"><i class="uil uil-twitter"></i></a>
+                                            <a href="#"><i class="uil uil-facebook-f"></i></a>
+                                            <a href="#"><i class="uil uil-dribbble"></i></a>
+                                            <a href="#"><i class="uil uil-instagram"></i></a>
+                                            <a href="#"><i class="uil uil-youtube"></i></a>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        
+                </div>
+            </nav>
+        </header>
+        <section class="wrapper image-wrapper bg-image bg-overlay bg-overlay-300"
+            data-image-src="./assets/img/photos/bg16.png">
+            <div id='map'></div>
+        </section>
+
+    </div>
+
+    <div class="forecasts_container">
+      
+    </div>
+    <footer class="bg-dark text-inverse">
+        <div class="swiper-container-desc dots-closer blog grid-view mb-1" data-margin="0" data-dots="true"
+            data-items-md="5" data-items-xs="1">
+            <ul class="pollutant_param list-inline mb-0">
+                <li class="list-inline-item"><a href="#" lf-param="no2" class="routing_pollutant_param"
+                        class="btn btn-soft-ash btn-sm rounded ">Nitrogen Dioxide (NO<sub>2</sub>)</a>
+                </li>
+                <li class="list-inline-item"><a href="#" lf-param="o3" class="routing_pollutant_param"
+                        class="btn btn-soft-ash btn-sm rounded "><b>Ozone</b> (O<sub>3</sub>)</a>
+                </li>
+                <li class="list-inline-item"><a href="#" lf-param="pm25" class="routing_pollutant_param"
+                        class="btn btn-soft-ash btn-sm rounded ">Fine Particles (PM <sub>2.5</sub>)</a>
+                </li>
+            </ul>
+            <div class="pollutants-banner">
+            </div>
+    
+    
+        </div>
+    
+        <div class="container">
+            <div class="d-md-flex align-items-center justify-content-between">
+    
+                <p class="mb-2 mb-lg-0">© 2022 HAQAST. All rights reserved.</p>
+                <nav class="nav social social-white text-md-end">
+    
+                </nav>
+            </div>
+        </div>
+    </footer>
+    <script src="./assets/js/plugins.js"></script>
+    <script src="./assets/js/theme.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+
+    <script src="local_forecasts.js"></script>
+    <script src="local_forecasts_assets.js"></script>
+    <script>
+    $(document).on('click', '.btn-close', function(e) {
+        $('.forecasts_container').css('display', 'none');
+    });
+    </script>
+</body>
+
+</html>
