@@ -192,8 +192,6 @@ function animateValue(obj, start, end, duration) {
   }
   
 
-
-
 function get_all_sites_data(sites,param){
 	let all_sites = [];
 	$.each(sites , function(index, val) { 	
@@ -205,7 +203,6 @@ function get_all_sites_data(sites,param){
 	return Promise.resolve(all_sites);
 }
 
-	
 	const sites = ["3995", "8645", "739","5282"];
 	const param = "no2";
 	get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites,param));
