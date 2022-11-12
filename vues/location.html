@@ -88,6 +88,20 @@
    
     
     <script>
+        
+        $.getJSON( "https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_FR40008_no2.json", function( data ) {
+        var items = [];
+        console.log('Gmao data!');
+        console.log(data);
+        $.each( data, function( key, val ) {
+            items.push( "<li id='" + key + "'>" + val + "</li>" );
+        });
+        
+        $( "<ul/>", {
+            "class": "my-new-list",
+            html: items.join( "" )
+        }).appendTo( "body" );
+        });
 
         d3.csv("https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_FR40008_no2.json", function(err, rows) {
 
