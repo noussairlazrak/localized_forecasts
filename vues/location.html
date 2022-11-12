@@ -1,5 +1,6 @@
 
-
+<script src="parametres/jquery-3.6.0.min.js"></script>
+<script src="parametres/d3-dsv@3.js"></script>
 <div class="container forecasts-box">
     <div class="modal-dialog modal-dialog-centered modal-md">
         <div class="modal-content text-center">
@@ -82,89 +83,92 @@
             </div>
         </div>
     </div>
-    <script src="parametres/jquery-3.6.0.min.js"></script>
+    
     <script src='parametres/plotly-2.12.1.min.js'></script>
-    <script src="parametres/d3-dsv@3.js"></script>
+   
     
     <script>
-    d3.csv("./vues/10812-intervals.csv", function(err, rows) {
 
-function unpack(rows, key) {
-    return rows.map(function(row) {
-        return row[key];
-    });
-}
+            d3.csv("./vues/10812-intervals.csv", function(err, rows) {
 
-console.log('unpacked!');
-console.log(unpack(rows, 'timestamp'));
+        function unpack(rows, key) {
+            return rows.map(function(row) {
+                return row[key];
+            });
+        }
+
+        console.log('unpacked!');
+        console.log(unpack(rows, 'timestamp'));
 
 
-var trace1 = {
-    type: "scatter",
-    mode: "lines",
-    x: unpack(rows, 'timestamp'),
-    y: unpack(rows, 'value'),
-    line: {
-        color: 'red'
-    },
-    name: 'Observation',
-    type: "scatter",
-    fill: "tonexty",
-    fillcolor: "white",
-}
+        var trace1 = {
+            type: "scatter",
+            mode: "lines",
+            x: unpack(rows, 'timestamp'),
+            y: unpack(rows, 'value'),
+            line: {
+                color: 'red'
+            },
+            name: 'Observation',
+            type: "scatter",
+            fill: "tonexty",
+            fillcolor: "white",
+        }
 
-var trace2 = {
-    type: "scatter",
-    mode: "lines",
-    x: unpack(rows, 'timestamp'),
-    y: unpack(rows, 'upper'),
-    line: {
-        color: 'blue'
-    },
-    name: 'Upper Quantile',
-    type: "scatter",
-    fill: "tonexty",
-    fillcolor: "rgba(68, 68, 68, 0.3)",
-}
+        var trace2 = {
+            type: "scatter",
+            mode: "lines",
+            x: unpack(rows, 'timestamp'),
+            y: unpack(rows, 'upper'),
+            line: {
+                color: 'blue'
+            },
+            name: 'Upper Quantile',
+            type: "scatter",
+            fill: "tonexty",
+            fillcolor: "rgba(68, 68, 68, 0.3)",
+        }
 
-var trace3 = {
-    type: "scatter",
-    mode: "lines",
-    x: unpack(rows, 'timestamp'),
-    y: unpack(rows, 'lower'),
-    line: {
-        color: 'green'
-    },
-    name: 'Lower Quantile',
-    type: "scatter",
-    fill: "tonexty",
-    fillcolor: "rgba(68, 68, 68, 0.3)",
-}
+        var trace3 = {
+            type: "scatter",
+            mode: "lines",
+            x: unpack(rows, 'timestamp'),
+            y: unpack(rows, 'lower'),
+            line: {
+                color: 'green'
+            },
+            name: 'Lower Quantile',
+            type: "scatter",
+            fill: "tonexty",
+            fillcolor: "rgba(68, 68, 68, 0.3)",
+        }
 
-var pred = [trace1];
+        var pred = [trace1];
 
-var intervals = [trace1, trace2, trace3];
+        var intervals = [trace1, trace2, trace3];
 
-var layout = {
-    // title: 'Bias Corrected Model',
-    font: {
-        family: 'Helvetica, sans-serif',
-        size: 18,
-        color: '#7f7f7f'
-    },
-    xaxis: {
-        // range: ['2021-06-10', '2021-06-30'],
-        type: 'date'
-    },
+        var layout = {
+            // title: 'Bias Corrected Model',
+            font: {
+                family: 'Helvetica, sans-serif',
+                size: 18,
+                color: '#7f7f7f'
+            },
+            xaxis: {
+                // range: ['2021-06-10', '2021-06-30'],
+                type: 'date'
+            },
 
-    yaxis: {
-        autorange: true,
-        range: [86.8700008333, 138.870004167],
-        type: 'linear',
+            yaxis: {
+                autorange: true,
+                range: [86.8700008333, 138.870004167],
+                type: 'linear',
 
-    }
-};
+            }
+        };
 
-Plotly.newPlot('intervals', intervals, layout);
-});
+        Plotly.newPlot('intervals', intervals, layout);
+        });
+
+    
     </script>
