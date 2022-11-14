@@ -2,7 +2,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibGF6cmFrbiIsImEiOiJjanZodzV3OXUwNmEwNDRxdnVsZ
 
 
 
-var washington_location = [30.1272444, -1.9297706];
+
 
 
 var deltaDegrees = 25;
@@ -106,10 +106,7 @@ function get_open_aq_observations(site_id,param){
 			
             success: function (data) {
 				
-				// console.log(data);
-				// add_marker(map,location_long, location_lat,site_id);
-				// our object
-				
+			
 				openaq.site_data.openaq_id = site_id;
 				openaq.site_data.location = data.results[0].location;
 				openaq.site_data.latitude = data.results[0].coordinates.latitude;
