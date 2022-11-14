@@ -1,8 +1,6 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoibGF6cmFrbiIsImEiOiJjanZodzV3OXUwNmEwNDRxdnVsZGhnaml4In0.-ES_Lt127Id6DEf8H9E3rg';
 
 
-var monument_1 = [-74.084753, 4.6848503];
-var marrakesh_3 = [-3.5715153, 40.4709065];
 
 var washington_location = [30.1272444, -1.9297706];
 
