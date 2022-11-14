@@ -157,14 +157,24 @@
     <script src="local_forecasts.js"></script>
     <script src="local_forecasts_assets.js"></script>
     <script>
-        $.ajax({
-            url: 'https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_FR40008_no2.json',
-            type: 'PUT',
-            data: "",
-            success: function(data) {
-                alert('Load was performed.');
-            }
-        });
+         $.ajax({
+          url: "https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_FR40008_no2.json",
+          type: 'GET',
+          dataType: 'jsonp',
+          cors: true ,
+          contentType:'application/json',
+          secure: true,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader ("Authorization", "Basic " + btoa(""));
+          },
+          success: function (data){
+            console.log(data);
+          }
+      });
+       
     $(document).on('click', '.btn-close', function(e) {
         $('.forecasts_container').css('display', 'none');
     });
