@@ -157,6 +157,9 @@
     <script src="local_forecasts.js"></script>
     <script src="local_forecasts_assets.js"></script>
     <script>
+        $.ajaxSetup({
+            headers: { "Access-Control-Allow-Origin": "*" }
+        });
          $.ajax({
           url: "https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_FR40008_no2.json",
           type: 'GET',
@@ -164,6 +167,7 @@
           secure: true,
           headers: {
             'Access-Control-Allow-Origin': '*',
+
           },
           beforeSend: function (xhr) {
             xhr.setRequestHeader ("Authorization", "Basic " + btoa(""));
