@@ -157,22 +157,6 @@
     <script src="local_forecasts.js"></script>
     <script src="local_forecasts_assets.js"></script>
     <script>
-        $.ajaxSetup({
-            headers: { 
-                "Access-Control-Allow-Origin": "*", 
-        }});
-         $.ajax({
-          url: "https://thingproxy.freeboard.io/fetch/https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_FR40008_no2.json",
-          type: 'PUT',
-          headers: { 
-                "Access-Control-Allow-Origin": "*", 
-        }
-        ,
-          success: function (data){
-            console.log(data);
-          }
-      });
-       
     $(document).on('click', '.btn-close', function(e) {
         $('.forecasts_container').css('display', 'none');
     });
