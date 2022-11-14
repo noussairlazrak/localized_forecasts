@@ -163,16 +163,11 @@
         }});
          $.ajax({
           url: "https://thingproxy.freeboard.io/fetch/https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_FR40008_no2.json",
-          type: 'GET',
-          contentType:'application/json',
-          crossDomain: true,
+          type: 'PUT',
           headers: { 
                 "Access-Control-Allow-Origin": "*", 
         }
         ,
-          beforeSend: function (xhr) {
-            xhr.setRequestHeader ("Authorization", "Basic " + btoa(""));
-          },
           success: function (data){
             console.log(data);
           }
