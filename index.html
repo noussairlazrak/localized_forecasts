@@ -166,6 +166,9 @@
           headers: {
             'Access-Control-Allow-Origin': '*',
           },
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader ("Authorization", "Basic " + btoa(""));
+          },
           success: function (data){
             console.log(data);
           }
