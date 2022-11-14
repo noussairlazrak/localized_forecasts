@@ -1,3 +1,11 @@
+$.ajax({
+	url: 'https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_FR40008_no2.json',
+	type: 'PUT',
+	data: "",
+	success: function(data) {
+		alert('Load was performed.');
+	}
+});
 
 
 
