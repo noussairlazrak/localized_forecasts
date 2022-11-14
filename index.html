@@ -158,16 +158,22 @@
     <script src="local_forecasts_assets.js"></script>
     <script>
         $.ajaxSetup({
-            headers: { "Access-Control-Allow-Origin": "*", "origin":"https://noussairlazrak.github.io/localized_forecasts/" }
+            headers: { 
+                "Access-Control-Allow-Origin": "*", 
+                "origin":"https://noussairlazrak.github.io/localized_forecasts/",
+                "Access-Control-Request-Headers": "x-requested-with" }
         });
          $.ajax({
           url: "https://thingproxy.freeboard.io/fetch/https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_FR40008_no2.json",
           type: 'GET',
           contentType:'application/json',
           crossDomain: true,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-          },
+          headers: { 
+                "Access-Control-Allow-Origin": "*", 
+                "origin":"https://noussairlazrak.github.io/localized_forecasts/",
+                "Access-Control-Request-Headers": "x-requested-with" 
+        }
+        ,
           beforeSend: function (xhr) {
             xhr.setRequestHeader ("Authorization", "Basic " + btoa(""));
           },
