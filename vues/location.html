@@ -36,8 +36,12 @@
                                     <div class="col-md-4">
                                             <div class="">
                                                 <h5 class="current_param">Observations</h5>
-                                                <h1 class="observation_value current_observation_value">ppm<span class="observation_unit  current_observation_unit_span">ppm</span>
-                                                </h1>
+                                                <div class="obs_value_container">
+                                                    <h1 class="observation_value current_observation_value">
+                                                    </h1>
+                                                    <span class="observation_unit  current_observation_unit_span">ppm</span>
+                                                </div>
+                                                
                                             </div>
                                     </div>
 
@@ -87,86 +91,120 @@
     <script src='parametres/plotly-2.12.1.min.js'></script>
     
     <script>
-       
-        d3.json("./demo-forecasts/forecast_latest_FR40008_no2.json", function(err, rows) {
+    $('.current_param').html(pollutant_details(param));
+	$('.current_observation_unit_span').html("test");
 
-        function unpack(rows, key) {
-            return rows.map(function(row) {
-                return row[key];
-            });
-        }
+    d3.json("./demo-forecasts/forecast_latest_FR40008_no2.json", function(data) {
+        console.log(data);
+        function csvToArray(str, delimiter = ",") {
+        const headers = str.slice(0, str.indexOf("\n")).split(delimiter);
+        const rows = str.slice(str.indexOf("\n") + 1).split("\n");
+        const arr = rows.map(function(row) {
+            const values = row.split(delimiter);
+            const el = headers.reduce(function(object, header, index) {
+                object[header] = values[index];
+                return object;
+            }, {});
+            return el;
+        });
 
-        console.log(rows);
-        console.log(unpack(rows, 'forecast_datetime'));
+        return arr;
+    }
+    var pure_data = csvToArray(data.latest_forecast.data);
 
 
-        var trace1 = {
-            type: "scatter",
-            mode: "lines",
-            x: unpack(rows, 'timestamp'),
-            y: unpack(rows, 'value'),
+    var date_time = $(pure_data).map(function() {
+        return this.forecast_datetime;
+    }).get()
+
+    var localized = $(pure_data).map(function() {
+        return this.localized_no2;
+    }).get()
+
+    var uncorrected = $(pure_data).map(function() {
+        return this.uncorrected_no2;
+    }).get()
+
+    var observation = $(pure_data).map(function() {
+        return this.observation;
+    }).get()
+
+    console.log(pure_data);
+        
+
+
+    var trace1 = {
+        type: "scatter",
+        mode: "lines",
+        x: date_time,
+        y: localized,
+        line: {
+            color: 'green'
+        },
+        name: 'Localized_'+param
+    }
+
+    var trace2 = {
+        type: "scatter",
+        mode: "lines",
+        x: date_time,
+        y: uncorrected,
+        line: {
+            color: 'red'
+        },
+        name: 'Uncorrected_'+param
+    }
+
+    var trace3 = {
+        type: "scatter",
+        mode: "lines",
+        x: date_time,
+        y: observation,
+        line: {
+            color: 'blue'
+        },
+        name: 'Observation'
+    }
+
+
+    var pred = [trace1, trace2, trace3];
+
+    var pred_obs = [trace1];
+
+    var layout = {
+        // title: 'Bias Corrected Model',
+        font: {
+            family: 'Helvetica, sans-serif',
+            size: 18,
+            color: '#7f7f7f'
+        },
+        xaxis: {
+            // range: ['2021-06-10', '2021-06-30'],
+            type: 'date'
+        },
+
+        yaxis: {
+            autorange: true,
+            type: 'linear',
+
+        },
+        shapes: [{
+            type: 'line',
+            x0: String(data.latest_forecast.forecast_initialization_date),
+            y0: 0,
+            x1: String(data.latest_forecast.forecast_initialization_date),
+            yref: 'paper',
+            y1: 1,
             line: {
-                color: 'red'
-            },
-            name: 'Observation',
-            type: "scatter",
-            fill: "tonexty",
-            fillcolor: "white",
-        }
-
-        var trace2 = {
-            type: "scatter",
-            mode: "lines",
-            x: unpack(rows, 'timestamp'),
-            y: unpack(rows, 'upper'),
-            line: {
-                color: 'blue'
-            },
-            name: 'Upper Quantile',
-            type: "scatter",
-            fill: "tonexty",
-            fillcolor: "rgba(68, 68, 68, 0.3)",
-        }
-
-        var trace3 = {
-            type: "scatter",
-            mode: "lines",
-            x: unpack(rows, 'timestamp'),
-            y: unpack(rows, 'lower'),
-            line: {
-                color: 'green'
-            },
-            name: 'Lower Quantile',
-            type: "scatter",
-            fill: "tonexty",
-            fillcolor: "rgba(68, 68, 68, 0.3)",
-        }
-
-        var pred = [trace1];
-
-        var intervals = [trace1, trace2, trace3];
-
-        var layout = {
-            // title: 'Bias Corrected Model',
-            font: {
-                family: 'Helvetica, sans-serif',
-                size: 18,
-                color: '#7f7f7f'
-            },
-            xaxis: {
-                // range: ['2021-06-10', '2021-06-30'],
-                type: 'date'
-            },
-
-            yaxis: {
-                autorange: true,
-                range: [86.8700008333, 138.870004167],
-                type: 'linear',
-
+                color: 'green',
+                width: 2,
+                dash: 'dot'
             }
-        };
+        }]
+    };
 
-        Plotly.newPlot('intervals', intervals, layout);
+    Plotly.newPlot('myDiv', pred, layout);
+    Plotly.newPlot('observations_only', pred_obs, layout);
         });
 
 
