@@ -34,14 +34,26 @@ function pollutant_details(code){
 
 
 function add_marker(map,lat,long,open_aq_id,param,site){
-	console.log("adding marker for OpenAQ cite id "+open_aq_id+' coordinates'+lat+' '+long)
+
 	var station_id = document.createAttribute("station_id");  
 	var parameter = document.createAttribute("parameter");       
 	var location_name = document.createAttribute("location_name");       
 	var observation_value = document.createAttribute("observation_value");       
-	var current_observation_unit = document.createAttribute("current_observation_unit");       
+	var current_observation_unit = document.createAttribute("current_observation_unit");
+	
+	$.each( site.latest_measurments, function( key, value ) {
+		if (value.parameter == param){
+			location_name.value = site.site_data.location;
+			observation_value.value = value.value;
+			current_observation_unit.value = value.unit;
+		}
+		
+	  });
+       
 	station_id.value = open_aq_id;
 	parameter.value = param;
+
+	
 	var site = [lat, long];
 	var el_open_aq_id = document.createElement('div');
 	el_open_aq_id.id = 'marker_'+open_aq_id;
@@ -67,7 +79,6 @@ function get_forecasts(sites){
 }
 
 function get_obeservation(openaq_id){
-	console.log("working on it");
 	fetch('https://r6datuje8k.us-east-1.awsapprunner.com/noussair.lazrak/api/read_openaq_test', {
 		method: 'POST',
 		headers: {
