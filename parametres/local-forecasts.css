@@ -165,8 +165,7 @@ p.caption {
 
 .noussair_animations {
     animation-duration: 1s;
-    animation-timing-function: cubic-bezier(0.05, 0.97, 0.57, 1);
-    //animation-iteration-count: infinite;	
+    animation-timing-function: cubic-bezier(0.05, 0.97, 0.57, 1);	
 }
 
 .zoom_out {
@@ -509,4 +508,33 @@ a.nav-link.btn.btn-primary.upload-your-data {
 
 button.btn.btn-primary {
     margin-top: 15px;
+}
+
+.obs_value_container {
+    position: relative;
+    width: fit-content;
+    text-align: center;
+}
+
+h1.observation_value.current_observation_value {
+    margin: 0;
+    margin-bottom: -15px;
+}
+
+.btn-close:before {
+    background: rgba(0,0,0,.08);
+    font-family: inherit;
+    content: "X";
+    width: 1.8rem;
+    height: 1.8rem;
+    line-height: 1.8rem;
+    border-radius: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    transition: background .2s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bolder;
 }

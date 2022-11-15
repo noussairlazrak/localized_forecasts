@@ -34,8 +34,9 @@
                             <div class="col-md-12">
                                 <div class="row align-items-center counter-wrapper gy-4 gy-md-0">
                                     <div class="col-md-4">
+                                        <h5 class="current_param"></h5>
                                             <div class="">
-                                                <h5 class="current_param">Observations</h5>
+                                                
                                                 <div class="obs_value_container">
                                                     <h1 class="observation_value current_observation_value">
                                                     </h1>
@@ -91,7 +92,7 @@
     <script src='parametres/plotly-2.12.1.min.js'></script>
     
     <script>
-    $('.current_param').html(pollutant_details(param));
+   
 	$('.current_observation_unit_span').html("test");
 
     d3.json("./demo-forecasts/forecast_latest_FR40008_no2.json", function(data) {

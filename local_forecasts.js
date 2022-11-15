@@ -229,7 +229,7 @@ function get_all_sites_data(sites,param){
 			$(this).fadeOut(10);
 			$(this).fadeIn(10);
 			$('.current_location_name').html(location_name);
-			$('.current_param').html(pollutant_details(param));
+			$('.current_param').html(pollutant_details(param)).name;
 			$('.current_observation_value').html(observation_value);
 			$('.current_observation_unit_span').html(current_observation_unit);
 			$(".forecasts_container").addClass("noussair_animations zoom_in");
