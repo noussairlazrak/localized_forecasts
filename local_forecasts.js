@@ -341,7 +341,7 @@ function get_all_sites_data(sites,param){
 		
 			var pred = [trace1, trace2, trace3];
 		
-			var pred_obs = [trace1];
+			var pred_obs = [trace3];
 		
 			var layout = {
 				// title: 'Bias Corrected Model',
