@@ -158,6 +158,18 @@
     <script src="local_forecasts.js?v=1.0.1"></script>
     <script src="local_forecasts_assets.js?v=1.0.1"></script>
     <script>
+var settings = {
+          "url": "https://www.noussair.com/fetch.php",
+          "method": "GET",
+          "headers": {
+              "Access-Control-Allow-Origin":"*"
+          }
+      }
+
+      $.ajax(settings).done(function (response) {
+          console.log(response);
+
+      });
     $(document).on('click', '.btn-close', function(e) {
         $('.forecasts_container').css('display', 'none');
     });
