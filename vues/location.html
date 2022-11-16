@@ -96,6 +96,7 @@
     console.log( "ready!"+location_name );
 });
 	$('.current_observation_unit_span').html("test");
+    var location_name = "test";
     var file_name = location_name.replace(/\s/g, '')+param+'.json';
     console.log(file_name);
     d3.json("https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_FR40008_no2.json", function(data) {
