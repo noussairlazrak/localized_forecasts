@@ -273,11 +273,28 @@ function get_all_sites_data(sites,param){
 			}).get()
 		
 			var localized = $(pure_data).map(function() {
-				return this.localized_no2;
+				if(param == "no2"){
+					return this.localized_no2
+				}
+				if(param == "o3"){
+					return this.localized_o3
+				}
+				if(param == "pm25"){
+					return this.localized_pm25
+				}
+				
 			}).get()
 		
 			var uncorrected = $(pure_data).map(function() {
-				return this.uncorrected_no2;
+				if(param == "no2"){
+					return this.uncorrected_no2
+				}
+				if(param == "o3"){
+					return this.uncorrected_o3
+				}
+				if(param == "pm25"){
+					return this.luncorrected_pm25
+				}
 			}).get()
 		
 			var observation = $(pure_data).map(function() {
