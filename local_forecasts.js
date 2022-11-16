@@ -225,6 +225,7 @@ function get_all_sites_data(sites,param){
 
 
 	$(document).on("click",".launch-local-forecasts", function(){
+		
 		$(".loading_div").fadeIn(10);
 		var messages = ["Connecting to OpenAQ", "Connecting to GMAO", "fetching data from OpenAQ", "fetching data from GMAO FTP", "fetching observations", "getting the forecasts","please wait...","connecting...."];
 		setInterval(function () {
@@ -236,7 +237,7 @@ function get_all_sites_data(sites,param){
 		var observation_value=$(this).attr("observation_value");
 		var current_observation_unit=$(this).attr("current_observation_unit");
 
-		$(".forecasts_container").load("vues/location.html?st="+st_id+'&param='+param, function(){
+		$(".forecasts_container").load("vues/location.html?st="+st_id+'&param='+param+'&location_name='+location_name, function(){
 			$(this).fadeOut(10);
 			$(this).fadeIn(10);
 			$('.current_location_name').html(location_name);

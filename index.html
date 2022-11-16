@@ -158,11 +158,13 @@
     <script src="local_forecasts.js?v=1.0.1"></script>
     <script src="local_forecasts_assets.js?v=1.0.1"></script>
     <script>
-var settings = {
-          "url": "https://www.noussair.com/fetch.php",
+    var settings = {
+
+          "url": "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_FR40008_no2.json",
           "method": "GET",
-          "headers": {
-              "Access-Control-Allow-Origin":"*"
+          "header": {
+              "Access-Control-Allow-Origin":"*",
+              "Access-Control-Allow-Methods": "GET, POST,PUT"
           }
       }
 

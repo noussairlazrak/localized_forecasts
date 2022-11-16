@@ -9,7 +9,7 @@
                 <div class="row text-center">
                     <h3 class="module_title location_parameter_name">
                     </h3>
-                    <h3 class="sub-title site-name11">Location: <span class="current_location_name"></span>
+                    <h3 class="sub-title site-name11">Location: <span class="current_location_name">test</span>
                     </h3>
                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
@@ -92,11 +92,13 @@
     <script src='parametres/plotly-2.12.1.min.js'></script>
     
     <script>
-   
+   $( window ).ready(function() {
+    console.log( "ready!"+location_name );
+});
 	$('.current_observation_unit_span').html("test");
-
-    d3.json("./demo-forecasts/forecast_latest_FR40008_no2.json", function(data) {
-        console.log(data);
+    var file_name = location_name.replace(/\s/g, '')+param+'.json';
+    console.log(file_name);
+    d3.json("https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_FR40008_no2.json", function(data) {
         function csvToArray(str, delimiter = ",") {
         const headers = str.slice(0, str.indexOf("\n")).split(delimiter);
         const rows = str.slice(str.indexOf("\n") + 1).split("\n");
