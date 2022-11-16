@@ -43,7 +43,7 @@ function add_marker(map,lat,long,open_aq_id,param,site){
 	
 	$.each( site.latest_measurments, function( key, value ) {
 		if (value.parameter == param){
-			location_name.value = site.site_data.location;
+			location_name.value = site.site_data.location.replace(/\s/g, '_');
 			observation_value.value = value.value;
 			current_observation_unit.value = value.unit;
 		}
@@ -173,7 +173,7 @@ function add_locations_banner(site, param){
 		if (value.parameter == param){
 			const obj = document.getElementsByClassName("observation_value");
 			animateValue(obj, 100, 0, 5000);
-			var html = '<div class="col-md-2 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" parameter="'+param+'" station_id="'+site.site_data.openaq_id+'" location_name='+site.site_data.location.substring(0, 25)+' observation_value='+value.value.toString().substring(0, 6)+' current_observation_unit='+value.unit+'> <div class="item-inner"> '+site.site_data.location.substring(0, 25)+' <div class="card shadow-none bg-forecasts text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> '+pollutant_details(param).name+'</h5> <h1 class="observation_value">'+value.value.toString().substring(0, 6)+'<span class="observation_unit">'+value.unit +'</span> </h1> <span class="source">Source: OpenAQ</span> </div> </div> </div> </a> </div>';
+			var html = '<div class="col-md-2 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" parameter="'+param+'" station_id="'+site.site_data.openaq_id+'" location_name='+site.site_data.location.replace(/\s/g, '_')+' observation_value='+value.value.toString().substring(0, 6)+' current_observation_unit='+value.unit+'> <div class="item-inner"> '+site.site_data.location+' <div class="card shadow-none bg-forecasts text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> '+pollutant_details(param).name+'</h5> <h1 class="observation_value">'+value.value.toString().substring(0, 6)+'<span class="observation_unit">'+value.unit +'</span> </h1> <span class="source">Source: OpenAQ</span> </div> </div> </div> </a> </div>';
 			$( ".pollutant-banner-o" ).append(html);
 		}
 		
@@ -223,9 +223,7 @@ function get_all_sites_data(sites,param){
 
 
 
-
 	$(document).on("click",".launch-local-forecasts", function(){
-		
 		$(".loading_div").fadeIn(10);
 		var messages = ["Connecting to OpenAQ", "Connecting to GMAO", "fetching data from OpenAQ", "fetching data from GMAO FTP", "fetching observations", "getting the forecasts","please wait...","connecting...."];
 		setInterval(function () {
@@ -236,7 +234,7 @@ function get_all_sites_data(sites,param){
 		var location_name=$(this).attr("location_name");
 		var observation_value=$(this).attr("observation_value");
 		var current_observation_unit=$(this).attr("current_observation_unit");
-
+		
 		$(".forecasts_container").load("vues/location.html?st="+st_id+'&param='+param+'&location_name='+location_name, function(){
 			$(this).fadeOut(10);
 			$(this).fadeIn(10);
@@ -247,6 +245,204 @@ function get_all_sites_data(sites,param){
 			$('.current_observation_unit_span').html(current_observation_unit);
 			$(".forecasts_container").addClass("noussair_animations zoom_in");
 			$(".loading_div").fadeOut(10);
+
+
+
+			var file_name = location_name.replace(/\_/g, '').replace(/\./g, '')+'_'+param+'.json';
+			console.log(file_name);
+			d3.json("https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_"+file_name, function(data) {
+				function csvToArray(str, delimiter = ",") {
+				const headers = str.slice(0, str.indexOf("\n")).split(delimiter);
+				const rows = str.slice(str.indexOf("\n") + 1).split("\n");
+				const arr = rows.map(function(row) {
+					const values = row.split(delimiter);
+					const el = headers.reduce(function(object, header, index) {
+						object[header] = values[index];
+						return object;
+					}, {});
+					return el;
+				});
+		
+				return arr;
+			}
+			var pure_data = csvToArray(data.latest_forecast.data);
+		
+		
+			var date_time = $(pure_data).map(function() {
+				return this.forecast_datetime;
+			}).get()
+		
+			var localized = $(pure_data).map(function() {
+				return this.localized_no2;
+			}).get()
+		
+			var uncorrected = $(pure_data).map(function() {
+				return this.uncorrected_no2;
+			}).get()
+		
+			var observation = $(pure_data).map(function() {
+				return this.observation;
+			}).get()
+		
+			console.log(pure_data);
+				
+		
+		
+			var trace1 = {
+				type: "scatter",
+				mode: "lines",
+				x: date_time,
+				y: localized,
+				line: {
+					color: 'green'
+				},
+				name: 'Localized_'+param
+			}
+		
+			var trace2 = {
+				type: "scatter",
+				mode: "lines",
+				x: date_time,
+				y: uncorrected,
+				line: {
+					color: 'red'
+				},
+				name: 'Uncorrected_'+param
+			}
+		
+			var trace3 = {
+				type: "scatter",
+				mode: "lines",
+				x: date_time,
+				y: observation,
+				line: {
+					color: 'blue'
+				},
+				name: 'Observation'
+			}
+		
+		
+			var pred = [trace1, trace2, trace3];
+		
+			var pred_obs = [trace1];
+		
+			var layout = {
+				// title: 'Bias Corrected Model',
+				font: {
+					family: 'Helvetica, sans-serif',
+					size: 18,
+					color: '#7f7f7f'
+				},
+				xaxis: {
+					// range: ['2021-06-10', '2021-06-30'],
+					type: 'date'
+				},
+		
+				yaxis: {
+					autorange: true,
+					type: 'linear',
+		
+				},
+				shapes: [{
+					type: 'line',
+					x0: String(data.latest_forecast.forecast_initialization_date),
+					y0: 0,
+					x1: String(data.latest_forecast.forecast_initialization_date),
+					yref: 'paper',
+					y1: 1,
+					line: {
+						color: 'green',
+						width: 2,
+						dash: 'dot'
+					}
+				}]
+			};
+		
+			Plotly.newPlot('myDiv', pred, layout);
+			Plotly.newPlot('observations_only', pred_obs, layout);
+				});
+		
+		
+		
+				 d3.csv("./vues/10812-intervals.csv", function(err, rows) {
+		
+				function unpack(rows, key) {
+					return rows.map(function(row) {
+						return row[key];
+					});
+				}
+		
+				console.log(unpack(rows, 'timestamp'));
+		
+		
+				var trace1 = {
+					type: "scatter",
+					mode: "lines",
+					x: unpack(rows, 'timestamp'),
+					y: unpack(rows, 'value'),
+					line: {
+						color: 'red'
+					},
+					name: 'Observation',
+					type: "scatter",
+					fill: "tonexty",
+					fillcolor: "white",
+				}
+		
+				var trace2 = {
+					type: "scatter",
+					mode: "lines",
+					x: unpack(rows, 'timestamp'),
+					y: unpack(rows, 'upper'),
+					line: {
+						color: 'blue'
+					},
+					name: 'Upper Quantile',
+					type: "scatter",
+					fill: "tonexty",
+					fillcolor: "rgba(68, 68, 68, 0.3)",
+				}
+		
+				var trace3 = {
+					type: "scatter",
+					mode: "lines",
+					x: unpack(rows, 'timestamp'),
+					y: unpack(rows, 'lower'),
+					line: {
+						color: 'green'
+					},
+					name: 'Lower Quantile',
+					type: "scatter",
+					fill: "tonexty",
+					fillcolor: "rgba(68, 68, 68, 0.3)",
+				}
+		
+				var pred = [trace1];
+		
+				var intervals = [trace1, trace2, trace3];
+		
+				var layout = {
+					// title: 'Bias Corrected Model',
+					font: {
+						family: 'Helvetica, sans-serif',
+						size: 18,
+						color: '#7f7f7f'
+					},
+					xaxis: {
+						// range: ['2021-06-10', '2021-06-30'],
+						type: 'date'
+					},
+		
+					yaxis: {
+						autorange: true,
+						range: [86.8700008333, 138.870004167],
+						type: 'linear',
+		
+					}
+				};
+		
+				Plotly.newPlot('intervals', intervals, layout);
+				});
 		});
 	});
 
