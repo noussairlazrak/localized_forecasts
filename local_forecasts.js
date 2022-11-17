@@ -40,10 +40,10 @@ function add_marker(map,lat,long,open_aq_id,param,site){
 	var location_name = document.createAttribute("location_name");       
 	var observation_value = document.createAttribute("observation_value");       
 	var current_observation_unit = document.createAttribute("current_observation_unit");
-	
+	location_name.value = site.site_data.location.replace(/\s/g, '_');
 	$.each( site.latest_measurments, function( key, value ) {
 		if (value.parameter == param){
-			location_name.value = site.site_data.location.replace(/\s/g, '_');
+			
 			observation_value.value = value.value;
 			current_observation_unit.value = value.unit;
 		}
@@ -208,7 +208,7 @@ function get_all_sites_data(sites,param){
 	return Promise.resolve(all_sites);
 }
 
-	const sites = ["3995", "8645", "739","5282"];
+	const sites = ["3995", "739","5282"];
 	const param = "no2";
 	get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites,param));
 	$(document).on('click','.routing_pollutant_param', function (e) {
