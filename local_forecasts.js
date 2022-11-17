@@ -144,10 +144,10 @@ function get_open_aq_observations(site_id,param){
 function create_map(sites,param){
 	
 	var deltaDistance = 100;
-	var monument = [30.1272444, -1.9297706];
+	var center_point = [30.1272444, -1.9297706];
 	var map = new mapboxgl.Map({
-		style: 'mapbox://styles/lazrakn/ck2g4kozj0q3w1cmx5tig3gnp',
-		center: monument,
+		style: 'mapbox://styles/lazrakn/clakch8ed006h14pdbqup69x7',
+		center: center_point,
 		zoom: 2,
 		pitch: 0,
 		bearing: 0,
@@ -173,7 +173,7 @@ function add_locations_banner(site, param){
 		if (value.parameter == param){
 			const obj = document.getElementsByClassName("observation_value");
 			animateValue(obj, 100, 0, 5000);
-			var html = '<div class="col-md-2 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" parameter="'+param+'" station_id="'+site.site_data.openaq_id+'" location_name='+site.site_data.location.replace(/\s/g, '_')+' observation_value='+value.value.toString().substring(0, 6)+' current_observation_unit='+value.unit+'> <div class="item-inner"> '+site.site_data.location+' <div class="card shadow-none bg-forecasts text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> '+pollutant_details(param).name+'</h5> <h1 class="observation_value">'+value.value.toString().substring(0, 6)+'<span class="observation_unit">'+value.unit +'</span> </h1> <span class="source">Source: OpenAQ</span> </div> </div> </div> </a> </div>';
+			var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" parameter="'+param+'" station_id="'+site.site_data.openaq_id+'" location_name='+site.site_data.location.replace(/\s/g, '_')+' observation_value='+value.value.toString().substring(0, 6)+' current_observation_unit='+value.unit+' latitude="'+site.site_data.latitude+'" longitude="'+site.site_data.longitude+'" lastUpdated="'+value.lastUpdated+'"> <div class="item-inner"> '+site.site_data.location+' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> '+pollutant_details(param).name+'</h5> <span class="last_update_widget"> Last update: '+value.lastUpdated+'</span><h1 class="observation_value">'+value.value.toString().substring(0, 6)+'<span class="observation_unit">'+value.unit +'</span> </h1> <span class="source">Source: OpenAQ</span> </div> </div> </div> </a> </div>';
 			$( ".pollutant-banner-o" ).append(html);
 		}
 		
@@ -250,7 +250,11 @@ function get_all_sites_data(sites,param){
 
 			var file_name = location_name.replace(/\_/g, '').replace(/\./g, '')+'_'+param+'.json';
 			console.log(file_name);
-			d3.json("https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_"+file_name, function(data) {
+			d3.json("https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_"+file_name, function(error, data) {
+				if(error)
+						{
+							alert(error);
+						}
 				function csvToArray(str, delimiter = ",") {
 				const headers = str.slice(0, str.indexOf("\n")).split(delimiter);
 				const rows = str.slice(str.indexOf("\n") + 1).split("\n");
@@ -266,7 +270,7 @@ function get_all_sites_data(sites,param){
 				return arr;
 			}
 			var pure_data = csvToArray(data.latest_forecast.data);
-		
+			
 		
 			var date_time = $(pure_data).map(function() {
 				return this.forecast_datetime;
@@ -301,9 +305,9 @@ function get_all_sites_data(sites,param){
 				return this.observation;
 			}).get()
 		
-			console.log(pure_data);
+			console.log(observation);
 				
-		
+			
 		
 			var trace1 = {
 				type: "scatter",
@@ -376,7 +380,12 @@ function get_all_sites_data(sites,param){
 			};
 		
 			Plotly.newPlot('myDiv', pred, layout);
-			Plotly.newPlot('observations_only', pred_obs, layout);
+			if(Plotly.newPlot('observations_only', pred_obs, layout)){
+				console.log("done");
+			}else{
+					alert("no observation found");
+					$('.tab-content').html(" Data not Available");
+			}
 				});
 		
 		

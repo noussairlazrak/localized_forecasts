@@ -1,26 +1,13 @@
-@font-face {
-    font-family: 'Gridnik';
-    src: url('ufonts.com_gridnik.eot');
-    /* IE9 Compat Modes */
-    src: url('ufonts.com_gridnik.eot?#iefix') format('embedded-opentype'),
-        /* IE6-IE8 */
-        url('ufonts.com_gridnik.woff') format('woff'),
-        /* Pretty Modern Browsers */
-        url('ufonts.com_gridnik.ttf') format('truetype');
-    /* Safari, Android, iOS */
-}
-
 html,
 body {
 
     font-weight: bold;
-    font-family: 'Helvetica', sans-serif;
+    font-family: 'Manrope', sans-serif;
     font-weight: 100;
 
 }
 
 .bg-forecasts {
-    background: #1f1f1f;
     color: white;
 }
 
@@ -537,4 +524,37 @@ h1.observation_value.current_observation_value {
     justify-content: center;
     align-items: center;
     font-weight: bolder;
+}
+
+.forecasts-item {
+    background: none;
+    color: white !important;
+}
+
+.forecasts-item  h1 {
+    color: white !important;
+}
+
+
+
+.item-inner:hover {
+    cursor: pointer;
+}
+
+div#pills-tabContent {
+    margin: 0;
+}
+
+ul#pills-tab {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+h3.sub-title.site-name11 {
+    margin: 0;
+}
+span.last_update_widget {
+    font-size: 11px;
+    position: absolute;
+    top: 18px;
 }
