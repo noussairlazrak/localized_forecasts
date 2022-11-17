@@ -209,7 +209,7 @@ function get_all_sites_data(sites,param){
 }
 
 	const sites = ["3995", "8645", "739","5282"];
-	const param = "no2";
+	const param = "pm25";
 	get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites,param));
 	$(document).on('click','.routing_pollutant_param', function (e) {
 	$(".loading_div").fadeIn(100);
@@ -250,6 +250,9 @@ function get_all_sites_data(sites,param){
 
 			var file_name = location_name.replace(/\_/g, '').replace(/\./g, '')+'_'+param+'.json';
 			console.log(file_name);
+			if(file_name == "Kampala_pm25.json"){
+				file_name = "Uganda_Kampala_USDiplomaticPost_pm25.json"
+			}
 			d3.json("https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_"+file_name, function(error, data) {
 				if(error)
 						{
