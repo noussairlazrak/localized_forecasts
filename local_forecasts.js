@@ -2,6 +2,41 @@
 
 
 
+
+$( document ).ready(function() {
+    	$('body').on('click','.nl_wave_routing',function(){
+			var page=$(this).attr('href');
+			window.location.hash = $(this).attr("href");
+			$(window).scrollTop(0);
+			return false; 
+			
+		});
+		
+		
+	window.onhashchange = function(){
+		
+		var hash = window.location.hash.substr(1);
+			$('.w_loader').toggle();
+			$(document).prop('title', 'GEOS CF: ::'+hash.toUpperCase().replace(/[_\W]+/g, " "));
+			
+			$(".loading_div").fadeIn(10);
+			var messages = ["Connecting to OpenAQ", "Connecting to GMAO", "fetching data from OpenAQ", "fetching data from GMAO FTP", "fetching observations", "getting the forecasts","please wait...","connecting...."];
+			setInterval(function () {
+				var message = messages[Math.floor(Math.random()*messages.length)];
+				$(".messages").html(message)}, 100);
+			var st_id=$(this).attr("station_id");
+			var param=$(this).attr("parameter");
+			$(".forecasts_container").load("vues/"+hash, function(){
+				$(this).fadeOut(10);
+				$(this).fadeIn(10);
+				$(".forecasts_container").addClass("noussair_animations zoom_in");
+				$(".loading_div").fadeOut(10);
+			});
+		
+	}
+});	
+
+
 mapboxgl.accessToken = 'pk.eyJ1IjoibGF6cmFrbiIsImEiOiJjanZodzV3OXUwNmEwNDRxdnVsZGhnaml4In0.-ES_Lt127Id6DEf8H9E3rg';
 
 var deltaDegrees = 25;
