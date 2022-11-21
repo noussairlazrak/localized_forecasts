@@ -7,7 +7,7 @@ $( document ).ready(function() {
 	$('body').on('click','.nl_wave_routing',function(){
 		var page=$(this).attr('href');
 		$(".loading_div").fadeIn(10);
-		var messages = ["Connecting to OpenAQ", "Connecting to GMAO", "fetching data from OpenAQ", "fetching data from GMAO FTP", "fetching observations", "getting the forecasts","please wait...","connecting...."];
+		var messages = ["please wait...","connecting...."];
 		setInterval(function () {
 			var message = messages[Math.floor(Math.random()*messages.length)];
 			$(".messages").html(message)}, 100);
@@ -238,6 +238,7 @@ function get_all_sites_data(sites,param){
 	$(document).on('click','.routing_pollutant_param', function (e) {
 	$(".loading_div").fadeIn(100);
 	const param = $(this).attr('lf-param');
+	$(".g-lf-params").attr("param",param);
 	const sites_2 = ["3995", "8645", "739","5282"];
 	get_all_sites_data(sites_2).then((all_sites) => map = create_map(all_sites,param));
 	$(".loading_div").fadeOut(100);
@@ -254,7 +255,8 @@ function get_all_sites_data(sites,param){
 			var message = messages[Math.floor(Math.random()*messages.length)];
 			$(".messages").html(message)}, 100);
 		var st_id=$(this).attr("station_id");
-		var param=$(this).attr('parameter');
+		var param=$('.g-lf-params').attr('param');
+		alert(param);
 		var location_name=$(this).attr("location_name");
 		var observation_value=$(this).attr("observation_value");
 		var current_observation_unit=$(this).attr("current_observation_unit");
