@@ -4,38 +4,26 @@
 
 
 $( document ).ready(function() {
-    	$('body').on('click','.nl_wave_routing',function(){
-			var page=$(this).attr('href');
-			window.location.hash = $(this).attr("href");
-			$(window).scrollTop(0);
-			return false; 
-			
-		});
-		
-		
-	window.onhashchange = function(){
-		
-		var hash = window.location.hash.substr(1);
-			$('.w_loader').toggle();
-			$(document).prop('title', 'GEOS CF: ::'+hash.toUpperCase().replace(/[_\W]+/g, " "));
-			
-			$(".loading_div").fadeIn(10);
-			var messages = ["Connecting to OpenAQ", "Connecting to GMAO", "fetching data from OpenAQ", "fetching data from GMAO FTP", "fetching observations", "getting the forecasts","please wait...","connecting...."];
-			setInterval(function () {
-				var message = messages[Math.floor(Math.random()*messages.length)];
-				$(".messages").html(message)}, 100);
-			var st_id=$(this).attr("station_id");
-			var param=$(this).attr("parameter");
-			$(".forecasts_container").load("vues/"+hash, function(){
-				$(this).fadeOut(10);
-				$(this).fadeIn(10);
-				$(".forecasts_container").addClass("noussair_animations zoom_in");
-				$(".loading_div").fadeOut(10);
-			});
-		
-	}
-});	
+	$('body').on('click','.nl_wave_routing',function(){
+		var page=$(this).attr('href');
+		$(".loading_div").fadeIn(10);
+		var messages = ["Connecting to OpenAQ", "Connecting to GMAO", "fetching data from OpenAQ", "fetching data from GMAO FTP", "fetching observations", "getting the forecasts","please wait...","connecting...."];
+		setInterval(function () {
+			var message = messages[Math.floor(Math.random()*messages.length)];
+			$(".messages").html(message)}, 100);
 
+		$(".forecasts_container").load("vues/"+page, function(){
+			$(this).fadeOut(10);
+			$(this).fadeIn(10);
+			$(".forecasts_container").addClass("noussair_animations zoom_in");
+			$(".loading_div").fadeOut(10);
+		}); 
+		return false; 
+	});
+	
+	
+
+});	
 
 mapboxgl.accessToken = 'pk.eyJ1IjoibGF6cmFrbiIsImEiOiJjanZodzV3OXUwNmEwNDRxdnVsZGhnaml4In0.-ES_Lt127Id6DEf8H9E3rg';
 
@@ -243,9 +231,9 @@ function get_all_sites_data(sites,param){
 
 	return Promise.resolve(all_sites);
 }
-
+	
 	const sites = ["3995", "8645", "739","5282"];
-	const param = "no2";
+	var param = "no2";
 	get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites,param));
 	$(document).on('click','.routing_pollutant_param', function (e) {
 	$(".loading_div").fadeIn(100);
@@ -254,19 +242,19 @@ function get_all_sites_data(sites,param){
 	get_all_sites_data(sites_2).then((all_sites) => map = create_map(all_sites,param));
 	$(".loading_div").fadeOut(100);
 	
-});
+	});
 
 
 
 
-	$(document).on("click",".launch-local-forecasts", function(){
+	$(document).on("click",".launch-local-forecasts", function(param){
 		$(".loading_div").fadeIn(10);
 		var messages = ["Connecting to OpenAQ", "Connecting to GMAO", "fetching data from OpenAQ", "fetching data from GMAO FTP", "fetching observations", "getting the forecasts","please wait...","connecting...."];
 		setInterval(function () {
 			var message = messages[Math.floor(Math.random()*messages.length)];
 			$(".messages").html(message)}, 100);
 		var st_id=$(this).attr("station_id");
-		var param=param;
+		var param=$(this).attr('parameter');
 		var location_name=$(this).attr("location_name");
 		var observation_value=$(this).attr("observation_value");
 		var current_observation_unit=$(this).attr("current_observation_unit");
