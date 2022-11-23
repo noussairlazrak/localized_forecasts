@@ -325,8 +325,7 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 							return this.observation;
 						}).get()
 	
-						console.log(observation);
-	
+
 	
 	
 						var trace1 = {
@@ -368,14 +367,14 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 						var pred_obs = [trace3];
 	
 						var layout = {
-							// title: 'Bias Corrected Model',
+							title: 'Bias Corrected Model',
 							font: {
 								family: 'Helvetica, sans-serif',
 								size: 18,
 								color: '#7f7f7f'
 							},
 							xaxis: {
-								// range: ['2021-06-10', '2021-06-30'],
+								range: ['2021-06-10', '2021-06-30'],
 								type: 'date'
 							},
 	
