@@ -374,13 +374,13 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 								color: '#7f7f7f'
 							},
 							xaxis: {
-								range: ['2021-06-10', '2021-06-30'],
 								type: 'date'
 							},
 	
 							yaxis: {
 								autorange: true,
 								type: 'linear',
+                                title: param+' ' +'[ '+ current_observation_unit +']'
 	
 							},
 							shapes: [{
