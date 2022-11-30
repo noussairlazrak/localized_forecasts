@@ -259,6 +259,7 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 
 
         var file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '.json';
+       
         console.log(file_name);
         if (file_name == "USDiplomaticPost:Kampala_pm25.json") {
             file_name = "Kampala_USDiplomaticPost_pm25.json"
@@ -399,8 +400,21 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 						};
 	
 						Plotly.newPlot('myDiv', pred, layout);
+                        $(document).on("click", ".download_forecats_data", function() {
+                            var csv_file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '.csv';
+                            let csvContent = "data:text/csv;charset=utf-8," + data.latest_forecast.data;
+                            var encodedUri = encodeURI(csvContent);
+                            var link = document.createElement("a");
+                            link.setAttribute("href", encodedUri);
+                            link.setAttribute("download", csv_file_name);
+                            document.body.appendChild(link); 
+                            link.click();
+                        });
+                        
 						if (Plotly.newPlot('observations_only', pred_obs, layout)) {
 							console.log("done");
+                           
+
 						} else {
 							$('.forecasts-view').html("Sorry, forecasts not available for "+param+" in this location");
 						}
