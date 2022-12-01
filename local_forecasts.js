@@ -417,6 +417,11 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
                             link.click();
                         });
                         
+                  
+
+
+
+                        
 						if (Plotly.newPlot('observations_only', pred_obs, layout)) {
 							console.log("done");
                            
