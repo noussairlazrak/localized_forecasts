@@ -728,6 +728,8 @@
     left: 0;
 }
 
+
+
 </style>
 <div class="container forecasts-box">
     <div class="modal-dialog modal-dialog-centered modal-md">
@@ -803,13 +805,15 @@
                                         <div class="outline"><span></span></div>
                                      </div>
                                 </div>
-                                    <div id='myDiv'></div>
-                                    <p class="caption">
-                                        Source: <a href="https://gmao.gsfc.nasa.gov/weather_prediction/GEOS-CF//">NASA GEOS Composition Forecasts (GEOS-CF)</a> | <a class="download_forecats_data" href="#">Download the data</a>
-                                    </p>
-                                    
-
-
+                                <div class="lf-container">
+                                  <div class="plots_container">
+                                    <div id='plot_model' class='model_plots'></div>
+                                    <div id='plot_resample' class='model_plots resample_plots'></div>
+                                  </div>
+                                </div>
+                                <p class="caption">
+                                  Source: <a href="https://gmao.gsfc.nasa.gov/weather_prediction/GEOS-CF//">NASA GEOS Composition Forecasts (GEOS-CF)</a> | <a class="download_forecats_data" href="#">Download the data</a> | <a class="resample" href="#">Resample</a>
+                              </p>
                             </div>
                             <div class="row">
                                 <div class="col-lg-6 col-xl-5 mx-auto">

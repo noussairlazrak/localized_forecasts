@@ -264,11 +264,11 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 
 
 
-        var file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '.json';
+        var file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '_historical.json';
        
         console.log(file_name);
-        if (file_name == "USDiplomaticPost:Kampala_pm25.json") {
-            file_name = "Kampala_USDiplomaticPost_pm25.json"
+        if (file_name == "USDiplomaticPost:Kampala_pm25_historical.json") {
+            file_name = "Kampala_USDiplomaticPost_pm25_historical.json"
         }
         
         var file_url = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_" + file_name;
@@ -315,7 +315,8 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 							}
 	
 						}).get()
-	
+                        
+                       
 						var uncorrected = $(pure_data).map(function() {
 							if (param == "no2") {
 								return this.uncorrected_no2
@@ -326,6 +327,48 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 							if (param == "pm25") {
 								return this.luncorrected_pm25
 							}
+						}).get()
+
+                        var observation_resample = $(pure_data).map(function() {
+							if (param == "no2") {
+								return this.observation_24H
+							}
+							if (param == "o3") {
+								return this.observation_8H
+							}
+							if (param == "pm25") {
+								return this.observation_24H
+							}
+	
+						}).get()
+                        var resample_window = 24;
+                        var localized_resample = $(pure_data).map(function() {
+							if (param == "no2") {
+                                resample_window = 24;
+								return this.localized_no2_24H
+							}
+							if (param == "o3") {
+                                resample_window = 8;
+								return this.localized_o3_8H
+							}
+							if (param == "pm25") {
+                                resample_window = 24;
+								return this.localized_pm25_24H
+							}
+	
+						}).get()
+
+                        var uncorrected_resample = $(pure_data).map(function() {
+							if (param == "no2") {
+								return this.uncorrected_no2_24H
+							}
+							if (param == "o3") {
+								return this.uncorrected_o3_8H
+							}
+							if (param == "pm25") {
+								return this.uncorrected_pm25_24H
+							}
+	
 						}).get()
 	
 						var observation = $(pure_data).map(function() {
@@ -367,11 +410,43 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 							},
 							name: 'Observation'
 						}
+
+                        var observation_resample_trace = {
+							type: "scatter",
+							mode: "lines",
+							x: date_time,
+							y: observation_resample,
+							line: {
+								color: 'blue'
+							},
+							name: param+' observation'
+						}
+                        var localized_resample_trace = {
+							type: "scatter",
+							mode: "lines",
+							x: date_time,
+							y: localized_resample,
+							line: {
+								color: 'green'
+							},
+							name: 'Localized '+param
+						}
+                        var uncorrected_resample_trace = {
+							type: "scatter",
+							mode: "lines",
+							x: date_time,
+							y: uncorrected_resample,
+							line: {
+								color: 'red'
+							},
+							name: 'uncorrected '+param
+						}
+
+						var pred = [trace3, trace1, trace2];
 	
-	
-						var pred = [trace1, trace2, trace3];
-	
-						var pred_obs = [trace3];
+						var pred_obs = [observation_resample_trace];
+						
+                        var plot_resample = [observation_resample_trace,localized_resample_trace,uncorrected_resample_trace];
 	
 						var layout = {
 							title: 'Bias Corrected Model',
@@ -405,7 +480,8 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 							}]
 						};
 	
-						Plotly.newPlot('myDiv', pred, layout);
+						Plotly.newPlot('plot_model', pred, layout);
+						Plotly.newPlot('plot_resample', plot_resample, layout);
                         $(document).on("click", ".download_forecats_data", function() {
                             var csv_file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '.csv';
                             let csvContent = "data:text/csv;charset=utf-8," + data.latest_forecast.data;
@@ -416,6 +492,11 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
                             document.body.appendChild(link); 
                             link.click();
                         });
+                        $('.resample').text("Resample "+resample_window+"H");
+                        $(".resample_plots").hide();
+                        $(document).on("click", ".resample", function() {
+                            $(".resample_plots").toggle();
+                        });
                         
                   
 
@@ -423,8 +504,7 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 
                         
 						if (Plotly.newPlot('observations_only', pred_obs, layout)) {
-							console.log("done");
-                           
+
 
 						} else {
 							$('.forecasts-view').html("Sorry, forecasts not available for "+param+" in this location");
