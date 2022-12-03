@@ -386,7 +386,7 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 							line: {
 								color: 'green'
 							},
-							name: 'Localized_' + param
+							name: 'Localized ' + param
 						}
 	
 						var trace2 = {
@@ -397,7 +397,7 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 							line: {
 								color: 'red'
 							},
-							name: 'Uncorrected_' + param
+							name: 'Uncorrected ' + param
 						}
 	
 						var trace3 = {
@@ -419,7 +419,7 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 							line: {
 								color: 'blue'
 							},
-							name: param+' observation'
+							name: 'Observation'
 						}
                         var localized_resample_trace = {
 							type: "scatter",
@@ -439,7 +439,7 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 							line: {
 								color: 'red'
 							},
-							name: 'uncorrected '+param
+							name: 'Uncorrected '+param
 						}
 
 						var pred = [trace3, trace1, trace2];
@@ -493,6 +493,8 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
                             link.click();
                         });
                         $('.resample').text("Resample "+resample_window+"H");
+                        $('.modebar').prepend('<div class="modebar-group"><a rel="tooltip" class="modebar-btn resample" data-title="resample">Resample '+resample_window+'H</div>');
+                        
                         $(".resample_plots").hide();
                         $(document).on("click", ".resample", function() {
                             $(".resample_plots").toggle();
