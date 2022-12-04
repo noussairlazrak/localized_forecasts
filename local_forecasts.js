@@ -263,271 +263,313 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
         $(".loading_div").fadeOut(10);
 
 
-
-        var file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '_historical.json';
+        function get_plot(location_name, param, forecasts_div, forecasts_resample_div,historicial){
+            if(historicial=="historicial"){
+                ext_name="_historicial.json";
+            }
+            else{
+                ext_name=".json";
+            }
+            var file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param +ext_name;
        
-        console.log(file_name);
-        if (file_name == "USDiplomaticPost:Kampala_pm25_historical.json") {
-            file_name = "Kampala_USDiplomaticPost_pm25_historical.json"
+            console.log(file_name);
+            if (file_name == "USDiplomaticPost:Kampala_pm25_historical.json") {
+                file_name = "Kampala_USDiplomaticPost_pm25_historical.json"
+            }
+            
+            var file_url = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_" + file_name;
+            $(".loading_forecasts").fadeIn(10);
+            $.ajax({
+                url: file_url, 
+                success: function() { 
+                    d3.json(file_url, function(error, data) {
+                        if (error) {
+                            alert(error);
+                        }
+                        console.log(data);
+                        function csvToArray(str, delimiter = ",") {
+                            const headers = str.slice(0, str.indexOf("\n")).split(delimiter);
+                            const rows = str.slice(str.indexOf("\n") + 1).split("\n");
+                            const arr = rows.map(function(row) {
+                                const values = row.split(delimiter);
+                                const el = headers.reduce(function(object, header, index) {
+                                    object[header] = values[index];
+                                    return object;
+                                }, {});
+                                return el;
+                            });
+    
+                            return arr;
+                        }
+                        if(data){
+                            var pure_data = csvToArray(data.latest_forecast.data);
+    
+    
+                            var date_time = $(pure_data).map(function() {
+                                return this.forecast_datetime;
+                            }).get()
+        
+                            var localized = $(pure_data).map(function() {
+                                if (param == "no2") {
+                                    return this.localized_no2
+                                }
+                                if (param == "o3") {
+                                    return this.localized_o3
+                                }
+                                if (param == "pm25") {
+                                    return this.localized_pm25
+                                }
+        
+                            }).get()
+                            
+                           
+                            var uncorrected = $(pure_data).map(function() {
+                                if (param == "no2") {
+                                    return this.uncorrected_no2
+                                }
+                                if (param == "o3") {
+                                    return this.uncorrected_o3
+                                }
+                                if (param == "pm25") {
+                                    return this.luncorrected_pm25
+                                }
+                            }).get()
+    
+                            var observation_resample = $(pure_data).map(function() {
+                                if (param == "no2") {
+                                    return this.observation_24H
+                                }
+                                if (param == "o3") {
+                                    return this.observation_8H
+                                }
+                                if (param == "pm25") {
+                                    return this.observation_24H
+                                }
+        
+                            }).get()
+                            var resample_window = 24;
+                            var localized_resample = $(pure_data).map(function() {
+                                if (param == "no2") {
+                                    resample_window = 24;
+                                    return this.localized_no2_24H
+                                }
+                                if (param == "o3") {
+                                    resample_window = 8;
+                                    return this.localized_o3_8H
+                                }
+                                if (param == "pm25") {
+                                    resample_window = 24;
+                                    return this.localized_pm25_24H
+                                }
+        
+                            }).get()
+    
+                            var uncorrected_resample = $(pure_data).map(function() {
+                                if (param == "no2") {
+                                    return this.uncorrected_no2_24H
+                                }
+                                if (param == "o3") {
+                                    return this.uncorrected_o3_8H
+                                }
+                                if (param == "pm25") {
+                                    return this.uncorrected_pm25_24H
+                                }
+        
+                            }).get()
+        
+                            var observation = $(pure_data).map(function() {
+                                return this.observation;
+                            }).get()
+        
+    
+        
+        
+                            var trace1 = {
+                                type: "scatter",
+                                mode: "lines",
+                                x: date_time,
+                                y: localized,
+                                line: {
+                                    color: 'green'
+                                },
+                                name: 'Localized ' + param
+                            }
+        
+                            var trace2 = {
+                                type: "scatter",
+                                mode: "lines",
+                                x: date_time,
+                                y: uncorrected,
+                                line: {
+                                    color: 'red'
+                                },
+                                name: 'Uncorrected ' + param
+                            }
+        
+                            var trace3 = {
+                                type: "scatter",
+                                mode: "lines",
+                                x: date_time,
+                                y: observation,
+                                line: {
+                                    color: 'blue'
+                                },
+                                name: 'Observation'
+                            }
+    
+                            var observation_resample_trace = {
+                                type: "scatter",
+                                mode: "lines",
+                                x: date_time,
+                                y: observation_resample,
+                                line: {
+                                    color: 'blue'
+                                },
+                                name: 'Observation'
+                            }
+                            var localized_resample_trace = {
+                                type: "scatter",
+                                mode: "lines",
+                                x: date_time,
+                                y: localized_resample,
+                                line: {
+                                    color: 'green'
+                                },
+                                name: 'Localized '+param
+                            }
+                            var uncorrected_resample_trace = {
+                                type: "scatter",
+                                mode: "lines",
+                                x: date_time,
+                                y: uncorrected_resample,
+                                line: {
+                                    color: 'red'
+                                },
+                                name: 'Uncorrected '+param
+                            }
+    
+                            var pred = [trace3, trace1, trace2];
+        
+                            var pred_obs = [observation_resample_trace];
+                            
+                            var plot_resample = [observation_resample_trace,localized_resample_trace,uncorrected_resample_trace];
+        
+                            var layout = {
+                                title: 'Bias Corrected Model',
+                                font: {
+                                    family: 'Helvetica, sans-serif',
+                                    size: 18,
+                                    color: '#7f7f7f'
+                                },
+                                xaxis: {
+                                    type: 'date'
+                                },
+        
+                                yaxis: {
+                                    autorange: true,
+                                    type: 'linear',
+                                    title: param+' ' +'[ '+ current_observation_unit +']'
+        
+                                },
+                                shapes: [{
+                                    type: 'line',
+                                    x0: String(data.latest_forecast.forecast_initialization_date),
+                                    y0: 0,
+                                    x1: String(data.latest_forecast.forecast_initialization_date),
+                                    yref: 'paper',
+                                    y1: 1,
+                                    line: {
+                                        color: 'green',
+                                        width: 2,
+                                        dash: 'dot'
+                                    }
+                                }]
+                            };
+
+                            var layout_resample = {
+                                title: 'Bias Corrected Model ' + resample_window+"H Rolling Averages",
+                                font: {
+                                    family: 'Helvetica, sans-serif',
+                                    size: 18,
+                                    color: '#7f7f7f'
+                                },
+                                xaxis: {
+                                    type: 'date'
+                                },
+        
+                                yaxis: {
+                                    autorange: true,
+                                    type: 'linear',
+                                    title: param+' ' +'[ '+ current_observation_unit +']'
+        
+                                },
+                                shapes: [{
+                                    type: 'line',
+                                    x0: String(data.latest_forecast.forecast_initialization_date),
+                                    y0: 0,
+                                    x1: String(data.latest_forecast.forecast_initialization_date),
+                                    yref: 'paper',
+                                    y1: 1,
+                                    line: {
+                                        color: 'green',
+                                        width: 2,
+                                        dash: 'dot'
+                                    }
+                                }]
+                            };
+        
+                            Plotly.newPlot(forecasts_div, pred, layout);
+                            Plotly.newPlot(forecasts_resample_div, plot_resample, layout_resample);
+                            $(document).on("click", ".download_forecats_data", function() {
+                                var csv_file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '('+'_'+historicial+').csv';
+                                let csvContent = "data:text/csv;charset=utf-8," + data.latest_forecast.data;
+                                var encodedUri = encodeURI(csvContent);
+                                var link = document.createElement("a");
+                                link.setAttribute("href", encodedUri);
+                                link.setAttribute("download", csv_file_name);
+                                document.body.appendChild(link); 
+                                link.click();
+                            });
+                            $('.resample').text(resample_window+"H Rolling Averages");
+                            $('.modebar').prepend('<div class="modebar-group"><a rel="tooltip" class="modebar-btn resample_'+historicial+'" data-title="resample">'+'_'+historicial+ ' '+resample_window+'H Rolling Averages</div>');
+                            
+                            $('.lf-operations').append('| <a class="download_forecats_data" href="#">Download the '+historicial+' data</a>');
+
+                            $('.lf-operations').prepend('| <a class="change_plot" change_to ="main_plot'+'_'+historicial+'" href="#"> raw '+historicial+' data</a> | <a change_to ="resample_main_plot'+'_'+historicial+'" class=" change_plot resample_'+'_'+historicial+'" href="#">'+historicial+' '+resample_window+'H Rolling averages</a> ');
+                            
+                            $('.change_plot').on("click", function() {
+                                var change_to_val = $(this).attr("change_to");
+                                   $('.model_plots').hide();
+                                    $('.'+change_to_val).show(); 
+                               });
+                       
+                            if (Plotly.newPlot('observations_only', pred_obs, layout)) {
+    
+    
+                            } else {
+                                $('.forecasts-view').html("Sorry, forecasts not available for "+param+" in this location");
+                            }
+                        }
+                        else {
+                            $('.forecasts-view').html("Sorry, Forecasts not available for "+param+" in this location");
+                        }
+                        $(".loading_forecasts").fadeOut(10);
+                        
+                    });
+    
+                },
+                error: function(jqXHR, status, er) {
+                    if (jqXHR.status === 404) {
+                        $('.forecasts-view').html("Sorry, forecasts not available for "+param+" in this location");
+                    }
+    
+                }
+            });
         }
         
-        var file_url = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_" + file_name;
-		$(".loading_forecasts").fadeIn(10);
-        $.ajax({
-            url: file_url, 
-            success: function() { 
-                d3.json(file_url, function(error, data) {
-                    if (error) {
-                        alert(error);
-                    }
-					console.log(data);
-                    function csvToArray(str, delimiter = ",") {
-                        const headers = str.slice(0, str.indexOf("\n")).split(delimiter);
-                        const rows = str.slice(str.indexOf("\n") + 1).split("\n");
-                        const arr = rows.map(function(row) {
-                            const values = row.split(delimiter);
-                            const el = headers.reduce(function(object, header, index) {
-                                object[header] = values[index];
-                                return object;
-                            }, {});
-                            return el;
-                        });
-
-                        return arr;
-                    }
-					if(data){
-						var pure_data = csvToArray(data.latest_forecast.data);
-
-
-						var date_time = $(pure_data).map(function() {
-							return this.forecast_datetime;
-						}).get()
-	
-						var localized = $(pure_data).map(function() {
-							if (param == "no2") {
-								return this.localized_no2
-							}
-							if (param == "o3") {
-								return this.localized_o3
-							}
-							if (param == "pm25") {
-								return this.localized_pm25
-							}
-	
-						}).get()
-                        
-                       
-						var uncorrected = $(pure_data).map(function() {
-							if (param == "no2") {
-								return this.uncorrected_no2
-							}
-							if (param == "o3") {
-								return this.uncorrected_o3
-							}
-							if (param == "pm25") {
-								return this.luncorrected_pm25
-							}
-						}).get()
-
-                        var observation_resample = $(pure_data).map(function() {
-							if (param == "no2") {
-								return this.observation_24H
-							}
-							if (param == "o3") {
-								return this.observation_8H
-							}
-							if (param == "pm25") {
-								return this.observation_24H
-							}
-	
-						}).get()
-                        var resample_window = 24;
-                        var localized_resample = $(pure_data).map(function() {
-							if (param == "no2") {
-                                resample_window = 24;
-								return this.localized_no2_24H
-							}
-							if (param == "o3") {
-                                resample_window = 8;
-								return this.localized_o3_8H
-							}
-							if (param == "pm25") {
-                                resample_window = 24;
-								return this.localized_pm25_24H
-							}
-	
-						}).get()
-
-                        var uncorrected_resample = $(pure_data).map(function() {
-							if (param == "no2") {
-								return this.uncorrected_no2_24H
-							}
-							if (param == "o3") {
-								return this.uncorrected_o3_8H
-							}
-							if (param == "pm25") {
-								return this.uncorrected_pm25_24H
-							}
-	
-						}).get()
-	
-						var observation = $(pure_data).map(function() {
-							return this.observation;
-						}).get()
-	
-
-	
-	
-						var trace1 = {
-							type: "scatter",
-							mode: "lines",
-							x: date_time,
-							y: localized,
-							line: {
-								color: 'green'
-							},
-							name: 'Localized ' + param
-						}
-	
-						var trace2 = {
-							type: "scatter",
-							mode: "lines",
-							x: date_time,
-							y: uncorrected,
-							line: {
-								color: 'red'
-							},
-							name: 'Uncorrected ' + param
-						}
-	
-						var trace3 = {
-							type: "scatter",
-							mode: "lines",
-							x: date_time,
-							y: observation,
-							line: {
-								color: 'blue'
-							},
-							name: 'Observation'
-						}
-
-                        var observation_resample_trace = {
-							type: "scatter",
-							mode: "lines",
-							x: date_time,
-							y: observation_resample,
-							line: {
-								color: 'blue'
-							},
-							name: 'Observation'
-						}
-                        var localized_resample_trace = {
-							type: "scatter",
-							mode: "lines",
-							x: date_time,
-							y: localized_resample,
-							line: {
-								color: 'green'
-							},
-							name: 'Localized '+param
-						}
-                        var uncorrected_resample_trace = {
-							type: "scatter",
-							mode: "lines",
-							x: date_time,
-							y: uncorrected_resample,
-							line: {
-								color: 'red'
-							},
-							name: 'Uncorrected '+param
-						}
-
-						var pred = [trace3, trace1, trace2];
-	
-						var pred_obs = [observation_resample_trace];
-						
-                        var plot_resample = [observation_resample_trace,localized_resample_trace,uncorrected_resample_trace];
-	
-						var layout = {
-							title: 'Bias Corrected Model',
-							font: {
-								family: 'Helvetica, sans-serif',
-								size: 18,
-								color: '#7f7f7f'
-							},
-							xaxis: {
-								type: 'date'
-							},
-	
-							yaxis: {
-								autorange: true,
-								type: 'linear',
-                                title: param+' ' +'[ '+ current_observation_unit +']'
-	
-							},
-							shapes: [{
-								type: 'line',
-								x0: String(data.latest_forecast.forecast_initialization_date),
-								y0: 0,
-								x1: String(data.latest_forecast.forecast_initialization_date),
-								yref: 'paper',
-								y1: 1,
-								line: {
-									color: 'green',
-									width: 2,
-									dash: 'dot'
-								}
-							}]
-						};
-	
-						Plotly.newPlot('plot_model', pred, layout);
-						Plotly.newPlot('plot_resample', plot_resample, layout);
-                        $(document).on("click", ".download_forecats_data", function() {
-                            var csv_file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '.csv';
-                            let csvContent = "data:text/csv;charset=utf-8," + data.latest_forecast.data;
-                            var encodedUri = encodeURI(csvContent);
-                            var link = document.createElement("a");
-                            link.setAttribute("href", encodedUri);
-                            link.setAttribute("download", csv_file_name);
-                            document.body.appendChild(link); 
-                            link.click();
-                        });
-                        $('.resample').text("Resample "+resample_window+"H");
-                        $('.modebar').prepend('<div class="modebar-group"><a rel="tooltip" class="modebar-btn resample" data-title="resample">Resample '+resample_window+'H</div>');
-                        
-                        $(".resample_plots").hide();
-                        $(document).on("click", ".resample", function() {
-                            $(".resample_plots").toggle();
-                        });
-                        
-                  
-
-
-
-                        
-						if (Plotly.newPlot('observations_only', pred_obs, layout)) {
-
-
-						} else {
-							$('.forecasts-view').html("Sorry, forecasts not available for "+param+" in this location");
-						}
-					}
-					else {
-						$('.forecasts-view').html("Sorry, Forecasts not available for "+param+" in this location");
-					}
-					$(".loading_forecasts").fadeOut(10);
-                    
-                });
-
-            },
-            error: function(jqXHR, status, er) {
-                if (jqXHR.status === 404) {
-					$('.forecasts-view').html("Sorry, forecasts not available for "+param+" in this location");
-                }
-
-            }
-        });
-
+        get_plot(location_name, param,'plot_model_','plot_resample_','');
+        get_plot(location_name, param,'plot_model_historical','plot_resample_historical','historical');
+        
         d3.csv("./vues/10812-intervals.csv", function(err, rows) {
 
             function unpack(rows, key) {

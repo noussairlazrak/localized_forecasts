@@ -807,12 +807,17 @@
                                 </div>
                                 <div class="lf-container">
                                   <div class="plots_container">
-                                    <div id='plot_model' class='model_plots'></div>
-                                    <div id='plot_resample' class='model_plots resample_plots'></div>
+                                      <div id='plot_model_historical' class='model_plots main_plot_historical'></div>
+                                      <div id='plot_resample_historical' class='model_plots resample_main_plot_historical'></div>
+                                    
+                                      <div id='plot_resample_' class='model_plots resample_main_plot_'></div>
+                                      <div id='plot_model_' class='model_plots main_plot_' ></div>
+                                    </div>
+
                                   </div>
                                 </div>
                                 <p class="caption">
-                                  Source: <a href="https://gmao.gsfc.nasa.gov/weather_prediction/GEOS-CF//">NASA GEOS Composition Forecasts (GEOS-CF)</a> | <a class="download_forecats_data" href="#">Download the data</a> | <a class="resample" href="#">Resample</a>
+                                  Source: <a href="https://gmao.gsfc.nasa.gov/weather_prediction/GEOS-CF//">NASA GEOS Composition Forecasts (GEOS-CF)</a> <span class="lf-operations"></span>
                               </p>
                             </div>
                             <div class="row">
@@ -822,11 +827,12 @@
                                 </div>
                             </div>
                         </div>
+                      </div>
                         <div class="tab-pane fade" id="pills-contact" role="tabpanel"
                             aria-labelledby="pills-contact-tab">
                             <div class="col-lg-12">
                                 <h3 class="sub-title">Confidence intervals</h3>
-                                <div id='intervals' class='lf_full_plot'></div>
+                                <div id='intervals' class='lf_full_plot model_plots'></div>
                             </div>
 
                         </div>
@@ -838,6 +844,3 @@
     </div>
     
     <script src='parametres/plotly-2.12.1.min.js'></script>
-
-    
- 
