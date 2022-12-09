@@ -263,7 +263,7 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
         $(".loading_div").fadeOut(10);
 
 
-        function get_plot(location_name, param, forecasts_div, forecasts_resample_div,historical){
+        function get_plot(location_name, param, forecasts_div, forecasts_resample_div,historical,merge){
             if(historical=="historical"){
                 ext_name="_historical.json";
             }
@@ -271,10 +271,13 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
                 ext_name=".json";
             }
             var file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param +ext_name;
+            if(merge){
+                historical_file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param +'_historical.json';
+            }
        
             console.log(file_name);
-            if (file_name == "USDiplomaticPost:Kampala_pm25_historical.json") {
-                file_name = "Kampala_USDiplomaticPost_pm25_historical.json"
+            if (file_name == "USDiplomaticPost:Kampala_pm25"+ext_name) {
+                file_name = "Kampala_USDiplomaticPost_pm25"+ext_name
             }
             
             var file_url = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_" + file_name;
@@ -286,7 +289,6 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
                         if (error) {
                             alert(error);
                         }
-                        console.log(data);
                         function csvToArray(str, delimiter = ",") {
                             const headers = str.slice(0, str.indexOf("\n")).split(delimiter);
                             const rows = str.slice(str.indexOf("\n") + 1).split("\n");
