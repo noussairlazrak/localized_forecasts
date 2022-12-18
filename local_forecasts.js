@@ -254,7 +254,7 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
     var forecasts_url = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_" + file_name+'.json';
     var historical_simulation = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_" + file_name+'_historical.json';
 
-    var list_of_files = [forecasts_url, historical_simulation];
+    var list_of_files = [historical_simulation, forecasts_url];
     var forecast_initialization_date = "";
     var master_datetime =[]; 
     var master_observation =[];
@@ -429,6 +429,8 @@ function draw_plot(combined_dataset,param,unit,forecasts_div){
     console.log("----- date data ------");
     console.log(combined_dataset.master_datetime);
     console.log(combined_dataset.master_localized);
+    console.log("latest date time");
+    console.log(combined_dataset.master_datetime.slice(-2, -1).toString());
     var master_localized = {
         type: "scatter",
         mode: "lines",
@@ -459,21 +461,21 @@ function draw_plot(combined_dataset,param,unit,forecasts_div){
         line: {
             color: 'blue'
         },
-        name: 'Observation'
+        name: 'Observation',
     }
 
 
     
 
     var layout = {
-        title: 'Bias Corrected Model TEST',
+        title: 'Bias Corrected Model Comparaison',
         font: {
             family: 'Helvetica, sans-serif',
             size: 18,
             color: '#7f7f7f'
         },
         xaxis: {
-            type: 'date'
+            type: 'category'
         },
 
         yaxis: {
@@ -481,7 +483,36 @@ function draw_plot(combined_dataset,param,unit,forecasts_div){
             type: 'linear',
             title: param+' ' +'[ '+ unit +']'
 
-        }
+        },
+        shapes: [
+            {
+              type: 'rect',
+              x0: "2021-12-05T11:30:00Z",
+              y0: 0,
+              x1: "2022-12-05T11:30:00Z",
+              y1: 1,
+              yref: 'paper',
+              fillcolor: '#d3d3d3',
+              line: {
+                color: 'rgb(55, 128, 191)',
+                width: 3
+              }
+            },
+            {
+                type: 'rect',
+                xref: 'x',
+                yref: 'paper',
+                x0: '2021-11-05T11:30:00Z',
+                y0: 0.2,
+                x1: '2022-11-05T11:30:00Z',
+                y1: 1,
+                fillcolor: '#d3d3d3',
+                opacity: 0.2,
+                line: {
+                    width: 0
+                }
+            }
+        ]
     };
 
     if(master_observation.length === 0){
