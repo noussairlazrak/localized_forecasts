@@ -465,7 +465,16 @@ function draw_plot(combined_dataset,param,unit,forecasts_div){
     }
 
 
-    
+    function getDates(startDate, stopDate) {
+        var dateArray = [];
+        var currentDate = moment(startDate);
+        var stopDate = moment(stopDate);
+        while (currentDate <= stopDate) {
+            dateArray.push( moment(currentDate).format('YYYY-MM-DD') )
+            currentDate = moment(currentDate).add(1, 'days');
+        }
+        return dateArray;
+    }
 
     var layout = {
         title: 'Bias Corrected Model Comparaison',
@@ -475,7 +484,15 @@ function draw_plot(combined_dataset,param,unit,forecasts_div){
             color: '#7f7f7f'
         },
         xaxis: {
-            type: 'category'
+            type: 'date',
+            automargin: true,
+            rangebreaks: [
+                {
+                  //bounds: ['2022-1', '2022-11'],
+                  values: getDates("2021-12-23", "2022-12-12"),
+                  //dvalue: 86400000  * 365 * 1 ,
+                }
+            ]
         },
 
         yaxis: {
@@ -487,31 +504,30 @@ function draw_plot(combined_dataset,param,unit,forecasts_div){
         shapes: [
             {
               type: 'rect',
-              x0: "2021-12-05T11:30:00Z",
+              x0: "2021-12-14T11:30:00Z",
               y0: 0,
-              x1: "2022-12-05T11:30:00Z",
+              x1: "2021-12-23T11:30:00Z",
               y1: 1,
               yref: 'paper',
-              fillcolor: '#d3d3d3',
+              fillcolor: '#00ffff2e',
               line: {
                 color: 'rgb(55, 128, 191)',
-                width: 3
+                width: 0.5
               }
             },
             {
                 type: 'rect',
-                xref: 'x',
-                yref: 'paper',
-                x0: '2021-11-05T11:30:00Z',
-                y0: 0.2,
-                x1: '2022-11-05T11:30:00Z',
+                x0: "2022-12-12T11:30:00Z",
+                y0: 0,
+                x1: "2022-12-21T11:30:00Z",
                 y1: 1,
-                fillcolor: '#d3d3d3',
-                opacity: 0.2,
+                yref: 'paper',
+                fillcolor: '#00ffa973',
                 line: {
-                    width: 0
+                  color: 'green',
+                  width: 0.5
                 }
-            }
+              },
         ]
     };
 
@@ -746,7 +762,8 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                             color: '#7f7f7f'
                         },
                         xaxis: {
-                            type: 'date'
+                            type: 'date',
+                           
                         },
 
                         yaxis: {
