@@ -498,7 +498,8 @@ function draw_plot(combined_dataset,param,unit,forecasts_div){
         yaxis: {
             autorange: true,
             type: 'linear',
-            title: param+' ' +'[ '+ unit +']'
+            title: param+' ' +'[ '+ unit +']',
+            text: ['2021', '2022'],
 
         },
         shapes: [
@@ -506,7 +507,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div){
               type: 'rect',
               x0: "2021-12-14T11:30:00Z",
               y0: 0,
-              x1: "2021-12-23T11:30:00Z",
+              x1: "2021-12-22T11:30:00Z",
               y1: 1,
               yref: 'paper',
               fillcolor: '#00ffff2e',
@@ -517,7 +518,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div){
             },
             {
                 type: 'rect',
-                x0: "2022-12-12T11:30:00Z",
+                x0: "2022-12-11T11:30:00Z",
                 y0: 0,
                 x1: "2022-12-21T11:30:00Z",
                 y1: 1,
