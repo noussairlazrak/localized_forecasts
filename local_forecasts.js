@@ -505,9 +505,9 @@ function draw_plot(combined_dataset,param,unit,forecasts_div){
         shapes: [
             {
               type: 'rect',
-              x0: "2021-12-14T11:30:00Z",
+              x0: "2021-12-17",
               y0: 0,
-              x1: "2021-12-22T11:30:00Z",
+              x1: "2021-12-24",
               y1: 1,
               yref: 'paper',
               fillcolor: '#00ffff2e',
@@ -518,9 +518,9 @@ function draw_plot(combined_dataset,param,unit,forecasts_div){
             },
             {
                 type: 'rect',
-                x0: "2022-12-11T11:30:00Z",
+                x0: "2022-12-13",
                 y0: 0,
-                x1: "2022-12-21T11:30:00Z",
+                x1: "2022-12-24",
                 y1: 1,
                 yref: 'paper',
                 fillcolor: '#00ffa973',
