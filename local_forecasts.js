@@ -265,7 +265,7 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
     var master_uncorrected_resample =[];
 
     var combined_dataset = {};
-    
+    var activate_number = 0;
     list_of_files.forEach(function(file_url, index){
         $.ajax({
             url: file_url, 
@@ -389,8 +389,8 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
                         
                         combined_dataset["master_uncorrected"] = master_uncorrected;
                         combined_dataset["master_uncorrected_resample"] = master_uncorrected_resample;
-
-                        draw_plot(combined_dataset,param,unit,forecasts_div)
+                        activate_number = activate_number + 1;
+                        draw_plot(combined_dataset,param,unit,forecasts_div,activate_number)
                     }
                     else {
                         $('.forecasts-view').html("Sorry, Forecasts not available for "+param+" in this location");
@@ -425,7 +425,7 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
     
 }
 
-function draw_plot(combined_dataset,param,unit,forecasts_div){
+function draw_plot(combined_dataset,param,unit,forecasts_div,activate_number){
     console.log("----- date data ------");
     console.log(combined_dataset.master_datetime);
     console.log(combined_dataset.master_localized);
@@ -485,7 +485,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div){
         },
         xaxis: {
             type: 'date',
-            automargin: true,
+            automargin: false,
             rangebreaks: [
                 {
                   //bounds: ['2022-1', '2022-11'],
@@ -496,7 +496,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div){
         },
 
         yaxis: {
-            autorange: true,
+            autorange: false,
             type: 'linear',
             title: param+' ' +'[ '+ unit +']',
             text: ['2021', '2022'],
@@ -538,7 +538,10 @@ function draw_plot(combined_dataset,param,unit,forecasts_div){
         var plot = [master_observation, master_uncorrected, master_localized];
 
         Plotly.newPlot(forecasts_div, plot, layout);
-        $('.plot_additional_features').prepend('<button type="button" class="btn btn-outline-primary change_plot" change_to="main_plot_for_comparaison" href="#"> Historical Comparaison</button>');
+        if (activate_number == 2){
+            $('.plot_additional_features').prepend('<button type="button" class="btn btn-outline-primary change_plot" change_to="main_plot_for_comparaison" href="#"> Historical Comparaison</button>');
+        }
+        
     }
     
 }
