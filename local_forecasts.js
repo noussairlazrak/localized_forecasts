@@ -247,12 +247,67 @@ function csvToArray(str, delimiter = ",") {
 
     return arr;
 }
+
+
+function read_api_baker(location,param,unit,forecasts_div){
+
+    var file_url = "https://www.noussair.com/api_baker.php?st=3995";
+    $(".loading_forecasts").fadeIn(10);
+    $.ajax({
+        url: file_url, 
+        success: function() { 
+            d3.json(file_url, function(error, data) {
+                if (error) {
+                    alert(error);
+                }
+                
+                if(data){
+                    master_datetime = []
+                    master_observation = []
+                    master_localized = []
+                    residuals = []
+                    master_data = []
+
+                    
+                    
+                    data_str = data.split('} {').join('},{');
+                    data_str = '['+data_str+']';
+                    data_str = JSON.parse(data_str);
+                    
+                    console.log(data_str[0].time);
+
+                    $.each(data_str,function(key,value){
+                        master_datetime.push(data_str[key]["time"])
+                        master_observation.push(data_str[key]["value"])
+                        master_localized.push(data_str[key]["prediction"])
+                        residuals.push(data_str[key]["residuals"])
+                    });
+                    master_data.master_datetime = master_datetime;
+                    master_data.master_observation = master_observation;
+                    master_data.master_localized = master_localized;
+                    draw_plot(master_data,param,unit,'api_baker_plot',false)
+
+                }
+                else {
+                   console.log("ERROR");
+                }
+                
+            });
+
+        },
+    });
+}
+
+
+
 function combine_historical_and_forecasts(location_name, param, unit, forecasts_div){
 
     var file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param;
 
-    var forecasts_url = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_" + file_name+'.json';
     var historical_simulation = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_" + file_name+'_historical.json';
+
+    var forecasts_url = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_" + file_name+'.json';
+    
 
     var list_of_files = [historical_simulation, forecasts_url];
     var forecast_initialization_date = "";
@@ -265,6 +320,7 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
     var master_uncorrected_resample =[];
 
     var combined_dataset = {};
+    var dates_ranges = [];
     var activate_number = 0;
     list_of_files.forEach(function(file_url, index){
         $.ajax({
@@ -378,6 +434,8 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
                         $.merge( master_uncorrected, uncorrected );
                         $.merge( master_uncorrected_resample, uncorrected_resample );
 
+
+
                         combined_dataset["forecast_initialization_date"] = forecast_initialization_date;
     
                         combined_dataset["master_datetime"] = master_datetime;
@@ -390,7 +448,16 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
                         combined_dataset["master_uncorrected"] = master_uncorrected;
                         combined_dataset["master_uncorrected_resample"] = master_uncorrected_resample;
                         activate_number = activate_number + 1;
-                        draw_plot(combined_dataset,param,unit,forecasts_div,activate_number)
+
+
+
+                        dates_ranges.push(date_time[0].toString());
+                        dates_ranges.push(date_time.slice(-2, -1).toString());
+
+                        if(activate_number == 2){
+                            draw_plot(combined_dataset,param,unit,forecasts_div,dates_ranges)
+                        }
+                      
                     }
                     else {
                         $('.forecasts-view').html("Sorry, Forecasts not available for "+param+" in this location");
@@ -425,12 +492,8 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
     
 }
 
-function draw_plot(combined_dataset,param,unit,forecasts_div,activate_number){
-    console.log("----- date data ------");
-    console.log(combined_dataset.master_datetime);
-    console.log(combined_dataset.master_localized);
-    console.log("latest date time");
-    console.log(combined_dataset.master_datetime.slice(-2, -1).toString());
+function draw_plot(combined_dataset,param,unit,forecasts_div,dates_ranges){
+    //console.log(dates_ranges);
     var master_localized = {
         type: "scatter",
         mode: "lines",
@@ -485,52 +548,55 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,activate_number){
         },
         xaxis: {
             type: 'date',
-            automargin: false,
+            automargin: true,
             rangebreaks: [
                 {
                   //bounds: ['2022-1', '2022-11'],
-                  values: getDates("2021-12-23", "2022-12-12"),
+                  values: getDates(dates_ranges[1], dates_ranges[2]),
                   //dvalue: 86400000  * 365 * 1 ,
                 }
             ]
         },
 
         yaxis: {
-            autorange: false,
+            autorange: true,
             type: 'linear',
             title: param+' ' +'[ '+ unit +']',
             text: ['2021', '2022'],
 
-        },
-        shapes: [
+        }
+    };
+
+    if(dates_ranges){
+        layout.shapes = [
             {
-              type: 'rect',
-              x0: "2021-12-17",
-              y0: 0,
-              x1: "2021-12-24",
-              y1: 1,
-              yref: 'paper',
-              fillcolor: '#00ffff2e',
-              line: {
+            type: 'rect',
+            x0: dates_ranges[0],
+            y0: 0,
+            x1: dates_ranges[1],
+            y1: 1,
+            yref: 'paper',
+            fillcolor: '#00ffff2e',
+            line: {
                 color: 'rgb(55, 128, 191)',
                 width: 0.5
-              }
+            }
             },
             {
                 type: 'rect',
-                x0: "2022-12-13",
+                x0: dates_ranges[2],
                 y0: 0,
-                x1: "2022-12-24",
+                x1: dates_ranges[3],
                 y1: 1,
                 yref: 'paper',
                 fillcolor: '#00ffa973',
                 line: {
-                  color: 'green',
-                  width: 0.5
+                color: 'green',
+                width: 0.5
                 }
-              },
+            }
         ]
-    };
+    }
 
     if(master_observation.length === 0){
        alert("array is empty");
@@ -538,9 +604,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,activate_number){
         var plot = [master_observation, master_uncorrected, master_localized];
 
         Plotly.newPlot(forecasts_div, plot, layout);
-        if (activate_number == 2){
             $('.plot_additional_features').prepend('<button type="button" class="btn btn-outline-primary change_plot" change_to="main_plot_for_comparaison" href="#"> Historical Comparaison</button>');
-        }
         
     }
     
@@ -888,7 +952,8 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
     get_plot(location_name, param,current_observation_unit,'plot_model_historical','plot_resample_historical','historical');
 
        combine_historical_and_forecasts(location_name, param,current_observation_unit,'test_plot');
-        
+       
+       read_api_baker();
         d3.csv("./vues/10812-intervals.csv", function(err, rows) {
 
             function unpack(rows, key) {
