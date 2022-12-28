@@ -728,43 +728,6 @@
     left: 0;
 }
 
-.btn-group.plot_additional_features button {
-    padding: 0 !important;
-    border: none !important;
-    color: white;
-    text-transform: capitalize;
-    border-right: 1px black solid !important;
-    border-radius: 0px;
-    background: black;
-    margin: 4px;
-}
-.btn-group.plot_additional_features button:hover {
-    color: white !important;
-}
-
-button.btn.btn-outline-primary.change_plot.main_plot_for_api_baker {
-    background: #026d02;
-    animation: blinker 2s cubic-bezier(0.03, 1.08, 0.56, 1) infinite;
-}
-
-
-
-@keyframes blinker {  
-  50% { 
-      opacity: 0.1;
-      transform:translateY(-4px)
-  
-  }
-}
-
-@keyframes intro {  
-  50% { 
-      opacity: 0.1;
-      transform:translateY(-4px)
-  
-  }
-}
-
 
 
 </style>
@@ -794,7 +757,6 @@ button.btn.btn-outline-primary.change_plot.main_plot_for_api_baker {
                     <div class="tab-content" id="pills-tabContent">
                         <div class="tab-pane fade" id="pills-home" role="tabpanel"
                             aria-labelledby="pills-home-tab">
-                            
                             <div class="col-md-12">
                                 <div class="row align-items-center counter-wrapper gy-4 gy-md-0">
                                     <div class="col-md-4">
@@ -817,7 +779,7 @@ button.btn.btn-outline-primary.change_plot.main_plot_for_api_baker {
                                     </p>
                                 </div>
                             </div>
-                            
+
 
                         </div>
                         <div class="tab-pane fade show active" id="pills-profile" role="tabpanel"
@@ -836,11 +798,15 @@ button.btn.btn-outline-primary.change_plot.main_plot_for_api_baker {
                                             
                                         </div>
                                 </div>
-                                <div class="btn-group plot_additional_features" role="group">
-
-                                </div>
+                                
                                 
                                 <span class="latest-obs">Forecasts</span>
+                                <div class="row m-4">
+                                  <ul class="nav nav-pills mb-3 plot_additional_features" id="pills-tab" role="tablist">
+
+                                  </ul>
+
+                                </div>
                                 <div class="loading_forecasts">
                                     <div class="load">
                                         <div class="dot"></div>
@@ -850,21 +816,20 @@ button.btn.btn-outline-primary.change_plot.main_plot_for_api_baker {
                                 
                                 <div class="lf-container">
                                   <div class="plots_container">
-                                      <div id='main_plot_for_api_baker' class='model_plots main_plot_for_api_baker' ></div>
                                       <div id='main_plot_for_comparaison' class='model_plots main_plot_for_comparaison'></div>
                                       <div id='plot_model_historical' class='model_plots main_plot_historical'></div>
                                       <div id='plot_resample_historical' class='model_plots resample_main_plot_historical'></div>
                                     
                                       <div id='plot_resample_' class='model_plots resample_main_plot_'></div>
                                       <div id='plot_model_' class='model_plots main_plot_' ></div>
-                                      
+                                      <div id='main_plot_for_api_baker' class='model_plots' ></div>
                                     </div>
 
                                   </div>
                                 </div>
                                 
                                 <p class="caption">
-                                  Source: <a href="https://gmao.gsfc.nasa.gov/weather_prediction/GEOS-CF//">NASA GEOS Composition Forecasts (GEOS-CF)</a> <span class="lf-downloads"></span>
+                                  Source: <a href="https://gmao.gsfc.nasa.gov/weather_prediction/GEOS-CF//">NASA GEOS Composition Forecasts (GEOS-CF)</a> <span class="lf-operations"></span>
                               </p>
       
                             <div class="row">

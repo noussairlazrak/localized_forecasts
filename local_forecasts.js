@@ -285,7 +285,9 @@ function read_api_baker(location,param,unit,forecasts_div){
                     master_data.master_datetime = master_datetime;
                     master_data.master_observation = master_observation;
                     master_data.master_localized = master_localized;
-                    draw_plot(master_data,param,unit,'api_baker_plot',false)
+                    console.log(master_data);
+                    draw_plot(master_data,param,unit,forecasts_div,'Localized Forecats (Retrained model)',false)
+
 
                 }
                 else {
@@ -455,12 +457,12 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
                         dates_ranges.push(date_time.slice(-2, -1).toString());
 
                         if(activate_number == 2){
-                            draw_plot(combined_dataset,param,unit,forecasts_div,dates_ranges)
+                            draw_plot(combined_dataset,param,unit,forecasts_div,'Historical Simulation Comparison',dates_ranges)
                         }
                       
                     }
                     else {
-                        $('.forecasts-view').html("Sorry, Forecasts not available for "+param+" in this location");
+                        $('.forecasts-view').html("Sorry, forecasts not available for "+param+" in this location");
                     }
                     
                 });
@@ -492,8 +494,8 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
     
 }
 
-function draw_plot(combined_dataset,param,unit,forecasts_div,dates_ranges){
-    //console.log(dates_ranges);
+function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges){
+    console.log(title);
     var master_localized = {
         type: "scatter",
         mode: "lines",
@@ -540,7 +542,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,dates_ranges){
     }
 
     var layout = {
-        title: 'Bias Corrected Model Comparaison',
+        title: title,
         font: {
             family: 'Helvetica, sans-serif',
             size: 18,
@@ -604,7 +606,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,dates_ranges){
         var plot = [master_observation, master_uncorrected, master_localized];
 
         Plotly.newPlot(forecasts_div, plot, layout);
-            $('.plot_additional_features').prepend('<button type="button" class="btn btn-outline-primary change_plot" change_to="main_plot_for_comparaison" href="#"> Historical Comparaison</button>');
+            $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'"  href="#">'+title+'</button>');
         
     }
     
@@ -884,7 +886,7 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                     
                     $('.plot_additional_features').prepend('<button type="button" class="btn btn-outline-primary change_plot" change_to="main_plot_'+historical+'" href="#"> '+label_text+'</button><button type="button" change_to="resample_main_plot_'+historical+'" change_to ="resample_main_plot_'+historical+'" class="btn btn-outline-primary change_plot change_plot resample'+'_'+historical+'" href="#">'+label_text_rolling_average+'</button>');
 
-                    $('.plot_additional_features').append('<button type="button" class="btn btn-outline-primary download_forecats_data" href="#">'+downlaod_label_text+'</button>');
+                    $('.lf-downloads').append('<a class="download_forecats_data" href="#">| '+downlaod_label_text+' </button>');
                     
 
 
@@ -946,15 +948,18 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
         $('.current_observation_unit_span').html(current_observation_unit);
         $(".forecasts_container").addClass("noussair_animations zoom_in");
         $(".loading_div").fadeOut(10);
+        $("button").css({ button: "animation: intro 2s cubic-bezier(0.03, 1.08, 0.56, 1); animation-delay: 2s;" });
         
         //console.log(combine_historical_and_forecasts(location_name, param));   
     get_plot(location_name, param,current_observation_unit,'plot_model_','plot_resample_','');
     get_plot(location_name, param,current_observation_unit,'plot_model_historical','plot_resample_historical','historical');
 
-       combine_historical_and_forecasts(location_name, param,current_observation_unit,'test_plot');
+       combine_historical_and_forecasts(location_name, param,current_observation_unit,'main_plot_for_comparaison');
        
-       read_api_baker();
-        d3.csv("./vues/10812-intervals.csv", function(err, rows) {
+       read_api_baker(location_name,param,current_observation_unit,'main_plot_for_api_baker');
+        
+       
+       d3.csv("./vues/10812-intervals.csv", function(err, rows) {
 
             function unpack(rows, key) {
                 return rows.map(function(row) {
