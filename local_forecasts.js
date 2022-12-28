@@ -603,7 +603,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
     if(master_observation.length === 0){
        alert("array is empty");
     }else{
-        var plot = [master_observation, master_uncorrected, master_localized];
+        var plot = [master_observation, master_localized];
 
         Plotly.newPlot(forecasts_div, plot, layout);
             $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'"  href="#">'+title+'</button>');
@@ -892,7 +892,8 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
 
                     $('.lf-operations_1').prepend('| <a class="change_plot" change_to ="main_plot_'+historical+'" href="#"> Raw '+historical+' data</a> | <a change_to ="resample_main_plot_'+historical+'" class=" change_plot resample'+'_'+historical+'" href="#">'+historical+' '+resample_window+'H Rolling averages</a> ');
                     
-                    $('.change_plot').on("click", function() {
+                    $(document).on("click", '.change_plot', function() {
+                        //alert("clicked");
                         var change_to_val = $(this).attr("change_to");
                            $('.model_plots').hide();
                             $('.'+change_to_val).show(); 
