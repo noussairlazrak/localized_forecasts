@@ -249,10 +249,16 @@ function csvToArray(str, delimiter = ",") {
 }
 
 
-function read_api_baker(location,param,unit,forecasts_div){
-
-    var file_url = "https://www.noussair.com/api_baker.php?st=3995";
-    $(".loading_forecasts").fadeIn(10);
+function read_api_baker(location,param,unit,forecasts_div,button_option=false){
+    $(".overlay-api-baker").fadeIn(10);
+    var messages = ["Model Retraining", "Connecting to SMCE", "fetching data from API Baker", "fetching data from GMAO FTP", "fetching observations", "getting the forecasts", "please wait...", "connecting...."];
+    setInterval(function() {
+        var message = messages[Math.floor(Math.random() * messages.length)];
+        $(".overlay-api-baker").html(message)
+    }, 400);
+    
+    var file_url = "https://www.noussair.com/api_baker.php?st="+location;
+   // $(".loading_forecasts").fadeIn(10);
     $.ajax({
         url: file_url, 
         success: function() { 
@@ -285,9 +291,12 @@ function read_api_baker(location,param,unit,forecasts_div){
                     master_data.master_datetime = master_datetime;
                     master_data.master_observation = master_observation;
                     master_data.master_localized = master_localized;
-                    console.log(master_data);
-                    draw_plot(master_data,param,unit,forecasts_div,'Localized Forecats (Retrained model)',false)
+                    //console.log(master_data);
+                    draw_plot(master_data,param,unit,forecasts_div,'Localized Forecats (Retrained model)',false, button_option)
 
+                    $('.retrain_model').attr("param",param);
+                    $('.retrain_model').attr("site",location);
+                    $('.retrain_model').attr("unit",unit);
 
                 }
                 else {
@@ -295,7 +304,7 @@ function read_api_baker(location,param,unit,forecasts_div){
                 }
                 
             });
-
+            $(".overlay-api-baker").fadeOut(10);
         },
     });
 }
@@ -494,8 +503,7 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
     
 }
 
-function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges){
-    console.log(title);
+function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges, button=flase){
     var master_localized = {
         type: "scatter",
         mode: "lines",
@@ -606,7 +614,11 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         var plot = [master_observation, master_localized];
 
         Plotly.newPlot(forecasts_div, plot, layout);
+        
+        if(button){
             $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'"  href="#">'+title+'</button>');
+        }
+       
         
     }
     
@@ -898,6 +910,10 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                            $('.model_plots').hide();
                             $('.'+change_to_val).show(); 
                        });
+
+                       
+
+                   
                
                     if (Plotly.newPlot('observations_only', pred_obs, layout)) {
 
@@ -957,7 +973,7 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 
        combine_historical_and_forecasts(location_name, param,current_observation_unit,'main_plot_for_comparaison');
        
-       read_api_baker(location_name,param,current_observation_unit,'main_plot_for_api_baker');
+       read_api_baker(st_id,param,current_observation_unit,'main_plot_for_api_baker', true);
         
        
        d3.csv("./vues/10812-intervals.csv", function(err, rows) {
@@ -1066,6 +1082,60 @@ function save_data_to_csv(data) {
     saveAs(blob, "file.csv");
 }
 
+function update_api_baker(location,param,unit,forecasts_div){
+
+    var file_url = "https://www.noussair.com/api_baker.php?st="+location;
+   // $(".loading_forecasts").fadeIn(10);
+    $.ajax({
+        url: file_url, 
+        success: function() { 
+            d3.json(file_url, function(error, data) {
+                if (error) {
+                    alert(error);
+                }
+                
+                if(data){
+                    master_datetime = []
+                    master_observation = []
+                    master_localized = []
+                    residuals = []
+                    master_data = []
+
+                    
+                    
+                    data_str = data.split('} {').join('},{');
+                    data_str = '['+data_str+']';
+                    data_str = JSON.parse(data_str);
+                    
+                    console.log(data_str[0].time);
+
+                    $.each(data_str,function(key,value){
+                        master_datetime.push(data_str[key]["time"])
+                        master_observation.push(data_str[key]["value"])
+                        master_localized.push(data_str[key]["prediction"])
+                        residuals.push(data_str[key]["residuals"])
+                    });
+                    master_data.master_datetime = master_datetime;
+                    master_data.master_observation = master_observation;
+                    master_data.master_localized = master_localized;
+                    //console.log(master_data);
+                    draw_plot(master_data,param,unit,forecasts_div,'Localized Forecats (Retrained model)',false)
+
+                    $('.retrain_model').attr("param",param);
+                    $('.retrain_model').attr("site",location);
+                    $('.retrain_model').attr("unit",unit);
+
+                }
+                else {
+                   console.log("ERROR");
+                }
+                
+            });
+
+        },
+    });
+}
+
 const sites = ["3995", "8645", "739", "5282"];
 var param = "pm25";
 get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param));
@@ -1078,3 +1148,13 @@ $(document).on('click', '.routing_pollutant_param', function(e) {
     $(".loading_div").fadeOut(100);
 
 });
+
+
+$(document).on("click", '.retrain_model', function() {
+    current_param = $(this).attr("param");
+    current_site = $(this).attr("site");
+    current_unit = $(this).attr("unit");
+    
+    read_api_baker(current_site,current_param,current_unit,'main_plot_for_api_baker', false);
+    
+   });
