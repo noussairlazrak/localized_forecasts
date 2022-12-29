@@ -503,7 +503,7 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
     
 }
 
-function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges, button=flase){
+function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges, button=false){
     var master_localized = {
         type: "scatter",
         mode: "lines",
