@@ -466,7 +466,7 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
                         dates_ranges.push(date_time.slice(-2, -1).toString());
 
                         if(activate_number == 2){
-                            draw_plot(combined_dataset,param,unit,forecasts_div,'Historical Simulation Comparison',dates_ranges)
+                            draw_plot(combined_dataset,param,unit,forecasts_div,'Historical Simulation Comparison',dates_ranges, true)
                         }
                       
                     }
