@@ -958,7 +958,7 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
     $(".forecasts_container").load("vues/location.html?st=" + st_id + '&param=' + param + '&location_name=' + location_name, function() {
         $(this).fadeOut(10);
         $(this).fadeIn(10);
-        $('.current_location_name').html(location_name);
+        $('.current_location_name').html(location_name.replace('_', ' '));
         $('.current_param').html(pollutant_details(param)).name;
         $('.current_param_1').html(pollutant_details(param).name);
         $('.current_observation_value').html(observation_value);
