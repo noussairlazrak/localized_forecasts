@@ -255,7 +255,7 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false){
     setInterval(function() {
         var message = messages[Math.floor(Math.random() * messages.length)];
         $(".overlay-api-baker").html(message)
-    }, 400);
+    }, 4000);
     
     var file_url = "https://www.noussair.com/api_baker.php?st="+location;
    // $(".loading_forecasts").fadeIn(10);
@@ -292,7 +292,7 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false){
                     master_data.master_observation = master_observation;
                     master_data.master_localized = master_localized;
                     //console.log(master_data);
-                    draw_plot(master_data,param,unit,forecasts_div,'Localized Forecats (Retrained model)',false, button_option)
+                    draw_plot(master_data,param,unit,forecasts_div,'Localized forecasts (Retrained model)',false, button_option)
 
                     $('.retrain_model').attr("param",param);
                     $('.retrain_model').attr("site",location);
@@ -871,7 +871,7 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
 
                     Plotly.newPlot(forecasts_div, pred, layout);
                     Plotly.newPlot(forecasts_resample_div, plot_resample, layout_resample);
-                    $(document).on("click", ".download_forecats_data", function() {
+                    $(document).on("click", ".download_forecasts_data", function() {
                         var csv_file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '('+'_'+historical+').csv';
                         let csvContent = "data:text/csv;charset=utf-8," + data.latest_forecast.data;
                         var encodedUri = encodeURI(csvContent);
@@ -898,7 +898,7 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                     
                     $('.plot_additional_features').prepend('<button type="button" class="btn btn-outline-primary change_plot" change_to="main_plot_'+historical+'" href="#"> '+label_text+'</button><button type="button" change_to="resample_main_plot_'+historical+'" change_to ="resample_main_plot_'+historical+'" class="btn btn-outline-primary change_plot change_plot resample'+'_'+historical+'" href="#">'+label_text_rolling_average+'</button>');
 
-                    $('.lf-downloads').append('<a class="download_forecats_data" href="#">| '+downlaod_label_text+' </button>');
+                    $('.lf-downloads').append('<a class="download_forecasts_data" href="#">| '+downlaod_label_text+' </button>');
                     
 
 
@@ -1119,7 +1119,7 @@ function update_api_baker(location,param,unit,forecasts_div){
                     master_data.master_observation = master_observation;
                     master_data.master_localized = master_localized;
                     //console.log(master_data);
-                    draw_plot(master_data,param,unit,forecasts_div,'Localized Forecats (Retrained model)',false)
+                    draw_plot(master_data,param,unit,forecasts_div,'Localized forecasts (Pretrained model)',false)
 
                     $('.retrain_model').attr("param",param);
                     $('.retrain_model').attr("site",location);
