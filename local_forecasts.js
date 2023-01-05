@@ -554,8 +554,8 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
             master_uncorrected.line = {dash: 'dashdot', width: 4 }
         }
 
-        //console.log(year);
-        //console.log(combined_dataset);
+        console.log(year);
+        console.log(combined_dataset);
 
          plot.push(master_localized);
          plot.push(master_uncorrected);
