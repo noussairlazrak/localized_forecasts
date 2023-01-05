@@ -258,6 +258,7 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false){
     }, 4000);
     
     var file_url = "https://www.noussair.com/api_baker.php?st="+location;
+   // var file_url = "response.json";
    // $(".loading_forecasts").fadeIn(10);
     $.ajax({
         url: file_url, 
@@ -268,31 +269,28 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false){
                 }
                 
                 if(data){
+
                     master_datetime = []
                     master_observation = []
                     master_localized = []
+                    master_uncorrected = []
                     residuals = []
                     master_data = []
 
-                    
-                    
-                    data_str = data.split('} {').join('},{');
-                    data_str = '['+data_str+']';
+                    data_str = data.replace(/NaN/g, '""')
+                    console.log(data_str);
                     data_str = JSON.parse(data_str);
                     
-                    console.log(data_str[0].time);
+                    
 
-                    $.each(data_str,function(key,value){
-                        master_datetime.push(data_str[key]["time"])
-                        master_observation.push(data_str[key]["value"])
-                        master_localized.push(data_str[key]["prediction"])
-                        residuals.push(data_str[key]["residuals"])
-                    });
-                    master_data.master_datetime = master_datetime;
-                    master_data.master_observation = master_observation;
-                    master_data.master_localized = master_localized;
+                    master_data.master_datetime_2023 = data_str.forecasts.time;
+                    master_data.master_observation_2023 = data_str.forecasts.value;
+                    master_data.master_localized_2023 = data_str.forecasts.prediction;
+                    master_data.master_uncorrected_2023 = data_str.forecasts.no2;
                     //console.log(master_data);
-                    draw_plot(master_data,param,unit,forecasts_div,'Localized forecasts (Retrained model)',false, button_option)
+                    draw_plot(master_data,param,unit,forecasts_div,'Localized forecasts (Retrained model)',false, button = button_option,[2023] )
+
+
 
                     $('.retrain_model').attr("param",param);
                     $('.retrain_model').attr("site",location);
@@ -331,9 +329,14 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
     var master_uncorrected_resample =[];
 
     var combined_dataset = {};
+    var dataset_year1 = {};
+    var dataset_year2 = {};
+    var combined_dataset = {};
     var dates_ranges = [];
     var activate_number = 0;
+    var year = new Date().getFullYear()
     list_of_files.forEach(function(file_url, index){
+        console.log("year: " +year)
         $.ajax({
             url: file_url, 
             async: false,
@@ -437,37 +440,29 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
                             return this.observation;
                         }).get()
     
-                        $.merge( master_datetime, date_time );
-                        $.merge( master_observation, observation );
-                        $.merge( master_observation_resample, observation_resample );
-                        $.merge( master_localized, localized );
-                        $.merge( master_localized_resample, localized_resample );
-                        $.merge( master_uncorrected, uncorrected );
-                        $.merge( master_uncorrected_resample, uncorrected_resample );
 
 
 
-                        combined_dataset["forecast_initialization_date"] = forecast_initialization_date;
+                       // combined_dataset["forecast_initialization_date_"+year] = forecast_initialization_date;
     
-                        combined_dataset["master_datetime"] = master_datetime;
-                        combined_dataset["master_observation"] = master_observation;
-                        combined_dataset["master_observation_resample"] = master_observation_resample;
-                        
-                        combined_dataset["master_localized"] = master_localized;
-                        combined_dataset["master_localized_resample"] = master_localized_resample;
-                        
-                        combined_dataset["master_uncorrected"] = master_uncorrected;
-                        combined_dataset["master_uncorrected_resample"] = master_uncorrected_resample;
+                        combined_dataset["master_datetime_"+year] = date_time;
+                        combined_dataset["master_observation_"+year] = observation;
+                        combined_dataset["master_observation_resample_"+year] = observation_resample;
+                        combined_dataset["master_localized_"+year] = localized;
+                        combined_dataset["master_uncorrected_"+year] = uncorrected;
+      
                         activate_number = activate_number + 1;
+                        year = year + 1;
 
 
 
                         dates_ranges.push(date_time[0].toString());
                         dates_ranges.push(date_time.slice(-2, -1).toString());
-
+                        
                         if(activate_number == 2){
-                            draw_plot(combined_dataset,param,unit,forecasts_div,'Historical Simulation Comparison',dates_ranges, true)
+                            draw_plot(combined_dataset,param,unit,forecasts_div,'Historical Simulation Comparison',false, button= true,  [2022,2023])
                         }
+                        
                       
                     }
                     else {
@@ -487,95 +482,110 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
         
     })
     
-    combined_dataset["forecast_initialization_date"] = forecast_initialization_date;
-    
-    combined_dataset["master_datetime"] = master_datetime;
-    combined_dataset["master_observation"] = master_observation;
-    combined_dataset["master_observation_resample"] = master_observation_resample;
-    
-    combined_dataset["master_localized"] = master_localized;
-    combined_dataset["master_localized_resample"] = master_localized_resample;
-    
-    combined_dataset["master_uncorrected"] = master_uncorrected;
-    combined_dataset["master_uncorrected_resample"] = master_uncorrected_resample;
+
 
     return combined_dataset;
     
 }
 
-function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges, button=false){
-    var master_localized = {
-        type: "scatter",
-        mode: "lines",
-        x: combined_dataset.master_datetime,
-        y: combined_dataset.master_localized,
-        line: {
-            color: 'green'
-        },
-        name: 'Localized ' + param
+function getDates(startDate, stopDate) {
+    var dateArray = [];
+    var currentDate = moment(startDate);
+    var stopDate = moment(stopDate);
+    while (currentDate <= stopDate) {
+        dateArray.push( moment(currentDate).format('YYYY-MM-DD') )
+        currentDate = moment(currentDate).add(1, 'days');
     }
+    return dateArray;
+}
 
-    var master_uncorrected = {
-        type: "scatter",
-        mode: "lines",
-        x: combined_dataset["master_datetime"],
-        y: combined_dataset["master_uncorrected"],
-        line: {
-            color: 'red'
-        },
-        name: 'Uncorrected ' + param
-    }
-
-    var master_observation = {
-        type: "scatter",
-        mode: "lines",
-        x: combined_dataset["master_datetime"],
-        y: combined_dataset["master_observation"],
-        line: {
-            color: 'blue'
-        },
-        name: 'Observation',
-    }
-
-
-    function getDates(startDate, stopDate) {
-        var dateArray = [];
-        var currentDate = moment(startDate);
-        var stopDate = moment(stopDate);
-        while (currentDate <= stopDate) {
-            dateArray.push( moment(currentDate).format('YYYY-MM-DD') )
-            currentDate = moment(currentDate).add(1, 'days');
+function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges, button=false, years=false){
+    var plot = []
+    var line_type = ""
+   if(years){
+    
+    years.forEach(function(year, index){
+        var title = " "
+        if(years.length > 1){
+            var title = year
         }
-        return dateArray;
-    }
-
-    var layout = {
-        title: title,
-        font: {
-            family: 'Helvetica, sans-serif',
-            size: 18,
-            color: '#7f7f7f'
-        },
-        xaxis: {
-            type: 'date',
-            automargin: true,
-            rangebreaks: [
-                {
-                  //bounds: ['2022-1', '2022-11'],
-                  values: getDates(dates_ranges[1], dates_ranges[2]),
-                  //dvalue: 86400000  * 365 * 1 ,
-                }
-            ]
-        },
-
-        yaxis: {
-            autorange: true,
-            type: 'linear',
-            title: param+' ' +'[ '+ unit +']',
-            text: ['2021', '2022'],
-
+        
+       console.log(year);
+        var master_localized = {
+            type: "scatter",
+            mode: "lines",
+            x: combined_dataset["master_datetime_"+year],
+            y: combined_dataset["master_localized_"+year],
+            line: {
+                line_type,
+                color: 'green'
+            },
+            name: 'Localized ' + param + ' '+ title
         }
-    };
+    
+        var master_uncorrected = {
+            type: "scatter",
+            mode: "lines",
+            x: combined_dataset["master_datetime_"+year],
+            y: combined_dataset["master_uncorrected_"+year],
+            line: {
+                line_type,
+                color: 'red'
+            },
+            name: 'Uncorrected ' + param + ' '+ title
+        }
+    
+        var master_observation = {
+            type: "scatter",
+            mode: "lines",
+            x: combined_dataset["master_datetime_"+year],
+            y: combined_dataset["master_observation_"+year],
+            line: {
+                line_type,
+                color: 'blue'
+            },
+            
+            name: 'Observation ' + param + ' '+ title
+        }
+
+        if(index == 1){ 
+            master_observation.line = {dash: 'dashdot', width: 4 }
+            master_localized.line = {dash: 'dashdot', width: 4 }
+            master_uncorrected.line = {dash: 'dashdot', width: 4 }
+        }
+
+        //console.log(year);
+        //console.log(combined_dataset);
+
+         plot.push(master_localized);
+         plot.push(master_uncorrected);
+         plot.push(master_observation);
+
+    });
+   }
+   
+    
+
+
+        var layout = {
+            title: title,
+            font: {
+                family: 'Helvetica, sans-serif',
+                size: 18,
+                color: '#7f7f7f'
+            },
+            xaxis: {
+                type: 'category'
+            },
+    
+            yaxis: {
+                autorange: true,
+                type: 'linear',
+                title: param+' ' +'[ '+ unit +']',
+    
+            }
+        };
+
 
     if(dates_ranges){
         layout.shapes = [
@@ -608,10 +618,8 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         ]
     }
 
-    if(master_observation.length === 0){
-       alert("array is empty");
-    }else{
-        var plot = [master_observation, master_localized];
+
+    
 
         Plotly.newPlot(forecasts_div, plot, layout);
         
@@ -620,7 +628,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         }
        
         
-    }
+
     
 }
 
@@ -973,7 +981,7 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
 
        combine_historical_and_forecasts(location_name, param,current_observation_unit,'main_plot_for_comparaison');
        
-       read_api_baker(st_id,param,current_observation_unit,'main_plot_for_api_baker', true);
+       read_api_baker(st_id,param,current_observation_unit,'main_plot_for_api_baker', true, 2023);
         
        
        d3.csv("./vues/10812-intervals.csv", function(err, rows) {
@@ -1157,4 +1165,14 @@ $(document).on("click", '.retrain_model', function() {
     
     read_api_baker(current_site,current_param,current_unit,'main_plot_for_api_baker', false);
     
+   });
+
+   Pusher.logToConsole = true;
+   var pusher = new Pusher('66c4558c3fed9445e375', {
+     cluster: 'eu'
+   });
+
+   var channel = pusher.subscribe('my-channel');
+   channel.bind('my-event', function(data) {
+     alert(JSON.stringify(data));
    });
