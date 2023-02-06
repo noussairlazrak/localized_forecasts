@@ -66,8 +66,8 @@ function add_marker(map, lat, long, open_aq_id, param, site) {
 
     if(site.site_data.obs_source == 's3'){
         location_name.value = site.site_data.location.replace(/\s/g, '_');
-        observation_value.value = '12';
-        current_observation_unit.value = 'ppm';
+        observation_value.value = '--';
+        current_observation_unit.value = site.obs_options.pm25.unit;
     }
     else{
         if ($.isArray(site.latest_measurments)){
@@ -209,7 +209,8 @@ function add_locations_banner(site, param) {
     if(site.site_data.obs_source == 's3'){
         const obj = document.getElementsByClassName("observation_value");
         animateValue(obj, 100, 0, 5000);
-        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.site_data.openaq_id + '" location_name=' + site.site_data.location + ' observation_value= "--" current_observation_unit= "--" latitude="' + site.site_data.latitude + '" longitude="' + site.site_data.longitude + '" lastUpdated="--"> <div class="item-inner"> ' + site.site_data.location.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last update:" -- "</span><h1 class="observation_value">--<span class="observation_unit">--</span> </h1> <span class="source">Source: S3 Local Data</span> </div> </div> </div> </a> </div>';
+        console.log(site);
+        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.site_data.openaq_id + '" location_name=' + site.site_data.location + ' observation_value= "--" current_observation_unit= "--" latitude="' + site.site_data.latitude + '" longitude="' + site.site_data.longitude + '" lastUpdated="--"> <div class="item-inner"> ' + site.site_data.location.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value">--<span class="observation_unit">' + site.obs_options.pm25.unit+ ' </span> </h1> <span class="source">Source: S3 Local Data</span> </div> </div> </div> </a> </div>';
         $(".pollutant-banner-o").append(html);
     }
     else{
@@ -273,11 +274,13 @@ function get_all_sites_data(sites, param) {
                 location.site_data.longitude = site.lon;
                 location.site_data.status = site.status;
                 location.site_data.obs_source = site.observation_source;
+                location.obs_options = site.obs_options;
                 location.meta_data = "data is now updated";
                 location.latest_n02 = "---";
                 location.latest_03 = "---";
                 location.latest_SO2 = "---";
                 location.latest_pm25 = "---";
+                
                 location.latest_measurments = "---";
                 all_sites.push(location)
             }           
