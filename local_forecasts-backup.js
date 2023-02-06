@@ -11,7 +11,7 @@ $(document).ready(function() {
         $(".forecasts_container").load("vues/" + page, function() {
             $(this).fadeOut(10);
             $(this).fadeIn(10);
-            $(".forecasts_ container").addClass("noussair_animations zoom_in");
+            $(".forecasts_container").addClass("noussair_animations zoom_in");
             $(".loading_div").fadeOut(10);
         });
         return false;
@@ -32,23 +32,19 @@ function easing(t) {
 
 function pollutant_details(code) {
     var pollutant_details = [];
-    if (code == "no2" || code == "1") {
+    if (code == "no2") {
         pollutant_details.name = "<b>Nitrogen Dioxide</b> (NO<sub>2</sub>)";
-        pollutant_details.id= 1;
     }
 
-    if (code == "so2" || code == "2") {
+    if (code == "so2") {
         pollutant_details.name = "<b>Sulfur Dioxide</b> (SO<sub>2</sub>)";
-        pollutant_details.id= 2;
     }
-    if (code == "pm25" || code == "3") {
+    if (code == "pm25") {
         pollutant_details.name = "<b>Particulate Matter</b> (PM<sub>2.5</sub>)";
-        pollutant_details.id= 3;
     }
 
-    if (code == "o3" || code == "4") {
+    if (code == "o3") {
         pollutant_details.name = "<b>Ozone</b> (O<sub>3</sub>)";
-        pollutant_details.id= 4;
     }
 
     return pollutant_details;
@@ -63,17 +59,15 @@ function add_marker(map, lat, long, open_aq_id, param, site) {
     var location_name = document.createAttribute("location_name");
     var observation_value = document.createAttribute("observation_value");
     var current_observation_unit = document.createAttribute("current_observation_unit");
-    if ($.isArray(site.latest_measurments)){
-        $.each(site.latest_measurments, function(key, value) {
-            if (value.parameter == param) {
-                location_name.value = site.site_data.location.replace(/\s/g, '_');
-                observation_value.value = value.value;
-                current_observation_unit.value = value.unit;
-            }
-    
-        });
-    }
-    
+
+    $.each(site.latest_measurments, function(key, value) {
+        if (value.parameter == param) {
+            location_name.value = site.site_data.location.replace(/\s/g, '_');
+            observation_value.value = value.value;
+            current_observation_unit.value = value.unit;
+        }
+
+    });
 
     station_id.value = open_aq_id;
     parameter.value = parameter;
@@ -180,6 +174,7 @@ function create_map(sites, param) {
     });
     $(".pollutants-banner").html($('<div class="pollutant-banner-o row gx-md-8 gy-8  swiper-desactivated"> </div>'));
     sites.forEach((element) => {
+
         add_marker(map, element.site_data.longitude, element.site_data.latitude, element.site_data.openaq_id, param, element);
         add_locations_banner(element, param);
     });
@@ -190,35 +185,24 @@ function create_map(sites, param) {
 
 //get_forecasts(sites);
 function add_locations_banner(site, param) {
-    console.log(site);
-    if(site.site_data.obs_source == 's3'){
-        const obj = document.getElementsByClassName("observation_value");
-        animateValue(obj, 100, 0, 5000);
-        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.site_data.openaq_id + '" location_name=' + site.site_data.location + ' observation_value= "--" current_observation_unit= "--" latitude="' + site.site_data.latitude + '" longitude="' + site.site_data.longitude + '" lastUpdated="--"> <div class="item-inner"> ' + site.site_data.location.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last update:" -- "</span><h1 class="observation_value">--<span class="observation_unit">--</span> </h1> <span class="source">Source: S3 Local Data</span> </div> </div> </div> </a> </div>';
-        $(".pollutant-banner-o").append(html);
-    }
-    else{
-        if ($.isArray(site.latest_measurments)){
-            $.each(site.latest_measurments, function(key, value) {
-                if (value.parameter == param) {
-                    var observation_value = value.value;
-                    var observation_unit = value.unit;
-                    if (observation_value === -999 || observation_value < 0){
-                        observation_value = "--";
-                        observation_unit = "";
-                    }
-                    const obj = document.getElementsByClassName("observation_value");
-                    animateValue(obj, 100, 0, 5000);
-                    var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="openaq" parameter="' + param + '" station_id="' + site.site_data.openaq_id + '" location_name=' + site.site_data.location.replace(/\s/g, '_') + ' observation_value=' + observation_value.toString().substring(0, 6) + ' current_observation_unit=' + observation_unit + ' latitude="' + site.site_data.latitude + '" longitude="' + site.site_data.longitude + '" lastUpdated="' + value.lastUpdated + '"> <div class="item-inner"> ' + site.site_data.location + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last update: ' + value.lastUpdated + '</span><h1 class="observation_value">' + observation_value.toString().substring(0, 6) + '<span class="observation_unit">' + observation_unit + '</span> </h1> <span class="source">Source: OpenAQ</span> </div> </div> </div> </a> </div>';
-                    $(".pollutant-banner-o").append(html);
-                }
-        
-            });
-        }
-    }
 
-    
-    
+
+
+    $.each(site.latest_measurments, function(key, value) {
+        if (value.parameter == param) {
+            var observation_value = value.value;
+            var observation_unit = value.unit;
+            if (observation_value === -999){
+                observation_value = "N/A";
+                observation_unit = "";
+            }
+            const obj = document.getElementsByClassName("observation_value");
+            animateValue(obj, 100, 0, 5000);
+            var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" parameter="' + param + '" station_id="' + site.site_data.openaq_id + '" location_name=' + site.site_data.location.replace(/\s/g, '_') + ' observation_value=' + observation_value.toString().substring(0, 6) + ' current_observation_unit=' + observation_unit + ' latitude="' + site.site_data.latitude + '" longitude="' + site.site_data.longitude + '" lastUpdated="' + value.lastUpdated + '"> <div class="item-inner"> ' + site.site_data.location + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last update: ' + value.lastUpdated + '</span><h1 class="observation_value">' + observation_value.toString().substring(0, 6) + '<span class="observation_unit">' + observation_unit + '</span> </h1> <span class="source">Source: OpenAQ</span> </div> </div> </div> </a> </div>';
+            $(".pollutant-banner-o").append(html);
+        }
+
+    });
 
 
 
@@ -240,35 +224,11 @@ function animateValue(obj, start, end, duration) {
 
 function get_all_sites_data(sites, param) {
     let all_sites = [];
-            
-        $.each(sites, function(index, site) {
-            if (site.observation_source == 'openaq'){
+    $.each(sites, function(index, val) {
 
-                console.log("this is openaq data: " + index)
-                
-                get_open_aq_observations(index, param).then((site_data) => all_sites.push(site_data));
-            }
-            else{
-                var location = {};
-                location.site_data = [];
-    
-                location.site_data.openaq_id = index;
-                location.site_data.location = site.location_name;
-                location.site_data.latitude = site.lat;
-                location.site_data.longitude = site.lon;
-                location.site_data.obs_source = site.observation_source;
-                location.meta_data = "data is now updated";
-                location.latest_n02 = "---";
-                location.latest_03 = "---";
-                location.latest_SO2 = "---";
-                location.latest_pm25 = "---";
-                location.latest_measurments = "---";
-                all_sites.push(location)
-            }           
+        get_open_aq_observations(val, param).then((site_data) => all_sites.push(site_data));
 
     });
-
-
 
     return Promise.resolve(all_sites);
 }
@@ -289,24 +249,17 @@ function csvToArray(str, delimiter = ",") {
 }
 
 
-function read_api_baker(location,param,unit,forecasts_div,button_option=false, historical=2, reinforce_training=2,hpTunning=2 ){
-    var title = 'Near Realtime Forecasts';
-    if (button_option){
-        $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'_color"  href="#">'+title+'</button>');
-    }
-   
-    $("."+forecasts_div).empty();
+function read_api_baker(location,param,unit,forecasts_div,button_option=false){
     $(".overlay-api-baker").fadeIn(10);
-    var messages = ["Generating data", "Connecting to SMCE", "Fetching the data from API Baker", "Fetching data from GMAO FTP", "Fetching observations", "Getting the forecasts", "Please wait...", "Connecting...."];
+    var messages = ["Model Retraining", "Connecting to SMCE", "fetching data from API Baker", "fetching data from GMAO FTP", "fetching observations", "getting the forecasts", "please wait...", "connecting...."];
     setInterval(function() {
         var message = messages[Math.floor(Math.random() * messages.length)];
         $(".overlay-api-baker").html(message)
     }, 4000);
     
-    var param_code = pollutant_details(param).id
-    var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"";
-     console.log(file_url);
-   //var file_url = "response.json";
+    var file_url = "https://www.noussair.com/api_baker.php?st="+location;
+   // var file_url = "response.json";
+   // $(".loading_forecasts").fadeIn(10);
     $.ajax({
         url: file_url, 
         success: function() { 
@@ -324,7 +277,7 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                     residuals = []
                     master_data = []
 
-                    data_str = data.replace(/NaN/g, '""')
+                    data_str = data.toString().replace(/NaN/g, '""')
                     console.log(data_str);
                     data_str = JSON.parse(data_str);
                     
@@ -333,18 +286,15 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                     master_data.master_datetime_2023 = data_str.forecasts.time;
                     master_data.master_observation_2023 = data_str.forecasts.value;
                     master_data.master_localized_2023 = data_str.forecasts.prediction;
-                    master_data.master_uncorrected_2023 = data_str.forecasts.pm25_rh35_gcc;
+                    master_data.master_uncorrected_2023 = data_str.forecasts.no2;
                     //console.log(master_data);
-                    draw_plot(master_data,param,unit,forecasts_div,title,false, button = false,[2023] )
+                    draw_plot(master_data,param,unit,forecasts_div,'Localized forecasts (Retrained model)',false, button = button_option,[2023] )
 
 
 
                     $('.retrain_model').attr("param",param);
                     $('.retrain_model').attr("site",location);
                     $('.retrain_model').attr("unit",unit);
-                    
-                    
-                    $('.model_data').html('<h1>Model information</h1> <ul><li>Total observations: '+data_str.metrics.total_observation+'</li><li>last time trained: '+data_str.metrics.latest_training+'</li><li>Root mean square deviation: '+data_str.metrics.rmse+'</li><li>Mean Absolute Error: '+data_str.metrics.mae+'</li><li>R2 Score: '+data_str.metrics.r2+'</li></ul><span class="model_general_info">The model has been trained based on the historical data from '+data_str.metrics.start_date+' to '+data_str.metrics.end_date+' </span>');
 
                 }
                 else {
@@ -357,13 +307,70 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
     });
 }
 
+function get_data_from_pusher(data){
+    json_data = JSON.parse(data.data);
+    var combined_dataset = [];  
+    var master_forecast_datetime =[]
+    var master_uncorrected_no2 =[]
+    var master_localized_no2 =[]
+    var master_observation =[]
+$.each(json_data, function (key, data) {
+    master_forecast_datetime.push(data.forecast_datetime);
+    master_uncorrected_no2.push(data.uncorrected_no2);
+    master_localized_no2.push(data.localized_no2);
+    master_observation.push(data.observation);
+    
+combined_dataset.master_datetime = master_forecast_datetime;
+combined_dataset.master_uncorrected = master_uncorrected_no2;
+combined_dataset.master_localized = master_localized_no2;
+combined_dataset.master_observation = master_observation;
+})
 
+return combined_dataset;
+
+
+}
+
+function pusher_dataset(pusher, site_id, param, unit, forecasts_div){
+        
+        var button = true
+        
+        
+        pusher.logToConsole = true;
+        
+        var channel = pusher.subscribe('forecats'); 
+        var cache_channel = pusher.subscribe('cache-location');
+        var combined_dataset = []; 
+        cache_channel.bind('precomputed', function(data) {
+            var master_dataset = get_data_from_pusher(data)
+            combined_dataset = master_dataset 
+            draw_single_plot(combined_dataset,param,unit,forecasts_div,'Latest Forecasts', button);
+            console.log(combined_dataset);
+      });
+
+        channel.bind('precomputed_'+site_id, function(data) {
+            var master_dataset = get_data_from_pusher(data)
+            combined_dataset = master_dataset 
+            draw_single_plot(combined_dataset,param,unit,forecasts_div,'Realtime Forecasts', button);
+            console.log(combined_dataset);
+      });
+      channel.bind('meta_'+site_id, function(data) {
+        console.log(JSON.stringify(data));
+      });
+
+      channel.bind('notification_'+site_id, function(data) {
+        toastr["success"](JSON.stringify(data.data), "SMCE Notification");;
+      });
+
+     
+     
+
+}
 
 function combine_historical_and_forecasts(location_name, param, unit, forecasts_div){
 
-    var file_name = location_name + '_' + param;
-    
-    
+    var file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param;
+
     var historical_simulation = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_" + file_name+'_historical.json';
 
     var forecasts_url = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_" + file_name+'.json';
@@ -371,23 +378,14 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
 
     var list_of_files = [historical_simulation, forecasts_url];
     var forecast_initialization_date = "";
-    var master_datetime =[]; 
-    var master_observation =[];
-    var master_observation_resample =[];
-    var master_localized =[]; 
-    var master_localized_resample =[]; 
-    var master_uncorrected =[];
-    var master_uncorrected_resample =[];
-
-    var combined_dataset = {};
-    var dataset_year1 = {};
-    var dataset_year2 = {};
     var combined_dataset = {};
     var dates_ranges = [];
     var activate_number = 0;
-    var year = new Date().getFullYear()
+    var year = 2022
     list_of_files.forEach(function(file_url, index){
+        
         console.log("year: " +year)
+        console.log("file: " + file_url)
         $.ajax({
             url: file_url, 
             async: false,
@@ -399,11 +397,14 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
                     }
                     
                     if(data){
+                        console.log("data from gmao");
+                        console.log(data);
+                        
                         var pure_data = csvToArray(data.latest_forecast.data);
     
     
                         var date_time = $(pure_data).map(function() {
-                            return this.forecast_datetime;
+                            return this.forecast_datetime.replace("2023","2022");
                         }).get()
 
 
@@ -494,13 +495,13 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
 
 
 
-                       // combined_dataset["forecast_initialization_date_"+year] = forecast_initialization_date;
+                       // combined_dataset["forecast_initialization_date"] = forecast_initialization_date;
     
-                        combined_dataset["master_datetime_"+year] = date_time;
-                        combined_dataset["master_observation_"+year] = observation;
-                        combined_dataset["master_observation_resample_"+year] = observation_resample;
-                        combined_dataset["master_localized_"+year] = localized;
-                        combined_dataset["master_uncorrected_"+year] = uncorrected;
+                        combined_dataset["master_datetime"] = date_time;
+                        combined_dataset["master_observation"] = observation;
+                        combined_dataset["master_observation_resample"] = observation_resample;
+                        combined_dataset["master_localized"] = localized;
+                        combined_dataset["master_uncorrected"] = uncorrected;
       
                         activate_number = activate_number + 1;
                         year = year + 1;
@@ -517,7 +518,7 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
                       
                     }
                     else {
-                        $('.forecasts-view').html("Sorry, data not available for "+param+" in this location");
+                        $('.forecasts-view').html("Sorry, forecasts not available for "+param+" in this location");
                     }
                     
                 });
@@ -525,7 +526,7 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
             },
             error: function(jqXHR, status, er) {
                 if (jqXHR.status === 404) {
-                    $('.forecasts-view').html("Sorry, PLOT ISSUE, please retry");
+                    $('.forecasts-view').html("Sorry, forecasts not available for "+param+" in this location");
                 }
     
             }
@@ -550,21 +551,22 @@ function getDates(startDate, stopDate) {
     return dateArray;
 }
 
-function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges, button=false, years=false){
+function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges, button=true, years=[2022,2023]){
     var plot = []
     var line_type = ""
    if(years){
     
     years.forEach(function(year, index){
         var title = " "
-        if(years.length > 1){
-            var title = year
+        if(index == 1){ 
+           
+            title = " (" + year + ")"
         }
-        
-       console.log(year);
+        //console.log(year);
         var master_localized = {
             type: "scatter",
             mode: "lines",
+            connectgaps: false,
             x: combined_dataset["master_datetime_"+year],
             y: combined_dataset["master_localized_"+year],
             line: {
@@ -577,6 +579,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         var master_uncorrected = {
             type: "scatter",
             mode: "lines",
+            connectgaps: false,
             x: combined_dataset["master_datetime_"+year],
             y: combined_dataset["master_uncorrected_"+year],
             line: {
@@ -589,6 +592,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         var master_observation = {
             type: "scatter",
             mode: "lines",
+            connectgaps: false,
             x: combined_dataset["master_datetime_"+year],
             y: combined_dataset["master_observation_"+year],
             line: {
@@ -600,13 +604,15 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         }
 
         if(index == 1){ 
-            master_observation.line = {dash: 'dashdot', width: 4 }
-            master_localized.line = {dash: 'dashdot', width: 4 }
-            master_uncorrected.line = {dash: 'dashdot', width: 4 }
+            master_observation.line = {dash: 'dashdot', width: 4, color: 'blue' }
+            master_localized.line = {dash: 'dashdot', width: 4, color: 'green' }
+            master_uncorrected.line = {dash: 'dashdot', width: 4, color: 'red' }
+            
         }
 
         console.log(year);
-        console.log(combined_dataset);
+        console.log(master_observation);
+        console.log(master_localized);
 
          plot.push(master_localized);
          plot.push(master_uncorrected);
@@ -621,16 +627,17 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         var layout = {
             title: title,
             font: {
-                family: 'Manrope, sans-serif',
+                family: 'Helvetica, sans-serif',
                 size: 18,
-                color: 'rgb(0 0 0)'
+                color: '#7f7f7f'
             },
             xaxis: {
-                type: 'date'
+                type : 'date',
+                'tickformat': '%d/%m'
             },
     
             yaxis: {
-                autorange: true,
+  
                 type: 'linear',
                 title: param+' ' +'[ '+ unit +']',
     
@@ -685,29 +692,121 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
 
 
 
-function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_div,historical,merge,regex){
+function draw_single_plot(combined_dataset,param,unit,forecasts_div,title, button=true){
+    var plot = []
+    var line_type = ""
+
+
+        var master_localized = {
+            type: "scatter",
+            mode: "lines",
+            connectgaps: false,
+            x: combined_dataset["master_datetime"],
+            y: combined_dataset["master_localized"],
+            line: {
+                line_type,
+                color: 'green'
+            },
+            name: 'Localized ' + param + ' '
+        }
     
+        var master_uncorrected = {
+            type: "scatter",
+            mode: "lines",
+            connectgaps: false,
+            x: combined_dataset["master_datetime"],
+            y: combined_dataset["master_uncorrected"],
+            line: {
+                line_type,
+                color: 'red'
+            },
+            name: 'Uncorrected ' + param + ' '
+        }
+    
+        var master_observation = {
+            type: "scatter",
+            mode: "lines",
+            connectgaps: false,
+            x: combined_dataset["master_datetime"],
+            y: combined_dataset["master_observation"],
+            line: {
+                line_type,
+                color: 'blue'
+            },
+            
+            name: 'Observation ' + param + ' '
+        }
+
+
+
+        console.log(master_observation);
+        console.log(master_localized);
+
+         plot.push(master_localized);
+         plot.push(master_uncorrected);
+         plot.push(master_observation);
+
+
 
    
+    
 
+
+        var layout = {
+            title: title,
+            font: {
+                family: 'Helvetica, sans-serif',
+                size: 18,
+                color: '#7f7f7f'
+            },
+            xaxis: {
+                type : 'date'
+            },
+    
+            yaxis: {
+  
+                type: 'linear',
+                title: param+' ' +'[ '+ unit +']',
+    
+            }
+        };
+
+
+    
+
+        Plotly.newPlot(forecasts_div, plot, layout);
+        
+        if(button){
+
+            $('.button_pusher').remove();
+            $('.plot_additional_features').append('<button type="button" change_to="main_plot_for_pusher" class="btn btn-outline-primary change_plot button_pusher" href="#">realtime forecasts</button>');
+            
+           
+        }
+       
+        
+
+    
+}
+
+
+
+function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_div,historical,merge){
     if(historical=="historical"){
         ext_name="_historical.json";
     }
     else{
         ext_name=".json";
     }
-
-    var lname = location_name
-    var file_name = lname + '_' + param +ext_name;
-    
-   
-
-
+    var file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param +ext_name;
     if(merge){
-        historical_file_name = lname + '_' + param +'_historical.json';
+        historical_file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param +'_historical.json';
+    }
+    if (file_name == "USDiplomaticPost:Kampala_pm25"+ext_name) {
+        file_name = "Kampala_USDiplomaticPost_pm25"+ext_name
     }
     
-    var file_url = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_" + file_name;
+    var file_url = "https://www.noussair.com/fetch.php?type=apibaker&st=3995&param=1"
     $(".loading_forecasts").fadeIn(10);
     $.ajax({
         url: file_url, 
@@ -716,9 +815,9 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                 if (error) {
                     alert(error);
                 }
-                
+
                 if(data){
-                    var pure_data = csvToArray(data.latest_forecast.data);
+                    var pure_data = csvToArray(data);
 
 
                     var date_time = $(pure_data).map(function() {
@@ -975,14 +1074,7 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                         var change_to_val = $(this).attr("change_to");
                            $('.model_plots').hide();
                             $('.'+change_to_val).show(); 
-
-                            if (change_to_val == "main_plot_for_api_baker"){
-                                $('.form-check').show()
-                            }else{
-                                $('.form-check').hide()
-                            }
                        });
-                       
 
                        
 
@@ -1016,7 +1108,6 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
 
 
 $(document).on("click", ".launch-local-forecasts", function(param) {
-    
     $(".loading_div").fadeIn(10);
     var messages = ["Connecting to OpenAQ", "Connecting to GMAO", "fetching data from OpenAQ", "fetching data from GMAO FTP", "fetching observations", "getting the forecasts", "please wait...", "connecting...."];
     setInterval(function() {
@@ -1024,18 +1115,15 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
         $(".messages").html(message)
     }, 100);
     var st_id = $(this).attr("station_id");
-    //var param = $('.g-lf-params').attr('param');
-    var param = $(this).attr('parameter');
+    var param = $('.g-lf-params').attr('param');
     var location_name = $(this).attr("location_name");
     var observation_value = $(this).attr("observation_value");
     var current_observation_unit = $(this).attr("current_observation_unit");
-    var obs_src = $(this).attr("obs_src");
 
-    $(".forecasts_container").load("vues/location.html?st=" + st_id + '&param=' + param + '&location_name=' + location_name +'&obs_src='+obs_src, function() {
+    $(".forecasts_container").load("vues/location.html?st=" + st_id + '&param=' + param + '&location_name=' + location_name, function() {
         $(this).fadeOut(10);
         $(this).fadeIn(10);
-        
-        $('.current_location_name').html(location_name.replace(/\_/g, ' ').replace(/\./g, ' ') );
+        $('.current_location_name').html(location_name.replace('_', ' '));
         $('.current_param').html(pollutant_details(param)).name;
         $('.current_param_1').html(pollutant_details(param).name);
         $('.current_observation_value').html(observation_value);
@@ -1043,21 +1131,17 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
         $(".forecasts_container").addClass("noussair_animations zoom_in");
         $(".loading_div").fadeOut(10);
         $("button").css({ button: "animation: intro 2s cubic-bezier(0.03, 1.08, 0.56, 1); animation-delay: 2s;" });
-        if(obs_src == "openaq"){
-            location_name = location_name.replace(/\_/g, '').replace(/\./g, '')   
-        }
-        if (location_name == "USDiplomaticPost:Kampala") {
-            location_name = "Kampala_USDiplomaticPost";
-        }
-
- 
+        
+        //console.log(combine_historical_and_forecasts(location_name, param));   
     get_plot(location_name, param,current_observation_unit,'plot_model_','plot_resample_','');
     get_plot(location_name, param,current_observation_unit,'plot_model_historical','plot_resample_historical','historical');
 
     combine_historical_and_forecasts(location_name, param,current_observation_unit,'main_plot_for_comparaison');
-       
-    read_api_baker(st_id,param,current_observation_unit,'main_plot_for_api_baker', true, historical=2, reinforce_training=2,hpTunning=2);
-        
+    
+
+    read_api_baker(st_id,param,current_observation_unit,'main_plot_for_api_baker', true, 2023);
+    pusher_dataset(pusher, 739, param, current_observation_unit, "main_plot_for_pusher");
+    
        
        d3.csv("./vues/10812-intervals.csv", function(err, rows) {
 
@@ -1202,7 +1286,7 @@ function update_api_baker(location,param,unit,forecasts_div){
                     master_data.master_observation = master_observation;
                     master_data.master_localized = master_localized;
                     //console.log(master_data);
-                    draw_plot(master_data,param,unit,forecasts_div,'Localized forecasts (Pretrained model)',false)
+                    //draw_plot(master_data,param,unit,forecasts_div,'Localized forecasts (Pretrained model)',false)
 
                     $('.retrain_model').attr("param",param);
                     $('.retrain_model').attr("site",location);
@@ -1219,6 +1303,42 @@ function update_api_baker(location,param,unit,forecasts_div){
     });
 }
 
+const sites = ["3995", "8645", "739", "5282"];
+var param = "pm25";
+get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param));
+
+var pusher = new Pusher('66c4558c3fed9445e375', {
+    cluster: 'eu'
+  });
+
+  toastr.options = {
+    "closeButton": true,
+    "debug": true,
+    "newestOnTop": false,
+    "progressBar": true,
+    "positionClass": "toast-top-right",
+    "preventDuplicates": false,
+    "showDuration": "300",
+    "hideDuration": "1000000",
+    "timeOut": "5000",
+    "extendedTimeOut": "1000",
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+  }
+
+
+
+$(document).on('click', '.routing_pollutant_param', function(e) {
+    $(".loading_div").fadeIn(100);
+    const param = $(this).attr('lf-param');
+    $(".g-lf-params").attr("param", param);
+    const sites_2 = ["3995", "8645", "739", "5282"];
+    get_all_sites_data(sites_2).then((all_sites) => map = create_map(all_sites, param));
+    $(".loading_div").fadeOut(100);
+
+});
 
 
 $(document).on("click", '.retrain_model', function() {
@@ -1226,100 +1346,8 @@ $(document).on("click", '.retrain_model', function() {
     current_site = $(this).attr("site");
     current_unit = $(this).attr("unit");
     
-    //read_api_baker(current_site,current_param,current_unit,'main_plot_for_api_baker', false);
+    read_api_baker(current_site,current_param,current_unit,'main_plot_for_api_baker', false);
     
    });
 
-   Pusher.logToConsole = true;
-   var pusher = new Pusher('66c4558c3fed9445e375', {
-     cluster: 'eu'
-   });
-
-   var channel = pusher.subscribe('my-channel');
-   channel.bind('my-event', function(data) {
-     alert(JSON.stringify(data));
-   });
-
-
-   $(document).on("change", '.form-check-input', function() {
-       var auto_refresh = 2;
-       var reinforce_training = 2;
-       var hpTunning = 2;
-       var historical = 2;
-    if($(this).prop("checked") == true){
-        var item_checked = $(this).attr('id');
-
-        if(item_checked == "auto_refresh"){
-            auto_refresh = 1
-        }
-        else if(item_checked == "model_update"){
-            reinforce_training = 1
-        }
-
-        else if(item_checked == "model_update_hp"){
-            hpTunning = 1
-        }
-        
-        else if(item_checked == "display_historical"){
-            historical = 1
-        }
-
-        current_param = $(this).attr("param");
-        current_site = $(this).attr("site");
-        current_unit = $(this).attr("unit");
-
-        
-        
-        
-    }
-    read_api_baker(current_site,current_param,current_unit,'main_plot_for_api_baker', false, historical=historical, reinforce_training= reinforce_training,hpTunning=hpTunning)
-    });
-    
    
-
-
-
-
-// MAIN APP
-
-const location_modules = "https://www.noussair.com/get_data.php?type=ftp&url=https://www.noussair.com/global.json";
-
-$.ajax({
-    type: "Get",
-    url: location_modules,
-    dataType: "json",
-    success: function(sites) {
-
-        var param = "pm25";
-        get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param))
-    },
-    error: function(){
-        alert("WARNING: LOCATION FILE NOT CONNECTING");
-    }
-});
-
-
-//const sites = ["3995", "8645", "739", "5282"];
-
-//get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param));
-
-
-$(document).on('click', '.routing_pollutant_param', function(e) {
-    $(".loading_div").fadeIn(100);
-    const param = $(this).attr('lf-param');
-    $(".g-lf-params").attr("param", param);
-    $.ajax({
-        type: "Get",
-        url: location_modules,
-        dataType: "json",
-        success: function(sites) {
-            var param = param;
-            get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param))
-        },
-        error: function(){
-            alert("WARNING: LOCATION FILE NOT CONNECTING");
-        }
-    });
-    $(".loading_div").fadeOut(100);
-
-});

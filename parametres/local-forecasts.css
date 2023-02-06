@@ -558,3 +558,14 @@ span.last_update_widget {
     position: absolute;
     top: 18px;
 }
+
+div#toast-container {
+    background: none;
+}
+
+.toast.toast-success {
+    background: white;
+    color: black !important;
+    font-family: 'manrope';
+    font-size: 12px;
+}

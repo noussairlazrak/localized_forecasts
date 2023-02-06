@@ -743,7 +743,7 @@
     color: white !important;
 }
 
-button.btn.btn-outline-primary.change_plot.main_plot_for_api_baker {
+button.btn.btn-outline-primary.change_plot.main_plot_for_api_baker_color {
     background: #026d02;
     /*animation: blinker 2s cubic-bezier(0.03, 1.08, 0.56, 1) infinite; */
 }
@@ -789,6 +789,33 @@ a.btn.retrain_model {
     align-items: center;
 }
 
+.model_data {
+    text-align: left;
+    font-size: 13px;
+}
+
+.plot_options {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    align-items: flex-start;
+    font-size: 14px;
+    z-index: 120;
+    /* background: white; */
+    top: 63px;
+
+}
+
+
+.form-check.form-switch {
+    margin-left: 17px;
+}
+.form-check{
+  display: none;
+}
 </style>
 <div class="container forecasts-box">
     <div class="modal-dialog modal-dialog-centered modal-md">
@@ -867,15 +894,38 @@ a.btn.retrain_model {
                                 
                                 <div class="lf-container">
                                   <div class="plots_container">
+                                    
+                                     <div class="api_baker_field">
                                       <div id='main_plot_for_api_baker' class='model_plots main_plot_for_api_baker' ></div>
-                                      <a href="#" class="btn retrain_model" site="" param="" unit=""> retrain model</a>
+                                      <div class="plot_options">
+                                        <div class="form-check form-switch">
+                                          <input class="form-check-input retrain_model" name="auto_ref" type="checkbox" role="switch" site="" param="" unit="" id="auto_refresh">
+                                          <label class="form-check-label"  ">Auto Refresh</label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                          <input class="form-check-input retrain_model" name="model_update"  type="checkbox" role="switch"  site="" param="" unit="" id="model_update" >
+                                          <label class="form-check-label" >Update Forecasts Model</label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                          <input class="form-check-input retrain_model" name="model_update_hpt" type="checkbox" role="switch"  site="" param="" unit="" id="model_update_hp">
+                                          <label class="form-check-label" >Update Forecasts with Hyperparameter Tunned</label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                          <input class="form-check-input retrain_model" name="display_historical"  type="checkbox" role="switch" site="" param="" unit="" id="display_historical">
+                                          <label class="form-check-label" >Display Historical Time Series</label>
+                                        </div>
+                                      </div>
+                                      
                                       <div class="overlay-api-baker"> retraining model.....</div>
+                                     </div>
+                                     
                                       <div id='main_plot_for_comparaison' class='model_plots main_plot_for_comparaison'></div>
                                       <div id='plot_model_historical' class='model_plots main_plot_historical'></div>
                                       <div id='plot_resample_historical' class='model_plots resample_main_plot_historical'></div>
                                     
                                       <div id='plot_resample_' class='model_plots resample_main_plot_'></div>
                                       <div id='plot_model_' class='model_plots main_plot_' ></div>
+                                      <div id='main_plot_for_pusher' class='model_plots main_plot_for_pusher' ></div>
                                       
                                     </div>
 
@@ -885,6 +935,9 @@ a.btn.retrain_model {
                                 <p class="caption">
                                   Source: <a href="https://gmao.gsfc.nasa.gov/weather_prediction/GEOS-CF//">NASA GEOS Composition Forecasts (GEOS-CF)</a> <span class="lf-downloads"></span>
                               </p>
+
+                              <div class="model_data">test</div>
+                              
                         </div>
                         <div class="tab-pane fade" id="pills-contact" role="tabpanel"
                             aria-labelledby="pills-contact-tab">
