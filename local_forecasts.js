@@ -63,20 +63,29 @@ function add_marker(map, lat, long, open_aq_id, param, site) {
     var location_name = document.createAttribute("location_name");
     var observation_value = document.createAttribute("observation_value");
     var current_observation_unit = document.createAttribute("current_observation_unit");
-    if ($.isArray(site.latest_measurments)){
-        $.each(site.latest_measurments, function(key, value) {
-            if (value.parameter == param) {
-                location_name.value = site.site_data.location.replace(/\s/g, '_');
-                observation_value.value = value.value;
-                current_observation_unit.value = value.unit;
-            }
-    
-        });
+
+    if(site.site_data.obs_source == 's3'){
+        location_name.value = site.site_data.location.replace(/\s/g, '_');
+        observation_value.value = '12';
+        current_observation_unit.value = 'ppm';
     }
+    else{
+        if ($.isArray(site.latest_measurments)){
+            $.each(site.latest_measurments, function(key, value) {
+                if (value.parameter == param) {
+                    location_name.value = site.site_data.location.replace(/\s/g, '_');
+                    observation_value.value = value.value;
+                    current_observation_unit.value = value.unit;
+                }
+        
+            });
+        }
+    }
+   
     
 
     station_id.value = open_aq_id;
-    parameter.value = parameter;
+    parameter.value = param;
 
 
     var site = [lat, long];
@@ -196,7 +205,7 @@ function create_map(sites, param) {
 
 //get_forecasts(sites);
 function add_locations_banner(site, param) {
-    console.log(site);
+
     if(site.site_data.obs_source == 's3'){
         const obj = document.getElementsByClassName("observation_value");
         animateValue(obj, 100, 0, 5000);
