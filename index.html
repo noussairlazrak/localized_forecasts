@@ -18,16 +18,16 @@
     <link rel="mask-icon" href="./parametres/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
-        <link rel="stylesheet" href="./parametres/style.css?v=3.0.0">
+        <link rel="stylesheet" href="./parametres/style.css?v=1.0.0">
 
-    <link rel="preload" href="./parametres/local-forecasts.css?v=3.0.0" as="style" onload="this.rel='stylesheet'">
+    <link rel="preload" href="./parametres/local-forecasts.css?v=1.0.0" as="style" onload="this.rel='stylesheet'">
     <link href='https://css.gg/css' rel='stylesheet'>
     
-    <script src="https://code.jquery.com/jquery-3.4.1.js?v=3.0.0"
+    <script src="https://code.jquery.com/jquery-3.4.1.js?v=1.0.0"
     integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
-    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js?v=3.0.0'></script>
-    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css?v=3.0.0' rel='stylesheet' />
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js?v=3.0.0"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js?v=1.0.0'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css?v=1.0.0' rel='stylesheet' />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js?v=1.0.0"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
@@ -147,12 +147,14 @@ button.btn.btn-outline-primary {
         <div class="swiper-container-desc dots-closer blog grid-view mb-1" data-margin="0" data-dots="true"
             data-items-md="5" data-items-xs="1">
             <ul class="pollutant_param list-inline mb-0">
+                <!--
                 <li class="list-inline-item"><a href="#" lf-param="no2" class="routing_pollutant_param"
                         class="btn btn-soft-ash btn-sm rounded ">Nitrogen Dioxide (NO<sub>2</sub>)</a>
                 </li>
                 <li class="list-inline-item"><a href="#" lf-param="o3" class="routing_pollutant_param"
                         class="btn btn-soft-ash btn-sm rounded "><b>Ozone</b> (O<sub>3</sub>)</a>
                 </li>
+                -->
                 <li class="list-inline-item"><a href="#" lf-param="pm25" class="routing_pollutant_param"
                         class="btn btn-soft-ash btn-sm rounded ">Fine Particles (PM <sub>2.5</sub>)</a>
                 </li>
@@ -166,24 +168,22 @@ button.btn.btn-outline-primary {
         <div class="container">
             <div class="d-md-flex align-items-center justify-content-between">
     
-                <p class="mb-2 mb-lg-0">© 2022 HAQAST. All rights reserved.</p>
-                <nav class="nav social social-white text-md-end">
-    
-                </nav>
+                <p class="mb-2 mb-lg-0">© 2023 HAQAST. All rights reserved.</p>
+                <p class="mb-2 mb-lg-0">Version: 1.0</p>
             </div>
         </div>
 
         
     </footer>
     
-    <script src="./assets/js/plugins.js?v=3.0.0"></script>
-    <script src="./assets/js/theme.js?v=3.0.0"></script>
+    <script src="./assets/js/plugins.js?v=1.0.0"></script>
+    <script src="./assets/js/theme.js?v=1.0.0"></script>
 
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
     
 
-    <script src="local_forecasts.js?v=3.0.0"></script>
-    <script src="local_forecasts_assets.js?v=3.0.0"></script>
+    <script src="local_forecasts.js?v=1.0.0"></script>
+    <script src="local_forecasts_assets.js?v=1.0.0"></script>
     <script>
     $(document).on('click', '.btn-close', function(e) {
         $('.forecasts_container').css('display', 'none');

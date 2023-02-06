@@ -128,6 +128,7 @@ function get_open_aq_observations(site_id, param) {
     openaq.site_data.location = "";
     openaq.site_data.latitude = "";
     openaq.site_data.longitude = "";
+    openaq.site_data.status = 'active';
     openaq.meta_data = "";
     openaq.latest_update = "";
     openaq.latest_n02 = "";
@@ -147,6 +148,7 @@ function get_open_aq_observations(site_id, param) {
             openaq.site_data.location = data.results[0].location;
             openaq.site_data.latitude = data.results[0].coordinates.latitude;
             openaq.site_data.longitude = data.results[0].coordinates.longitude;
+            openaq.site_data.status = 'active';
             openaq.meta_data = "data is now updated";
             openaq.latest_n02 = data.results[0].measurements.longitude;
             openaq.latest_03 = "";
@@ -181,7 +183,11 @@ function create_map(sites, param) {
     $(".pollutants-banner").html($('<div class="pollutant-banner-o row gx-md-8 gy-8  swiper-desactivated"> </div>'));
     sites.forEach((element) => {
         add_marker(map, element.site_data.longitude, element.site_data.latitude, element.site_data.openaq_id, param, element);
-        add_locations_banner(element, param);
+        console.log(element.site_data);
+        if(element.site_data.status == 'active'){
+            add_locations_banner(element, param);
+        }
+      
     });
 
     return map;
@@ -256,6 +262,7 @@ function get_all_sites_data(sites, param) {
                 location.site_data.location = site.location_name;
                 location.site_data.latitude = site.lat;
                 location.site_data.longitude = site.lon;
+                location.site_data.status = site.status;
                 location.site_data.obs_source = site.observation_source;
                 location.meta_data = "data is now updated";
                 location.latest_n02 = "---";
@@ -325,7 +332,6 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                     master_data = []
 
                     data_str = data.replace(/NaN/g, '""')
-                    console.log(data_str);
                     data_str = JSON.parse(data_str);
                     
                     
@@ -550,21 +556,22 @@ function getDates(startDate, stopDate) {
     return dateArray;
 }
 
-function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges, button=false, years=false){
+function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges = ["2021-04-20","2023-02-10"], button=false, years=false){
     var plot = []
     var line_type = ""
    if(years){
     
     years.forEach(function(year, index){
         var title = " "
-        if(years.length > 1){
+        if(years.length > 2){
             var title = year
         }
         
-       console.log(year);
+       
         var master_localized = {
             type: "scatter",
             mode: "lines",
+            connectgaps: false,
             x: combined_dataset["master_datetime_"+year],
             y: combined_dataset["master_localized_"+year],
             line: {
@@ -577,6 +584,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         var master_uncorrected = {
             type: "scatter",
             mode: "lines",
+            connectgaps: false,
             x: combined_dataset["master_datetime_"+year],
             y: combined_dataset["master_uncorrected_"+year],
             line: {
@@ -589,6 +597,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         var master_observation = {
             type: "scatter",
             mode: "lines",
+            connectgaps: false,
             x: combined_dataset["master_datetime_"+year],
             y: combined_dataset["master_observation_"+year],
             line: {
@@ -605,8 +614,6 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
             master_uncorrected.line = {dash: 'dashdot', width: 4 }
         }
 
-        console.log(year);
-        console.log(combined_dataset);
 
          plot.push(master_localized);
          plot.push(master_uncorrected);
