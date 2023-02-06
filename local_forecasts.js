@@ -191,9 +191,9 @@ function create_map(sites, param) {
     });
     $(".pollutants-banner").html($('<div class="pollutant-banner-o row gx-md-8 gy-8  swiper-desactivated"> </div>'));
     sites.forEach((element) => {
-        add_marker(map, element.site_data.longitude, element.site_data.latitude, element.site_data.openaq_id, param, element);
-        console.log(element.site_data);
+        
         if(element.site_data.status == 'active'){
+            add_marker(map, element.site_data.longitude, element.site_data.latitude, element.site_data.openaq_id, param, element);
             add_locations_banner(element, param);
         }
       
@@ -1074,84 +1074,6 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
        
     read_api_baker(st_id,param,current_observation_unit,'main_plot_for_api_baker', true, historical=2, reinforce_training=2,hpTunning=2);
         
-       
-       d3.csv("./vues/10812-intervals.csv", function(err, rows) {
-
-            function unpack(rows, key) {
-                return rows.map(function(row) {
-                    return row[key];
-                });
-            }
-
-
-            var trace1 = {
-                type: "scatter",
-                mode: "lines",
-                x: unpack(rows, 'timestamp'),
-                y: unpack(rows, 'value'),
-                line: {
-                    color: 'red'
-                },
-                name: 'Observation',
-                type: "scatter",
-                fill: "tonexty",
-                fillcolor: "white",
-            }
-
-            var trace2 = {
-                type: "scatter",
-                mode: "lines",
-                x: unpack(rows, 'timestamp'),
-                y: unpack(rows, 'upper'),
-                line: {
-                    color: 'blue'
-                },
-                name: 'Upper Quantile',
-                type: "scatter",
-                fill: "tonexty",
-                fillcolor: "rgba(68, 68, 68, 0.3)",
-            }
-
-            var trace3 = {
-                type: "scatter",
-                mode: "lines",
-                x: unpack(rows, 'timestamp'),
-                y: unpack(rows, 'lower'),
-                line: {
-                    color: 'green'
-                },
-                name: 'Lower Quantile',
-                type: "scatter",
-                fill: "tonexty",
-                fillcolor: "rgba(68, 68, 68, 0.3)",
-            }
-
-            var pred = [trace1];
-
-            var intervals = [trace1, trace2, trace3];
-
-            var layout = {
-                title: 'Bias Corrected Model',
-                font: {
-                    family: 'Helvetica, sans-serif',
-                    size: 18,
-                    color: '#7f7f7f'
-                },
-                xaxis: {
-                    // range: ['2021-06-10', '2021-06-30'],
-                    type: 'date'
-                },
-
-                yaxis: {
-                    autorange: true,
-                    range: [86.8700008333, 138.870004167],
-                    type: 'linear',
-
-                }
-            };
-
-            Plotly.newPlot('intervals', intervals, layout);
-        });
     });
 
 });
@@ -1329,7 +1251,7 @@ $(document).on('click', '.routing_pollutant_param', function(e) {
         url: location_modules,
         dataType: "json",
         success: function(sites) {
-            var param = param;
+            var param = $(".g-lf-params").attr('param');
             get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param))
         },
         error: function(){
