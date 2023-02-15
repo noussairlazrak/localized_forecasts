@@ -182,30 +182,186 @@ function create_map(sites, param) {
     var deltaDistance = 100;
     var center_point = [30.1272444, -1.9297706];
     var map = new mapboxgl.Map({
-        style: 'mapbox://styles/lazrakn/clakch8ed006h14pdbqup69x7',
+        style: 'mapbox://styles/lazrakn/ck2g4kozj0q3w1cmx5tig3gnp',
         center: center_point,
         zoom: 2,
         pitch: 0,
         bearing: 0,
-        container: 'map'
+        container: 'map',
+        cluster: true,
+        clusterMaxZoom: 2, 
+        clusterRadius: 2
     });
-    $(".pollutants-banner").html($('<div class="pollutant-banner-o row gx-md-8 gy-8  swiper-desactivated"> </div>'));
-    sites.forEach((element) => {
+    map.on('load', () => {
+        map.addSource('locations_dst', {
+            type: 'geojson',
+            data: 'https://www.noussair.com/get_data.php?type=location2&param=pm25',
+            cluster: true,
+            clusterMaxZoom: 14, 
+            clusterRadius: 50 
+        });
+    
+        map.addLayer({
+            id: 'clusters',
+            type: 'circle',
+            source: 'locations_dst',
+            filter: ['has', 'point_count'],
+            paint: {
+                'circle-color': [
+                    'step',
+                    ['get', 'point_count'],
+                    '#51bbd6',
+                    100,
+                    '#f1f075',
+                    750,
+                    '#f28cb1'
+                ],
+                'circle-radius': [
+                    'step',
+                    ['get', 'point_count'],
+                    20,
+                    100,
+                    30,
+                    750,
+                    40
+                ]
+            }
+        });
+    
+        map.addLayer({
+            id: 'cluster-count',
+            type: 'symbol',
+            source: 'locations_dst',
+            filter: ['has', 'point_count'],
+            layout: {
+                'text-field': ['get', 'point_count_abbreviated'],
+                'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                'text-size': 12
+            }
+        });
+    
+        map.addLayer({
+            id: 'unclustered-point',
+            type: 'circle',
+            source: 'locations_dst',
+            filter: ['!', ['has', 'point_count']],
+            paint: {
+                'circle-color': '#11b4da',
+                'circle-radius': 4,
+                'circle-stroke-width': 1,
+                'circle-stroke-color': 'black'
+            }
+        });
+    
+        map.on('click', 'clusters', (e) => {
+            const features = map.queryRenderedFeatures(e.point, {
+                layers: ['clusters']
+            });
+            const clusterId = features[0].properties.cluster_id;
+            map.getSource('locations_dst').getClusterExpansionZoom(
+                clusterId,
+                (err, zoom) => {
+                    if (err) return;
+    
+                    map.easeTo({
+                        center: features[0].geometry.coordinates,
+                        zoom: zoom
+                    });
+                }
+            );
+        });
         
-        if(element.site_data.status == 'active'){
-            add_marker(map, element.site_data.longitude, element.site_data.latitude, element.site_data.openaq_id, param, element);
-            add_locations_banner(element, param);
+            
+    })
+
+    
+
+    var list_in = [];
+    map.on("sourcedata", function(e) {
+        if (map.getSource('locations_dst') && map.isSourceLoaded('locations_dst')) {
+            var features = map.querySourceFeatures('locations_dst');
+            $.each(features, function(index, site) {
+                if(site.properties.location_id){
+                    var l_id =site.properties.location_id;
+                    if (!~$.inArray(l_id,list_in))  {
+                        add_the_banner(site.properties, 'pm25')
+                        list_in.push(l_id);
+                       
+                    }
+                }
+               
+            });  
         }
-      
     });
+    
+
+
+
+    map.on('click', 'unclustered-point', (e) => {
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        const location_id = e.features[0].properties.location_id;
+        const location_name = e.features[0].properties.location_name.replace(/[^a-z0-9\s]/gi, '').replace(/[_\s]/g, '-')
+        const status = e.features[0].properties.status;
+        const observation_source = e.features[0].properties.observation_source;
+        const observation_value = e.features[0].properties.observation_value;
+
+        const precomputed_forecasts = $.parseJSON(e.features[0].properties.precomputed_forecasts);
+        const obs_option =
+            e.features[0].properties.obs_options;
+
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+        
+        new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML(
+                `location_id: ${location_id}<br>Was there a location_name?: ${location_name}`
+            ).on('open', e => {
+
+                open_forecats_window (["Loading", "Please hold"], location_id, 'pm25', location_name, observation_value, location_name, observation_source, precomputed_forecasts[0].pm25.forecasts)
+
+       
+            })
+           
+            .addTo(map);
+
+
+            
+        
+    });
+
+    map.on('mouseenter', 'clusters', () => {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'clusters', () => {
+        map.getCanvas().style.cursor = '';
+    });
+
 
     return map;
 }
 
+function add_the_banner(site, param) {
+    
+    precomputed_forecasts = $.parseJSON(site.precomputed_forecasts)
+    obs_options =  $.parseJSON(site.obs_options)
+    if(site.observation_source){
+        
+        const obj = document.getElementsByClassName("observation_value");
+        animateValue(obj, 100, 0, 5000);
+        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "--" current_observation_unit= "--" latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+precomputed_forecasts[0].pm25.forecasts+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value">--<span class="observation_unit">' + obs_options[0].pm25.unit+ ' </span> </h1> <span class="source">Observation Source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';
+        $(".pollutant-banner-o").prepend(html);
 
-//get_forecasts(sites);
+        
+
+    }
+
+}
+
 function add_locations_banner(site, param) {
-
+    console.log('site');
+    console.log(site);
     if(site.site_data.obs_source == 's3'){
         const obj = document.getElementsByClassName("observation_value");
         animateValue(obj, 100, 0, 5000);
@@ -232,12 +388,6 @@ function add_locations_banner(site, param) {
             });
         }
     }
-
-    
-    
-
-
-
 }
 
 function animateValue(obj, start, end, duration) {
@@ -323,9 +473,8 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
     }, 4000);
     
     var param_code = pollutant_details(param).id
-    var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"";
-     console.log(file_url);
-   //var file_url = "response.json";
+    var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
+    console.log(file_url);
     $.ajax({
         url: file_url, 
         success: function() { 
@@ -352,7 +501,6 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                     master_data.master_observation_2023 = data_str.forecasts.value;
                     master_data.master_localized_2023 = data_str.forecasts.prediction;
                     master_data.master_uncorrected_2023 = data_str.forecasts.pm25_rh35_gcc;
-                    //console.log(master_data);
                     draw_plot(master_data,param,unit,forecasts_div,title,false, button = false,[2023] )
 
 
@@ -428,9 +576,7 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
                         var date_time_uncorrected = $(pure_data).map(function() {
                             return this.forecast_datetime;
                         }).get()
-
-                        //console.log(date_time);
-                        
+          
                         forecast_initialization_date = data.latest_forecast.forecast_initialization_date;
     
                         var localized = $(pure_data).map(function() {
@@ -645,7 +791,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
                 color: 'rgb(0 0 0)'
             },
             xaxis: {
-                type: 'date'
+                type: 'category'
             },
     
             yaxis: {
@@ -704,30 +850,18 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
 
 
 
-function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_div,historical,merge,regex){
-    
+function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_div,merge,precomputer_forecasts,historical){
 
-   
-
-    if(historical=="historical"){
-        ext_name="_historical.json";
-    }
-    else{
-        ext_name=".json";
-    }
-
-    var lname = location_name
-    var file_name = lname + '_' + param +ext_name;
-    
-   
-
-
-    if(merge){
-        historical_file_name = lname + '_' + param +'_historical.json';
-    }
-    
-    var file_url = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_" + file_name;
+    var file_url = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/" + precomputer_forecasts;
     $(".loading_forecasts").fadeIn(10);
+    if(merge){
+        file_url.replace('.json', '_historical.json');
+    }
+    if(historical == "historical"){
+        file_url = file_url.replace('.json', '_historical.json');
+    }
+   
+    console.log(historical+'   |'+file_url);
     $.ajax({
         url: file_url, 
         success: function() { 
@@ -990,7 +1124,7 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                     $('.lf-operations_1').prepend('| <a class="change_plot" change_to ="main_plot_'+historical+'" href="#"> Raw '+historical+' data</a> | <a change_to ="resample_main_plot_'+historical+'" class=" change_plot resample'+'_'+historical+'" href="#">'+historical+' '+resample_window+'H Rolling averages</a> ');
                     
                     $(document).on("click", '.change_plot', function() {
-                        //alert("clicked");
+
                         var change_to_val = $(this).attr("change_to");
                            $('.model_plots').hide();
                             $('.'+change_to_val).show(); 
@@ -1032,28 +1166,17 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
 }
 
 
-
-
-$(document).on("click", ".launch-local-forecasts", function(param) {
-    
+function open_forecats_window (messages, st_id, param, location_name, observation_value, current_observation_unit, obs_src,precomputer_forecasts){
     $(".loading_div").fadeIn(10);
-    var messages = ["Connecting to OpenAQ", "Connecting to GMAO", "fetching data from OpenAQ", "fetching data from GMAO FTP", "fetching observations", "getting the forecasts", "please wait...", "connecting...."];
-    setInterval(function() {
-        var message = messages[Math.floor(Math.random() * messages.length)];
-        $(".messages").html(message)
-    }, 100);
-    var st_id = $(this).attr("station_id");
-    //var param = $('.g-lf-params').attr('param');
-    var param = $(this).attr('parameter');
-    var location_name = $(this).attr("location_name");
-    var observation_value = $(this).attr("observation_value");
-    var current_observation_unit = $(this).attr("current_observation_unit");
-    var obs_src = $(this).attr("obs_src");
-
+    console.log(location_name);
+    console.log('st_id : '+st_id);
     $(".forecasts_container").load("vues/location.html?st=" + st_id + '&param=' + param + '&location_name=' + location_name +'&obs_src='+obs_src, function() {
         $(this).fadeOut(10);
         $(this).fadeIn(10);
-        
+        setInterval(function() {
+            var message = messages[Math.floor(Math.random() * messages.length)];
+            $(".messages").html(message)
+        }, 100);
         $('.current_location_name').html(location_name.replace(/\_/g, ' ').replace(/\./g, ' ') );
         $('.current_param').html(pollutant_details(param)).name;
         $('.current_param_1').html(pollutant_details(param).name);
@@ -1061,24 +1184,36 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
         $('.current_observation_unit_span').html(current_observation_unit);
         $(".forecasts_container").addClass("noussair_animations zoom_in");
         $(".loading_div").fadeOut(10);
-        $("button").css({ button: "animation: intro 2s cubic-bezier(0.03, 1.08, 0.56, 1); animation-delay: 2s;" });
-        if(obs_src == "openaq"){
-            location_name = location_name.replace(/\_/g, '').replace(/\./g, '')   
-        }
-        if (location_name == "USDiplomaticPost:Kampala") {
-            location_name = "Kampala_USDiplomaticPost";
-        }
+        $("button").css({ "button": "animation: intro 2s cubic-bezier(0.03, 1.08, 0.56, 1); animation-delay: 2s;" });
 
- 
-    get_plot(location_name, param,current_observation_unit,'plot_model_','plot_resample_','');
-    get_plot(location_name, param,current_observation_unit,'plot_model_historical','plot_resample_historical','historical');
 
-    combine_historical_and_forecasts(location_name, param,current_observation_unit,'main_plot_for_comparaison');
+    get_plot(location_name, param,current_observation_unit,'plot_model_','plot_resample_',false,precomputer_forecasts,'');
+    get_plot(location_name, param,current_observation_unit,'plot_model_historical','plot_resample_historical', false, precomputer_forecasts,'historical');
        
     read_api_baker(st_id,param,current_observation_unit,'main_plot_for_api_baker', true, historical=2, reinforce_training=2,hpTunning=2);
         
     });
+}
 
+$(document).on("click", ".launch-local-forecasts", function(param) {
+    var messages = ["Connecting to OpenAQ", "Connecting to GMAO", "fetching data from OpenAQ", "fetching data from GMAO FTP", "fetching observations", "getting the forecasts", "please wait...", "connecting...."];
+    var location_id = $(this).attr("station_id");
+    //var param = $('.g-lf-params').attr('param');
+    var param = $(this).attr('parameter');
+    var location_name = $(this).attr("location_name");
+    var observation_source = $(this).attr("observation_source");
+    var precomputed_forecasts = $(this).attr("precomputed_forecasts");
+    var observation_value = $(this).attr("observation_value");
+    var current_observation_unit = $(this).attr("current_observation_unit");
+    var obs_src = $(this).attr("obs_src");
+    open_forecats_window (["Loading", "Please hold"], location_id, 'pm25', location_name, observation_value, current_observation_unit, observation_source, precomputed_forecasts)
+
+
+
+
+
+
+ 
 });
 
 $(document).on("click", ".upload-your-data", function() {
@@ -1232,14 +1367,14 @@ $.ajax({
     success: function(sites) {
 
         var param = "pm25";
-        get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param))
+        //get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param))
     },
     error: function(){
         alert("WARNING: LOCATION FILE NOT CONNECTING");
     }
 });
 
-
+create_map('test','pm25')
 //const sites = ["3995", "8645", "739", "5282"];
 
 //get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param));

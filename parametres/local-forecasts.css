@@ -199,9 +199,6 @@ h5.location_name {
     color: white !important;
 }
 
-.mapboxgl-popup.mapboxgl-popup-anchor-left {
-    display: none;
-}
 
 h5.location_name {
     min-height: 7vh;
@@ -245,13 +242,7 @@ footer.bg-dark.text-inverse {
     bottom: 0;
 }
 
-.mapboxgl-ctrl-bottom-right {
-    display: none;
-}
 
-.mapboxgl-control-container {
-    display: none;
-}
 
 .mapboxgl-marker {
     position: absolute !important;
