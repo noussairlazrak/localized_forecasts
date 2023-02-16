@@ -196,9 +196,9 @@ function create_map(sites, param) {
         map.addSource('locations_dst', {
             type: 'geojson',
             data: 'https://www.noussair.com/get_data.php?type=location2&param=pm25',
-            cluster: true,
-            clusterMaxZoom: 14, 
-            clusterRadius: 50 
+            cluster: false,
+            clusterMaxZoom: 10, 
+            clusterRadius: 2 
         });
     
         map.addLayer({
@@ -246,8 +246,15 @@ function create_map(sites, param) {
             source: 'locations_dst',
             filter: ['!', ['has', 'point_count']],
             paint: {
-                'circle-color': '#11b4da',
-                'circle-radius': 4,
+                'circle-color': [
+                    'case',
+                ["<=", ["get", "forecasted_value"], 20], "#fbb03b",
+                [">=", ["get", "forecasted_value"], 20], "#e55e5e",
+                [">", ["get", "forecasted_value"], 30], "#3bb2d0",
+                "#ccc"
+
+                    ],
+                'circle-radius': 8,
                 'circle-stroke-width': 1,
                 'circle-stroke-color': 'black'
             }
@@ -265,7 +272,7 @@ function create_map(sites, param) {
     
                     map.easeTo({
                         center: features[0].geometry.coordinates,
-                        zoom: zoom
+                        zoom: 10
                     });
                 }
             );
@@ -350,7 +357,7 @@ function add_the_banner(site, param) {
         
         const obj = document.getElementsByClassName("observation_value");
         animateValue(obj, 100, 0, 5000);
-        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "--" current_observation_unit= "' + obs_options[0].pm25.unit+ ' " latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+precomputed_forecasts[0].pm25.forecasts+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value">--<span class="observation_unit">' + obs_options[0].pm25.unit+ ' </span> </h1> <span class="source">Observation Source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';
+        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "' + site.forecasted_value + '" current_observation_unit= "' + obs_options[0].pm25.unit+ ' " latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+precomputed_forecasts[0].pm25.forecasts+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value">' + site.forecasted_value + '<span class="observation_unit">' + obs_options[0].pm25.unit+ ' </span> </h1> <span class="source">Observation Source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';
         $(".pollutant-banner-o").prepend(html);
 
         
