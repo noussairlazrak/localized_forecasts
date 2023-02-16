@@ -310,12 +310,13 @@ function create_map(sites, param) {
         const location_name = e.features[0].properties.location_name.replace(/[^a-z0-9\s]/gi, '').replace(/[_\s]/g, '-')
         const status = e.features[0].properties.status;
         const observation_source = e.features[0].properties.observation_source;
-        const observation_value = e.features[0].properties.observation_value;
+        const observation_value = e.features[0].properties.forecasted_value;
+        
 
         const precomputed_forecasts = $.parseJSON(e.features[0].properties.precomputed_forecasts);
-        const obs_option =
-            e.features[0].properties.obs_options;
-
+        const obs_option =  $.parseJSON( e.features[0].properties.obs_options);
+        const observation_unit= obs_option[0].pm25.unit;
+        console.log(observation_unit);
         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
             coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
         }
@@ -326,8 +327,9 @@ function create_map(sites, param) {
                 `location_id: ${location_id}<br>Was there a location_name?: ${location_name}`
             ).on('open', e => {
 
-                open_forecats_window (["Loading", "Please hold"], location_id, 'pm25', location_name, observation_value, location_name, observation_source, precomputed_forecasts[0].pm25.forecasts)
+                open_forecats_window (["Loading", "Please hold"], location_id, 'pm25', location_name, observation_value, observation_unit, observation_source, precomputed_forecasts[0].pm25.forecasts)
 
+                //open_forecats_window (messages, st_id, param, location_name, observation_value, current_observation_unit, obs_src,precomputer_forecasts)
        
             })
            
