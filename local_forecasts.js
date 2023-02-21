@@ -178,7 +178,6 @@ function get_open_aq_observations(site_id, param) {
 }
 
 function create_map(sites, param) {
-
     var deltaDistance = 100;
     var center_point = [30.1272444, -1.9297706];
     var map = new mapboxgl.Map({
