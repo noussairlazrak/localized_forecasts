@@ -196,7 +196,7 @@ function create_map(sites, param) {
         map.addSource('locations_dst', {
             type: 'geojson',
             data: 'https://www.noussair.com/get_data.php?type=location2&param=pm25',
-            cluster: false,
+            cluster: true,
             clusterMaxZoom: 10, 
             clusterRadius: 2 
         });
@@ -800,7 +800,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
                 color: 'rgb(0 0 0)'
             },
             xaxis: {
-                type: 'category'
+                type: 'date'
             },
     
             yaxis: {
