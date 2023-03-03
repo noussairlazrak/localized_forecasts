@@ -789,7 +789,6 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
     });
    }
    
-    
 
         var layout = {
             title: title,
