@@ -253,8 +253,8 @@ function create_map(sites, param) {
                 "#ccc"
 
                     ],
-                'circle-radius': 8,
-                'circle-stroke-width': 1,
+                'circle-radius': 6,
+                'circle-stroke-width': 0,
                 'circle-stroke-color': 'black'
             }
         });
@@ -358,7 +358,7 @@ function add_the_banner(site, param) {
         
         const obj = document.getElementsByClassName("observation_value");
         animateValue(obj, 100, 0, 5000);
-        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "' + site.forecasted_value + '" current_observation_unit= "' + obs_options[0].pm25.unit+ ' " latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+precomputed_forecasts[0].pm25.forecasts+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value">' + site.forecasted_value + '<span class="observation_unit">' + obs_options[0].pm25.unit+ ' </span> </h1> <span class="source">Observation Source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';
+        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "' + site.forecasted_value + '" current_observation_unit= "' + obs_options[0].pm25.unit+ ' " latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+precomputed_forecasts[0].pm25.forecasts+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last model update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value">----<span class="observation_unit">' + obs_options[0].pm25.unit+ ' </span> </h1> <span class="source">Forecasts Source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';
         $(".pollutant-banner-o").prepend(html);
 
         
@@ -741,10 +741,10 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
             x: combined_dataset["master_datetime_"+year],
             y: combined_dataset["master_localized_"+year],
             line: {
-                line_type,
-                color: 'green'
+                color: 'rgba(59, 59, 59, 0.8)',
+                width: 3
             },
-            name: 'Localized ' + param + ' '+ title
+            name: 'ML + Model '
         }
     
         var master_uncorrected = {
@@ -754,10 +754,10 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
             x: combined_dataset["master_datetime_"+year],
             y: combined_dataset["master_uncorrected_"+year],
             line: {
-                line_type,
-                color: 'red'
+                color: 'rgba(142, 142, 142, 0.8)',
+                width: 3
             },
-            name: 'Uncorrected ' + param + ' '+ title
+            name: 'Model'
         }
     
         var master_observation = {
@@ -767,12 +767,13 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
             x: combined_dataset["master_datetime_"+year],
             y: combined_dataset["master_observation_"+year],
             line: {
-                line_type,
-                color: 'blue'
+                color: 'rgba(255, 0, 0, 0.8)',
+                width: 3
             },
-            
-            name: 'Observation ' + param + ' '+ title
+            name: 'Observation'
         }
+
+        
 
         if(index == 1){ 
             master_observation.line = {dash: 'dashdot', width: 4 }
@@ -793,6 +794,10 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
 
         var layout = {
             title: title,
+            legend: {
+                orientation: 'h',
+                y: 1.2
+              },
             font: {
                 family: 'Manrope, sans-serif',
                 size: 18,
@@ -967,9 +972,10 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                         x: date_time,
                         y: localized,
                         line: {
-                            color: 'green'
+                            color: 'rgba(59, 59, 59, 0.8)',
+                            width: 3
                         },
-                        name: 'Localized ' + param
+                        name: 'ML + Model '
                     }
 
                     var trace2 = {
@@ -978,9 +984,10 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                         x: date_time,
                         y: uncorrected,
                         line: {
-                            color: 'red'
+                            color: 'rgba(142, 142, 142, 0.8)',
+                            width: 3
                         },
-                        name: 'Uncorrected ' + param
+                        name: 'Model'
                     }
 
                     var trace3 = {
@@ -989,7 +996,8 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                         x: date_time,
                         y: observation,
                         line: {
-                            color: 'blue'
+                            color: 'rgba(255, 0, 0, 0.8)',
+                            width: 3
                         },
                         name: 'Observation'
                     }
@@ -1000,7 +1008,8 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                         x: date_time,
                         y: observation_resample,
                         line: {
-                            color: 'blue'
+                            color: 'rgba(255, 0, 0, 0.8)',
+                            width: 3
                         },
                         name: 'Observation'
                     }
@@ -1010,9 +1019,10 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                         x: date_time,
                         y: localized_resample,
                         line: {
-                            color: 'green'
+                            color: 'rgba(59, 59, 59, 0.8)',
+                            width: 3
                         },
-                        name: 'Localized '+param
+                        name: 'ML + Model'
                     }
                     var uncorrected_resample_trace = {
                         type: "scatter",
@@ -1020,9 +1030,10 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                         x: date_time,
                         y: uncorrected_resample,
                         line: {
-                            color: 'red'
+                            color: 'rgba(142, 142, 142, 0.8)',
+                            width: 3
                         },
-                        name: 'Uncorrected '+param
+                        name: 'Model'
                     }
 
                     var pred = [trace3, trace1, trace2];
@@ -1060,7 +1071,11 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                                 width: 2,
                                 dash: 'dot'
                             }
-                        }]
+                        }],
+                        legend: {
+                            orientation: 'h',
+                            y: 1.2
+                        }
                     };
 
                     var layout_resample = {
@@ -1093,7 +1108,11 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                                 width: 2,
                                 dash: 'dot'
                             }
-                        }]
+                        }],
+                        legend: {
+                            orientation: 'h',
+                            y: 1.2
+                        }
                     };
 
                     Plotly.newPlot(forecasts_div, pred, layout);
@@ -1407,3 +1426,26 @@ $(document).on('click', '.routing_pollutant_param', function(e) {
     $(".loading_div").fadeOut(100);
 
 });
+
+
+    // Bind a click event to the filter button
+    $(document).on('keyup', '#filter-input', function() {
+      // Get the user input
+      var locationName = $('#filter-input').val().toLowerCase();
+  
+      // Loop through each forecast item
+      $('.launch-local-forecasts').each(function() {
+        var item = $(this);
+        var item_parent = $(this).parent();
+        var itemName = item.attr('location_name').toLowerCase();
+  
+        // If the item name contains the user input, show it, else hide it
+        if (itemName.includes(locationName)) {
+            item_parent.show();
+        } else {
+            item_parent.hide();
+        }
+      });
+    });
+
+  

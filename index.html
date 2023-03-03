@@ -61,6 +61,16 @@ button.btn.btn-outline-primary {
     text-transform: capitalize;
 }
 
+input#filter-input {
+    width: 100%;
+    background: none;
+    border: none;
+    color:white;
+}
+
+input#filter-input:focus{
+    outline: none;
+}
 
 </style>
 </head>
@@ -144,6 +154,8 @@ button.btn.btn-outline-primary {
       
     </div>
     <footer class="bg-dark text-inverse">
+        
+
         <div class="swiper-container-desc dots-closer blog grid-view mb-1" data-margin="0" data-dots="true"
             data-items-md="5" data-items-xs="1">
             <ul class="pollutant_param list-inline mb-0">
@@ -159,6 +171,7 @@ button.btn.btn-outline-primary {
                         class="btn btn-soft-ash btn-sm rounded ">Fine Particles (PM <sub>2.5</sub>)</a>
                 </li>
             </ul>
+            <input type="text" id="filter-input" placeholder="Enter location name" />
             <div class="pollutants-banner">
                 <div class="pollutant-banner-o row gx-md-8 gy-8  swiper-desactivated"> </div>
             </div>
