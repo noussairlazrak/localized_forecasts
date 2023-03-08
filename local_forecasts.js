@@ -518,7 +518,7 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                     $('.retrain_model').attr("unit",unit);
                     
                     
-                    $('.model_data').html('<h1>Model information</h1> <ul><li>Total observations: '+data_str.metrics.total_observation+'</li><li>last time trained: '+data_str.metrics.latest_training+'</li><li>Root mean square deviation: '+data_str.metrics.rmse+'</li><li>Mean Absolute Error: '+data_str.metrics.mae+'</li><li>R2 Score: '+data_str.metrics.r2+'</li></ul><span class="model_general_info">The model has been trained based on the historical data from '+data_str.metrics.start_date+' to '+data_str.metrics.end_date+' </span>');
+                    $('.model_data').html('<h1>Model information</h1> <ul><li>Total observations: '+data_str.metrics.total_observation+'</li><li>Last model update: '+data_str.metrics.latest_training.substring(0, 19)+'</li><li>Mean Square Error:  <b> Before training</b> -> '+data_str.metrics["mse before training"]+' | <b>After training </b> -> '+data_str.metrics["mse after training"]+' </li><li>Mean Absolute Error: <b> Before training</b> -> '+data_str.metrics["mae before training"]+' | <b>After training </b> -> '+data_str.metrics["mae after training"]+' </li><li>R2 Score: <b> Before training</b> -> '+data_str.metrics["r2 before training"]+' | <b>After training </b> -> '+data_str.metrics["r2 after training"]+' </li></ul><span class="model_general_info">Bias-corrected model is provided for dates between '+data_str.metrics.start_date.substring(0, 10)+' and '+data_str.metrics.end_date.substring(0, 10)+' </span>');
 
                 }
                 else {
@@ -734,57 +734,90 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         }
         
        
+        // define the range of dates you are interested in
+        var start_date = new Date('2020-01-01');
+        var end_date = new Date('2023-03-08');
+
+        // create a list of all the dates in the range
+        var all_dates = [];
+        var current_date = start_date;
+        while (current_date <= end_date) {
+        all_dates.push(current_date.toISOString().split('T')[0]);
+        current_date.setDate(current_date.getDate() + 1);
+        }
+
+        // get the data from your JSON file
+        var localized_data = combined_dataset["master_localized_"+year];
+        var uncorrected_data = combined_dataset["master_uncorrected_"+year];
+        var observation_data = combined_dataset["master_observation_"+year];
+        var datetime_data = combined_dataset["master_datetime_"+year];
+
+        // check which dates are missing
+        var missing_dates = all_dates.filter(function(date) {
+        return datetime_data.indexOf(date) === -1;
+        });
+
+        // remove the data points for the missing dates
+        missing_dates.forEach(function(date) {
+        var index = datetime_data.indexOf(date);
+        if (index >= 0) {
+            localized_data.splice(index, 1);
+            uncorrected_data.splice(index, 1);
+            observation_data.splice(index, 1);
+            datetime_data.splice(index, 1);
+        }
+        });
+
+        // create the plotly traces
         var master_localized = {
-            type: "scatter",
-            mode: "lines",
-            connectgaps: false,
-            x: combined_dataset["master_datetime_"+year],
-            y: combined_dataset["master_localized_"+year],
-            line: {
-                color: 'rgba(59, 59, 59, 0.8)',
-                width: 3
-            },
-            name: 'ML + Model '
-        }
-    
+        type: "scatter",
+        mode: "lines",
+        connectgaps: false,
+        x: datetime_data,
+        y: localized_data,
+        line: {
+            color: 'rgba(59, 59, 59, 0.8)',
+            width: 3
+        },
+        name: 'ML + Model '
+        };
+
         var master_uncorrected = {
-            type: "scatter",
-            mode: "lines",
-            connectgaps: false,
-            x: combined_dataset["master_datetime_"+year],
-            y: combined_dataset["master_uncorrected_"+year],
-            line: {
-                color: 'rgba(142, 142, 142, 0.8)',
-                width: 3
-            },
-            name: 'Model'
-        }
-    
+        type: "scatter",
+        mode: "lines",
+        connectgaps: false,
+        x: datetime_data,
+        y: uncorrected_data,
+        line: {
+            color: 'rgba(142, 142, 142, 0.8)',
+            width: 3
+        },
+        name: 'Model'
+        };
+
         var master_observation = {
-            type: "scatter",
-            mode: "lines",
-            connectgaps: false,
-            x: combined_dataset["master_datetime_"+year],
-            y: combined_dataset["master_observation_"+year],
-            line: {
-                color: 'rgba(255, 0, 0, 0.8)',
-                width: 3
-            },
-            name: 'Observation'
+        type: "scatter",
+        mode: "lines",
+        connectgaps: false,
+        x: datetime_data,
+        y: observation_data,
+        line: {
+            color: 'rgba(255, 0, 0, 0.8)',
+            width: 3
+        },
+        name: 'Observation'
+        };
+
+        if (index == 1) {
+        master_observation.line = {dash: 'dashdot', width: 4};
+        master_localized.line = {dash: 'dashdot', width: 4};
+        master_uncorrected.line = {dash: 'dashdot', width: 4};
         }
 
-        
-
-        if(index == 1){ 
-            master_observation.line = {dash: 'dashdot', width: 4 }
-            master_localized.line = {dash: 'dashdot', width: 4 }
-            master_uncorrected.line = {dash: 'dashdot', width: 4 }
-        }
-
-
-         plot.push(master_localized);
-         plot.push(master_uncorrected);
-         plot.push(master_observation);
+        // add the traces to the plot
+        plot.push(master_localized);
+        plot.push(master_uncorrected);
+        plot.push(master_observation);
 
     });
    }
@@ -1169,13 +1202,9 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                     if (Plotly.newPlot('observations_only', pred_obs, layout)) {
 
 
-                    } else {
-                        $('.forecasts-view').html("Sorry, forecasts not available for "+param+" in this location");
-                    }
+                    } 
                 }
-                else {
-                    $('.forecasts-view').html("Sorry, Forecasts not available for "+param+" in this location");
-                }
+               
                 $(".loading_forecasts").fadeOut(10);
                 
             });
@@ -1212,10 +1241,14 @@ function open_forecats_window (messages, st_id, param, location_name, observatio
         $("button").css({ "button": "animation: intro 2s cubic-bezier(0.03, 1.08, 0.56, 1); animation-delay: 2s;" });
 
 
-    get_plot(location_name, param,current_observation_unit,'plot_model_','plot_resample_',false,precomputer_forecasts,'');
-    get_plot(location_name, param,current_observation_unit,'plot_model_historical','plot_resample_historical', false, precomputer_forecasts,'historical');
+        try {
+            get_plot(location_name, param, current_observation_unit, 'plot_model_', 'plot_resample_', false, precomputer_forecasts, '');
+            get_plot(location_name, param, current_observation_unit, 'plot_model_historical', 'plot_resample_historical', false, precomputer_forecasts, 'historical');
+          } catch (error) {
+            console.error('An error occurred while running the get_plot function:', error);
+          }
        
-    read_api_baker(st_id,param,current_observation_unit,'main_plot_for_api_baker', true, historical=2, reinforce_training=2,hpTunning=2);
+        read_api_baker(st_id,param,current_observation_unit,'main_plot_for_api_baker', true, historical=2, reinforce_training=2,hpTunning=2);
         
     });
 }
