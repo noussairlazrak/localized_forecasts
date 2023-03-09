@@ -1,0 +1,1576 @@
+{
+	"-102": {
+		"location_name": "Kenya_Nairobi",
+		"lat": 1.278822,
+		"lon": 36.817281,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Kenya_Nairobi_pm25.json",
+				"historical": "forecast_latest_Kenya_Nairobi_pm25_historical.json"
+
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Nairobi_data.csv",
+				"lname": "Kenya_Nairobi",
+				"time_col": "Time",
+				"val_col": "Conc (mg/m3)",
+				"l_name": "Kenya_Nairobi",
+				"lat": 1.278822,
+				"lon": 36.817281,
+				"coefficient_convert": 1000.0,
+				"unit": "ugm-3"
+			}
+
+
+		}
+	},
+	"-103": {
+		"location_name": "Uganda_Kampala_Bugolobi",
+		"lat": -1.286,
+		"lon": 36.817,
+		"status": "desactivated",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Bugolobi_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Bugolobi_pm25_historical.json"
+
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Uganda_Kampala_Bugolobi",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-104": {
+		"location_name": "Rwanda_Kigali_Gacuriro",
+		"lat": -1.9270086,
+		"lon": 30.0817766,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Rwanda_Kigali_Gacuriro_pm25.json",
+				"historical": "forecast_latest_Rwanda_Kigali_Gacuriro_pm25_historical.json"
+
+			},
+			"o3": {
+				"forecasts": "forecast_latest_Rwanda_Kigali_Gikomero_o3.json",
+				"historical": "forecast_latest_Rwanda_Kigali_Gacuriro_o3_historical.json"
+
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kigali_stations/Gacuriro_HourlyWRI.csv",
+				"val_col": "PM25",
+				"l_name": "Rwanda_Kigali_Gacuriro",
+				"lat": -1.944,
+				"lon": 30.059,
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-105": {
+		"location_name": "Ghana_Accra",
+		"lat": 5.55,
+		"lon": -0.2,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Ghana_Accra_pm25.json",
+				"historical": "forecast_latest_Ghana_Accra_pm25_historical.json"
+
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Accra_PM2.5_2021_YTD.csv",
+				"val_col": "NowCast Conc.",
+				"l_name": "Accra_Ghana",
+				"lat": 5.55,
+				"lon": -0.2,
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-106": {
+		"location_name": "Kampala_Bukasa",
+		"lat": 0.29875,
+		"lon": 32.615,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Bukasa_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Bukasa_pm25_historical.json"
+
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Uganda_Kampala_Bugolobi",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-107": {
+		"location_name": "Rwanda_Kigali_Gitega",
+		"lat": -1.94,
+		"lon": 30.06,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Rwanda_Kigali_Gitega_pm25.json",
+				"historical": "forecast_latest_Rwanda_Kigali_Gitega_pm25_historical.json"
+
+			},
+			"o3": {
+				"forecasts": "forecast_latest_Rwanda_Kigali_Gikomero_o3.json",
+				"historical": "forecast_latest_Rwanda_Kigali_Gacuriro_o3_historical.json"
+
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Uganda_Kampala_Bugolobi",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"3995": {
+		"location_name": "French Guiana (FR40008)",
+		"lat": 4.93784416911561,
+		"lon": -52.3209364190869,
+		"status": "active",
+		"observation_source": "openaq",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_FR40008_pm25.json",
+				"historical": "forecast_latest_FR40008_pm25_historical.json"
+
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"start": 90,
+				"end": 90,
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"8645": {
+		"location_name": "US Diplomatic Post: Kampala",
+		"lat": 4.93784416911561,
+		"lon": -52.3209364190869,
+		"status": "active",
+		"observation_source": "openaq",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Kampala_USDiplomaticPost_pm25.json",
+				"historical": "forecast_latest_Kampala_USDiplomaticPost_pm25_historical.json"
+
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"start": 90,
+				"end": 90,
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"5282": {
+		"location_name": "Parque D.Pedro II",
+		"lat": -23.54484566,
+		"lon": -46.62767559,
+		"status": "active",
+		"observation_source": "openaq",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_ParqueDPedroII_pm25.json",
+				"historical": "forecast_latest_ParqueDPedroII_pm25_historical.json"
+
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"start": 90,
+				"end": 90,
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"739": {
+		"location_name": "McMillan Reservoir",
+		"lat": 38.921848,
+		"lon": -77.013176,
+		"status": "active",
+		"observation_source": "openaq",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_McMillanReservoir_pm25.json",
+				"historical": "forecast_latest_McMillanReservoir_pm25_historical.json"
+
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"start": 90,
+				"end": 90,
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-108": {
+		"location_name": "Banda, Kampala",
+		"lat": 0.341674,
+		"lon": 32.635306,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Banda_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Banda_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Banda, Kampala",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-109": {
+		"location_name": "Bbuto, Kira Municipality",
+		"lat": 0.39205,
+		"lon": 32.67298,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Bbuto_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Bbuto_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Bbuto, Kira Municipality",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-110": {
+		"location_name": "Bugolobi, Nakawa",
+		"lat": 0.3075,
+		"lon": 32.6206,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Bugolobi_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Bugolobi_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Bugolobi, Nakawa",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-111": {
+		"location_name": "Bukasa, Kira Municipality",
+		"lat": 0.29875,
+		"lon": 32.615,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Bukasa_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Bukasa_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Bukasa, Kira Municipality",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-112": {
+		"location_name": "Bukoto I, Kawempe",
+		"lat": 0.3517,
+		"lon": 32.591,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Bukoto I_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Bukoto I_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Bukoto I, Kawempe",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-113": {
+		"location_name": "Busabala, Wakiso",
+		"lat": 0.2182,
+		"lon": 32.6176,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Busabala_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Busabala_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Busabala, Wakiso",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-114": {
+		"location_name": "Busega, Rubaga",
+		"lat": 0.3101,
+		"lon": 32.516,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Busega_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Busega_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Busega, Rubaga",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-115": {
+		"location_name": "Butabika, Nakawa",
+		"lat": 0.30778,
+		"lon": 32.651449,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Butabika_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Butabika_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Butabika, Nakawa",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-116": {
+		"location_name": "Buwate, Kira Municipality",
+		"lat": 0.40532,
+		"lon": 32.62027,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Buwate_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Buwate_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Buwate, Kira Municipality",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-117": {
+		"location_name": "Bweyogerere, Kira Municipality",
+		"lat": 0.3501,
+		"lon": 32.6662,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Bweyogerere_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Bweyogerere_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Bweyogerere, Kira Municipality",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-118": {
+		"location_name": "Bweyogerere, Wakiso",
+		"lat": 0.354825,
+		"lon": 32.67781,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Bweyogerere_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Bweyogerere_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Bweyogerere, Wakiso",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-119": {
+		"location_name": "Civic Centre, Kampala Central",
+		"lat": 0.314,
+		"lon": 32.59,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_CivicCentre_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_CivicCentre_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Civic Centre, Kampala Central",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-120": {
+		"location_name": "Ggaba, Makindye",
+		"lat": 0.25776,
+		"lon": 32.63686,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Ggaba_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Ggaba_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Ggaba, Makindye",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-121": {
+		"location_name": "Kalerwe, Kawempe",
+		"lat": 0.3564,
+		"lon": 32.573,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Kalerwe_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Kalerwe_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Kalerwe, Kawempe",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-122": {
+		"location_name": "Kasubi, Rubaga",
+		"lat": 0.344,
+		"lon": 32.553,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Kasubi_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Kasubi_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Kasubi, Rubaga",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-123": {
+		"location_name": "Kawempe",
+		"lat": 0.35147,
+		"lon": 32.56223,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Kawempe_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Kawempe_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Kawempe",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-124": {
+		"location_name": "Kawempe Industrial, Kawempe",
+		"lat": 0.374653,
+		"lon": 32.55744,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_KawempeIndustrial_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_KawempeIndustrial_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Kawempe Industrial, Kawempe",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-125": {
+		"location_name": "Kibuli, Makindye",
+		"lat": 0.30852,
+		"lon": 32.59224,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Kibuli_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Kibuli_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Kibuli, Makindye",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-126": {
+		"location_name": "Kireka, Kira Municipality",
+		"lat": 0.347014,
+		"lon": 32.64936,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Kireka_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Kireka_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Kireka, Kira Municipality",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-127": {
+		"location_name": "Kirinya, Kira Municipality",
+		"lat": 0.33197,
+		"lon": 32.66903,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Kirinya_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Kirinya_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Kirinya, Kira Municipality",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-128": {
+		"location_name": "Kisugu, Makindye",
+		"lat": 0.307489,
+		"lon": 32.611755,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Kisugu_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Kisugu_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Kisugu, Makindye",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-129": {
+		"location_name": "Kiwatule, Nakawa",
+		"lat": 0.373078,
+		"lon": 32.628226,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Kiwatule_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Kiwatule_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Kiwatule, Nakawa",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-130": {
+		"location_name": "Kizungu, Makindye",
+		"lat": 0.27602,
+		"lon": 32.59075,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Kizungu_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Kizungu_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Kizungu, Makindye",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-131": {
+		"location_name": "Kyaliwajala, Kira Municipality",
+		"lat": 0.381576,
+		"lon": 32.647109,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Kyaliwajala_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Kyaliwajala_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Kyaliwajala, Kira Municipality",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-132": {
+		"location_name": "Kyebando, Kampala",
+		"lat": 0.357987,
+		"lon": 32.5841,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Kyebando_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Kyebando_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Kyebando, Kampala",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-133": {
+		"location_name": "Lower Nsooba, Kawempe",
+		"lat": 0.34959,
+		"lon": 32.57644,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_LowerNsooba_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_LowerNsooba_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Lower Nsooba, Kawempe",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-134": {
+		"location_name": "Lukuli, Makindye",
+		"lat": 0.28368,
+		"lon": 32.60048,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Lukuli_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Lukuli_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Lukuli, Makindye",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-135": {
+		"location_name": "Luwafu, Makindye",
+		"lat": 0.2689,
+		"lon": 32.588,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Luwafu_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Luwafu_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Luwafu, Makindye",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-136": {
+		"location_name": "Makerere University Weather Station",
+		"lat": 0.333529,
+		"lon": 32.568643,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_MakerereUniversityWeatherStation_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_MakerereUniversityWeatherStation_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Makerere University Weather Station",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-137": {
+		"location_name": "Makerere University_01, Kawempe",
+		"lat": 0.3323,
+		"lon": 32.5698,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_MakerereUniversity_01_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_MakerereUniversity_01_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Makerere University_01, Kawempe",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-138": {
+		"location_name": "Makerere, Kawempe",
+		"lat": 0.33347,
+		"lon": 32.56854,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Makerere_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Makerere_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Makerere, Kawempe",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-139": {
+		"location_name": "Makindye Kcca division offices",
+		"lat": 0.29282,
+		"lon": 32.57132,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Makindye_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Makindye_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Makindye Kcca division offices",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-140": {
+		"location_name": "Makindye Nsambya/US Embassy",
+		"lat": 0.29926,
+		"lon": 32.59266,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_MakindyeNsambyaUSEmbassy_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_MakindyeNsambyaUSEmbassy_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Makindye Nsambya/US Embassy",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-141": {
+		"location_name": "Makindye, Lukuli Makindye",
+		"lat": 0.28904,
+		"lon": 32.58958,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Makindye_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Makindye_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Makindye, Lukuli Makindye",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-142": {
+		"location_name": "Mbalwa, Kira Municipality",
+		"lat": 0.3655,
+		"lon": 32.6468,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Mbalwa_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Mbalwa_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Mbalwa, Kira Municipality",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-143": {
+		"location_name": "Mbuya II, Nakawa",
+		"lat": 0.325346,
+		"lon": 32.632288,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_MbuyaII_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_MbuyaII_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Mbuya II, Nakawa",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-144": {
+		"location_name": "Mpererwe, Kawempe",
+		"lat": 0.380684,
+		"lon": 32.57651,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Mpererwe_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Mpererwe_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Mpererwe, Kawempe",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-145": {
+		"location_name": "Municipal Council, Kira Municipality",
+		"lat": 0.39738,
+		"lon": 32.64111,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_MunicipalCouncil_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_MunicipalCouncil_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Municipal Council, Kira Municipality",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-146": {
+		"location_name": "Mutundwe, Makindye Ssabagabo",
+		"lat": 0.269993,
+		"lon": 32.558017,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Mutundwe_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Mutundwe_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Mutundwe, Makindye Ssabagabo",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-147": {
+		"location_name": "Naguru II, Nakawa",
+		"lat": 0.3412,
+		"lon": 32.602,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_NaguruII_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_NaguruII_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Naguru II, Nakawa",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-148": {
+		"location_name": "Najera, Kira Municipality",
+		"lat": 0.391478,
+		"lon": 32.62583,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Najera_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Najera_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Najera, Kira Municipality",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-149": {
+		"location_name": "Nakasero II, Kampala",
+		"lat": 0.322108,
+		"lon": 32.576,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_NakaseroII_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_NakaseroII_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Nakasero II, Kampala",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-150": {
+		"location_name": "Nakasero II, Kampala",
+		"lat": 0.32232,
+		"lon": 32.5757,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_NakaseroII_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_NakaseroII_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Nakasero II, Kampala",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-151": {
+		"location_name": "Nakawa, Nakawa",
+		"lat": 0.33261,
+		"lon": 32.61005,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Nakawa_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Nakawa_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Nakawa, Nakawa",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-152": {
+		"location_name": "Nansana east ward, Wakiso",
+		"lat": 0.3759,
+		"lon": 32.528,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Nansanaeastward_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Nansanaeastward_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Nansana east ward, Wakiso",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-153": {
+		"location_name": "Nansana west ward, Wakiso",
+		"lat": 0.363,
+		"lon": 32.529,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Nansanawestward_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Nansanawestward_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Nansana west ward, Wakiso",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-154": {
+		"location_name": "Nsambya/US Embassy, Makindye",
+		"lat": 0.299358,
+		"lon": 32.59274,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_MakindyeNsambyaUSEmbassy_pm25.json ",
+				"historical": "forecast_latest_Uganda_Kampala_MakindyeNsambyaUSEmbassy_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Nsambya/US Embassy, Makindye",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-155": {
+		"location_name": "Nsawo, Kira Municipality",
+		"lat": 0.39205,
+		"lon": 32.67296,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Nsawo_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Nsawo_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Nsawo, Kira Municipality",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-156": {
+		"location_name": "Ntinda, Nakawa",
+		"lat": 0.360209,
+		"lon": 32.610756,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Ntinda_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Ntinda_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Ntinda, Nakawa",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-157": {
+		"location_name": "Rubaga, Kampala",
+		"lat": 0.295314,
+		"lon": 32.553682,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Rubaga_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Rubaga_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Rubaga, Kampala",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-158": {
+		"location_name": "Seguku, Makindye-Ssabagabo",
+		"lat": 0.2336,
+		"lon": 32.5635,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Seguku_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Seguku_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "Seguku, Makindye-Ssabagabo",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-159": {
+		"location_name": "St.Ponsiano primary school, makindye",
+		"lat": 0.25562,
+		"lon": 32.60538,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_Makindye_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_Makindye_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "St.Ponsiano primary school, makindye",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	},
+	"-160": {
+		"location_name": "wabigalo",
+		"lat": 0.30991,
+		"lon": 32.60045,
+		"status": "active",
+		"observation_source": "s3",
+		"precomputed_forecasts": {
+			"pm25": {
+				"forecasts": "forecast_latest_Uganda_Kampala_wabigalo_pm25.json",
+				"historical": "forecast_latest_Uganda_Kampala_wabigalo_pm25_historical.json"
+			}
+		},
+		"obs_options": {
+			"pm25": {
+				"file": "Kampala/kampala_all.csv",
+				"time_col": "timestamp",
+				"time_parser": "%Y-%m-%d %H:%M:%S UTC",
+				"val_col": "pm2_5_calibrated_value",
+				"l_name": "wabigalo",
+				"lat_col": "latitude",
+				"lon_col": "longitude",
+				"unit": "ugm-3"
+			}
+		}
+	}
+}

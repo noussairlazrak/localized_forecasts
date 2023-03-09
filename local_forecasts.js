@@ -1422,7 +1422,7 @@ function open_forecats_window (messages, st_id, param, location_name, observatio
         $("button").css({ "button": "animation: intro 2s cubic-bezier(0.03, 1.08, 0.56, 1); animation-delay: 2s;" });
 
         try {
-            side_by_side_plots(param, current_observation_unit, 'Model Caomparaison', precomputer_forecasts);
+            side_by_side_plots(param, current_observation_unit, 'Model comparison', precomputer_forecasts);
         }catch (error) {
             console.error('An error occurred while running the side_by_side_plots function:', error);
           }
