@@ -258,6 +258,100 @@ function create_map(sites, param) {
                 'circle-stroke-color': 'black'
             }
         });
+        // Add a heatmap layer to the map
+        // Set up the Earth Engine API client
+        var earthEngineApiScript = document.createElement('script');
+        earthEngineApiScript.src = 'https://ajax.googleapis.com/ajax/libs/earthengine/0.1.343/earthengine-api.min.js';
+        
+        // Append the script element to the head of the document
+        document.head.appendChild(earthEngineApiScript);
+        
+        // Wait for the Earth Engine API to load and initialize
+        earthEngineApiScript.onload = function() {
+          ee.initialize();
+          var collection = ee.ImageCollection('COPERNICUS/S5P/NRTI/L3_NO2')
+          .filterDate('2022-01-01', '2022-01-31')
+          .select('NO2_column_number_density')
+          .mean();
+
+          // Once the map has loaded, add the heatmap layer
+        map.on('load', function () {
+            // Convert the Earth Engine image to a raster tileset using the Earth Engine API
+            var url = collection.getThumbURL({
+                dimensions: '512',
+                region: '-180,-90,180,90'
+            });
+    
+            // Add the raster tileset to the map as a raster source
+            map.addSource('no2', {
+                'type': 'raster',
+                'tiles': [url],
+                'tileSize': 512,
+                'maxzoom': 12
+            });
+    
+            // Add a heatmap layer to the map using the raster source
+            map.addLayer({
+                'id': 'no2-heatmap',
+                'type': 'heatmap',
+                'source': 'no2',
+                'maxzoom': 12,
+                'paint': {
+                // Increase the heatmap weight based on frequency and property magnitude
+                'heatmap-weight': [
+                    'interpolate',
+                    ['linear'],
+                    ['get', 'heatmapDensity'],
+                    0, 0,
+                    1, 1
+                ],
+                // Increase the heatmap color weight weight by zoom level
+                // heatmap-intensity is a multiplier on top of heatmap-weight
+                'heatmap-intensity': [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    0, 1,
+                    12, 3
+                ],
+                // Color ramp for heatmap.  Domain is 0 (low) to 1 (high).
+                // Begin color ramp at 0-stop with a 0-transparancy color
+                // to create a blur-like effect.
+                'heatmap-color': [
+                    'interpolate',
+                    ['linear'],
+                    ['heatmap-density'],
+                    0, 'rgba(33,102,172,0)',
+                    0.2, 'rgb(103,169,207)',
+                    0.4, 'rgb(209,229,240)',
+                    0.6, 'rgb(253,219,199)',
+                    0.8, 'rgb(239,138,98)',
+                    1, 'rgb(178,24,43)'
+                ],
+                // Adjust the heatmap radius by zoom level
+                'heatmap-radius': [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    0, 2,
+                    12, 20
+                ],
+                // Transition from heatmap to circle layer by zoom level
+                'heatmap-opacity': [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    7, 1,
+                    9, 0
+                ]
+                }
+            });
+            });
+          // Your Earth Engine code goes here...
+        }
+
+        // Define the Earth Engine image collection and date range of interest
+      
     
         map.on('click', 'clusters', (e) => {
             const features = map.queryRenderedFeatures(e.point, {
@@ -892,7 +986,94 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
     
 }
 
+function side_by_side_plots(param, unit, title, precomputer_forecasts){
+    $(document).ready(function() {
 
+        var year1_file = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/" + precomputer_forecasts;
+        var year2_file = year1_file.replace('.json', '_historical.json');
+        
+        
+        $.getJSON(year1_file, function(data) {
+          var currentYearData = data.latest_forecast.data.split('\n').slice(1,-1);
+          var currentYearUncorrected = currentYearData.map(function(row) {
+            return row.split(',')[1];
+          });
+          var currentYearLocalized = currentYearData.map(function(row) {
+            return row.split(',')[2];
+          });
+          var currentYearObservation = currentYearData.map(function(row) {
+            return row.split(',')[3];
+          });
+          var currentYearUncorrectedTrace = {
+            name: 'Current Year Model',
+            y: currentYearUncorrected,
+            type: 'scatter'
+          };
+          var currentYearLocalizedTrace = {
+            name: 'Current Year Model + ML',
+            y: currentYearLocalized,
+            type: 'scatter'
+          };
+          var currentYearObservationTrace = {
+            name: 'Current Year Observation',
+            y: currentYearObservation,
+            type: 'scatter'
+          };
+          $.getJSON(year2_file, function(data) {
+            var previousYearData = data.latest_forecast.data.split('\n').slice(1,-1);
+            var previousYearUncorrected = previousYearData.map(function(row) {
+              return row.split(',')[1];
+            });
+            var previousYearLocalized = previousYearData.map(function(row) {
+              return row.split(',')[2];
+            });
+            var previousYearObservation = previousYearData.map(function(row) {
+              return row.split(',')[3];
+            });
+            var previousYearUncorrectedTrace = {
+              name: 'Previous Year Model',
+              y: previousYearUncorrected,
+              type: 'scatter'
+            };
+            var previousYearLocalizedTrace = {
+              name: 'Previous Year Model + ML',
+              y: previousYearLocalized,
+              type: 'scatter'
+            };
+            var previousYearObservationTrace = {
+              name: 'Previous Year Observation',
+              y: previousYearObservation,
+              type: 'scatter'
+            };
+            var data = [
+              currentYearUncorrectedTrace,
+              currentYearLocalizedTrace,
+              currentYearObservationTrace,
+              previousYearUncorrectedTrace,
+              previousYearLocalizedTrace,
+              previousYearObservationTrace
+            ];
+            var layout = {
+              title: title,
+              xaxis: {
+                title: 'Datetime'
+              },
+              yaxis: {
+                title: param+ ' Concentration ('+unit+')'
+              },
+              legend: {
+                x: 1,
+                y: 1
+              }
+            };
+            Plotly.newPlot('comparaison_plot_js', data, layout);
+          });
+        });
+
+        $('.plot_additional_features').append('<button type="button" change_to="comparaison_plot_js" class="btn btn-outline-primary change_plot comparaison_plot_js"  href="#">'+title+'</button>');
+      });
+      
+}
 
 function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_div,merge,precomputer_forecasts,historical){
 
@@ -905,7 +1086,7 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
         file_url = file_url.replace('.json', '_historical.json');
     }
    
-    console.log(historical+'   |'+file_url);
+ 
     $.ajax({
         url: file_url, 
         success: function() { 
@@ -1240,7 +1421,11 @@ function open_forecats_window (messages, st_id, param, location_name, observatio
         $(".loading_div").fadeOut(10);
         $("button").css({ "button": "animation: intro 2s cubic-bezier(0.03, 1.08, 0.56, 1); animation-delay: 2s;" });
 
-
+        try {
+            side_by_side_plots(param, current_observation_unit, 'Model Caomparaison', precomputer_forecasts);
+        }catch (error) {
+            console.error('An error occurred while running the side_by_side_plots function:', error);
+          }
         try {
             get_plot(location_name, param, current_observation_unit, 'plot_model_', 'plot_resample_', false, precomputer_forecasts, '');
             get_plot(location_name, param, current_observation_unit, 'plot_model_historical', 'plot_resample_historical', false, precomputer_forecasts, 'historical');
