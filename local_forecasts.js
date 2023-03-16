@@ -226,6 +226,60 @@ function create_map(sites, param) {
                 ]
             }
         });
+
+        
+
+        map.on('load', function() {
+            map.addSource('pm25', {
+                type: 'geojson',
+                data: 'https://gis.epa.ie/geoserver/EPA/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=EPA:AIR_PM2_5&maxFeatures=50&outputFormat=application%2Fjson'
+            });
+        
+            // add the heatmap layer
+            map.addLayer({
+                id: 'pm25-heatmap',
+                type: 'heatmap',
+                source: 'pm25',
+                paint: {
+                    // increase intensity as zoom level increases
+                    'heatmap-intensity': {
+                        stops: [
+                            [11, 1],
+                            [15, 3]
+                        ]
+                    },
+                    // increase radius as zoom level increases
+                    'heatmap-radius': {
+                        stops: [
+                            [11, 15],
+                            [15, 20]
+                        ]
+                    },
+                    // decrease opacity to transition into the circle layer
+                    'heatmap-opacity': {
+                        default: 1,
+                        stops: [
+                            [14, 1],
+                            [15, 0]
+                        ]
+                    },
+                    // color ramp for heatmap density
+                    'heatmap-color': [
+                        'interpolate',
+                        ['linear'],
+                        ['heatmap-density'],
+                        0, 'rgba(33,102,172,0)',
+                        0.2, 'rgb(103,169,207)',
+                        0.4, 'rgb(209,229,240)',
+                        0.6, 'rgb(253,219,199)',
+                        0.8, 'rgb(239,138,98)',
+                        1, 'rgb(178,24,43)'
+                    ]
+                }
+            });
+        });
+
+        
     
         map.addLayer({
             id: 'cluster-count',
@@ -258,99 +312,10 @@ function create_map(sites, param) {
                 'circle-stroke-color': 'black'
             }
         });
-        // Add a heatmap layer to the map
-        // Set up the Earth Engine API client
-        var earthEngineApiScript = document.createElement('script');
-        earthEngineApiScript.src = 'https://ajax.googleapis.com/ajax/libs/earthengine/0.1.343/earthengine-api.min.js';
-        
-        // Append the script element to the head of the document
-        document.head.appendChild(earthEngineApiScript);
-        
-        // Wait for the Earth Engine API to load and initialize
-        earthEngineApiScript.onload = function() {
-          ee.initialize();
-          var collection = ee.ImageCollection('COPERNICUS/S5P/NRTI/L3_NO2')
-          .filterDate('2022-01-01', '2022-01-31')
-          .select('NO2_column_number_density')
-          .mean();
 
-          // Once the map has loaded, add the heatmap layer
-        map.on('load', function () {
-            // Convert the Earth Engine image to a raster tileset using the Earth Engine API
-            var url = collection.getThumbURL({
-                dimensions: '512',
-                region: '-180,-90,180,90'
-            });
-    
-            // Add the raster tileset to the map as a raster source
-            map.addSource('no2', {
-                'type': 'raster',
-                'tiles': [url],
-                'tileSize': 512,
-                'maxzoom': 12
-            });
-    
-            // Add a heatmap layer to the map using the raster source
-            map.addLayer({
-                'id': 'no2-heatmap',
-                'type': 'heatmap',
-                'source': 'no2',
-                'maxzoom': 12,
-                'paint': {
-                // Increase the heatmap weight based on frequency and property magnitude
-                'heatmap-weight': [
-                    'interpolate',
-                    ['linear'],
-                    ['get', 'heatmapDensity'],
-                    0, 0,
-                    1, 1
-                ],
-                // Increase the heatmap color weight weight by zoom level
-                // heatmap-intensity is a multiplier on top of heatmap-weight
-                'heatmap-intensity': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    0, 1,
-                    12, 3
-                ],
-                // Color ramp for heatmap.  Domain is 0 (low) to 1 (high).
-                // Begin color ramp at 0-stop with a 0-transparancy color
-                // to create a blur-like effect.
-                'heatmap-color': [
-                    'interpolate',
-                    ['linear'],
-                    ['heatmap-density'],
-                    0, 'rgba(33,102,172,0)',
-                    0.2, 'rgb(103,169,207)',
-                    0.4, 'rgb(209,229,240)',
-                    0.6, 'rgb(253,219,199)',
-                    0.8, 'rgb(239,138,98)',
-                    1, 'rgb(178,24,43)'
-                ],
-                // Adjust the heatmap radius by zoom level
-                'heatmap-radius': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    0, 2,
-                    12, 20
-                ],
-                // Transition from heatmap to circle layer by zoom level
-                'heatmap-opacity': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    7, 1,
-                    9, 0
-                ]
-                }
-            });
-            });
-          // Your Earth Engine code goes here...
-        }
 
-        // Define the Earth Engine image collection and date range of interest
+        
+
       
     
         map.on('click', 'clusters', (e) => {
@@ -560,7 +525,7 @@ function csvToArray(str, delimiter = ",") {
 }
 
 
-function read_api_baker(location,param,unit,forecasts_div,button_option=false, historical=2, reinforce_training=2,hpTunning=2 ){
+function read_api_baker(location,param,unit,forecasts_div,button_option=false, historical=2, reinforce_training=2,hpTunning=2, resample = true){
     var title = 'Near Realtime Forecasts';
     if (button_option){
         $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'_color"  href="#">'+title+'</button>');
@@ -596,13 +561,97 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
 
                     data_str = data.replace(/NaN/g, '""')
                     data_str = JSON.parse(data_str);
+
+                    master_data.master_datetime = data_str.forecasts.time;
+                    master_data.master_observation = data_str.forecasts.value;
+                    master_data.master_localized = data_str.forecasts.prediction;
+                    master_data.master_uncorrected = data_str.forecasts.pm25_rh35_gcc;
+
+
+                    // Find the first and last dates in the dataset
+                    const firstDate = new Date(master_data.master_datetime[0]);
+                    const lastDate = new Date(master_data.master_datetime[master_data.master_datetime.length - 1]);
+
+                    // Create an array of dates for each hour between the first and last dates
+                    const dateArray = [];
+                    let currentDate = new Date(firstDate);
+                    while (currentDate <= lastDate) {
+                    const formattedDate = currentDate.toISOString().slice(0, 19).replace('T', ' ');
+                    dateArray.push(formattedDate);
+                    currentDate.setHours(currentDate.getHours() + 1);
+                    }
+
+                    // Create a new array for the observation values with empty values for missing dates
+                    const observationArray = [];
+                    const localizedArray = [];
+                    const uncorrectedArray = [];
+                    let dataIndex = 0;
+                    for (let i = 0; i < dateArray.length; i++) {
+                    const date = dateArray[i];
+                    const dataDate = new Date(master_data.master_datetime[dataIndex]);
+                    if (date === dataDate.toISOString().slice(0, 19).replace('T', ' ')) {
+                        observationArray.push(master_data.master_observation[dataIndex]);
+                        localizedArray.push(master_data.master_localized[dataIndex]);
+                        uncorrectedArray.push(master_data.master_uncorrected[dataIndex]);
+                        dataIndex++;
+                    } else {
+                        observationArray.push("");
+                        localizedArray.push("");
+                        uncorrectedArray.push("");
+                    }
+                    }
+
                     
+                    if (resample){
+                        // Calculate the 24-hour averages for observation, localized, and uncorrected arrays
+                        const observation24HourArray = [];
+                        const localized24HourArray = [];
+                        const uncorrected24HourArray = [];
+                        for (let i = 0; i < observationArray.length; i++) {
+                        if (i < 24) {
+                            observation24HourArray.push("");
+                            localized24HourArray.push("");
+                            uncorrected24HourArray.push("");
+                        } else {
+                            const observationSum = observationArray.slice(i - 24, i).reduce((a, b) => a + b, 0);
+                            const localizedSum = localizedArray.slice(i - 24, i).reduce((a, b) => a + b, 0);
+                            const uncorrectedSum = uncorrectedArray.slice(i - 24, i).reduce((a, b) => a + b, 0);
+                            const observationAverage = observationSum / 24;
+                            const localizedAverage = localizedSum / 24;
+                            const uncorrectedAverage = uncorrectedSum / 24;
+                            
+                            if (localizedAverage > 0) {
+                                observation24HourArray.push(observationAverage);
+                                localized24HourArray.push(localizedAverage);
+                                uncorrected24HourArray.push(uncorrectedAverage);
+                              } else {
+                                uncorrected24HourArray.push("");
+                                localized24HourArray.push("");
+                                observation24HourArray.push("");
+                            }
+
+                            
+                        }
+                        }
+                            master_data.master_datetime_2023 = dateArray;
+                            master_data.master_observation_2023 = observation24HourArray;
+                            master_data.master_localized_2023 = localized24HourArray;
+                            master_data.master_uncorrected_2023 = uncorrected24HourArray;
+                    }
+                    else{
+                        master_data.master_datetime_2023 = dateArray;
+                        master_data.master_observation_2023 = observationArray;
+                        master_data.master_localized_2023 = localizedArray;
+                        master_data.master_uncorrected_2023 = uncorrectedArray;
+                    }
+                    // Update the master_data object with the new date and observation arrays
                     
 
-                    master_data.master_datetime_2023 = data_str.forecasts.time;
-                    master_data.master_observation_2023 = data_str.forecasts.value;
-                    master_data.master_localized_2023 = data_str.forecasts.prediction;
-                    master_data.master_uncorrected_2023 = data_str.forecasts.pm25_rh35_gcc;
+                    console.log(master_data.master_uncorrected_2023);
+
+
+
+                                
                     draw_plot(master_data,param,unit,forecasts_div,title,false, button = false,[2023] )
 
 
@@ -828,11 +877,9 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         }
         
        
-        // define the range of dates you are interested in
         var start_date = new Date('2020-01-01');
         var end_date = new Date('2023-03-08');
 
-        // create a list of all the dates in the range
         var all_dates = [];
         var current_date = start_date;
         while (current_date <= end_date) {
@@ -840,18 +887,15 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         current_date.setDate(current_date.getDate() + 1);
         }
 
-        // get the data from your JSON file
         var localized_data = combined_dataset["master_localized_"+year];
         var uncorrected_data = combined_dataset["master_uncorrected_"+year];
         var observation_data = combined_dataset["master_observation_"+year];
         var datetime_data = combined_dataset["master_datetime_"+year];
 
-        // check which dates are missing
         var missing_dates = all_dates.filter(function(date) {
         return datetime_data.indexOf(date) === -1;
         });
 
-        // remove the data points for the missing dates
         missing_dates.forEach(function(date) {
         var index = datetime_data.indexOf(date);
         if (index >= 0) {
@@ -862,7 +906,6 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         }
         });
 
-        // create the plotly traces
         var master_localized = {
         type: "scatter",
         mode: "lines",
