@@ -345,6 +345,11 @@ function create_map(sites, param) {
     map.on("sourcedata", function(e) {
         if (map.getSource('locations_dst') && map.isSourceLoaded('locations_dst')) {
             var features = map.querySourceFeatures('locations_dst');
+
+
+            
+
+              
             $.each(features, function(index, site) {
                 if(site.properties.location_id){
                     var l_id =site.properties.location_id;
@@ -413,11 +418,15 @@ function add_the_banner(site, param) {
     
     precomputed_forecasts = $.parseJSON(site.precomputed_forecasts)
     obs_options =  $.parseJSON(site.obs_options)
+    
     if(site.observation_source){
         
         const obj = document.getElementsByClassName("observation_value");
+        const obs_values = Math.floor(Math.random() * 130 + 210) / 10;
+ 
+
         animateValue(obj, 100, 0, 5000);
-        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "' + site.forecasted_value + '" current_observation_unit= "' + obs_options[0].pm25.unit+ ' " latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+precomputed_forecasts[0].pm25.forecasts+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last model update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value">----<span class="observation_unit">' + obs_options[0].pm25.unit+ ' </span> </h1> <span class="source">Forecasts Source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';
+        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "' + site.forecasted_value + '" current_observation_unit= "' + obs_options[0].pm25.unit+ ' " latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+precomputed_forecasts[0].pm25.forecasts+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last model update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value"></span> </h1> <span class="source">Forecasts Source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';
         $(".pollutant-banner-o").prepend(html);
 
         
@@ -525,7 +534,7 @@ function csvToArray(str, delimiter = ",") {
 }
 
 
-function read_api_baker(location,param,unit,forecasts_div,button_option=false, historical=2, reinforce_training=2,hpTunning=2, resample = true){
+function read_api_baker(location,param,unit,forecasts_div,button_option=false, historical=2, reinforce_training=2,hpTunning=2, resample = false){
     var title = 'Near Realtime Forecasts';
     if (button_option){
         $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'_color"  href="#">'+title+'</button>');
@@ -1064,6 +1073,7 @@ function side_by_side_plots(param, unit, title, precomputer_forecasts){
           };
           $.getJSON(year2_file, function(data) {
             var previousYearData = data.latest_forecast.data.split('\n').slice(1,-1);
+            
             var previousYearUncorrected = previousYearData.map(function(row) {
               return row.split(',')[1];
             });
@@ -1099,8 +1109,11 @@ function side_by_side_plots(param, unit, title, precomputer_forecasts){
             var layout = {
               title: title,
               xaxis: {
-                title: 'Datetime'
+                title: 'Datetime',
+                tickformat: '%m-%d',
+                type: 'Date'
               },
+              
               yaxis: {
                 title: param+ ' Concentration ('+unit+')'
               },
