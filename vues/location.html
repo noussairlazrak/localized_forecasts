@@ -730,22 +730,24 @@
 }
 
 .btn-group.plot_additional_features button {
-    padding: 0 !important;
+    padding: 6px !important;
     border: none !important;
-    color: white;
+    color: #453f3f;
     text-transform: capitalize;
     border-right: 1px black solid !important;
     border-radius: 0px;
-    background: black;
-    margin: 4px;
+    background: #efb90b;
+    margin: 3px;
+    font-size: 13px !important;
 }
 .btn-group.plot_additional_features button:hover {
     color: white !important;
 }
 
 button.btn.btn-outline-primary.change_plot.main_plot_for_api_baker_color {
-    background: #026d02;
-    /*animation: blinker 2s cubic-bezier(0.03, 1.08, 0.56, 1) infinite; */
+    background: #ffffff;
+    /* animation: blinker 2s cubic-bezier(0.03, 1.08, 0.56, 1) infinite; */
+    color: #d11310;
 }
 
 
@@ -778,7 +780,7 @@ a.btn.retrain_model {
 }
 
 .overlay-api-baker {
-    background: #ffffffeb;
+    background: #161a1e;
     position: absolute;
     width: 100%;
     height: 410px;
@@ -800,13 +802,15 @@ a.btn.retrain_model {
     flex-direction: row;
     flex-wrap: wrap;
     align-content: center;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: flex-start;
-    font-size: 14px;
-    z-index: 120;
-    /* background: white; */
-    top: 84px;
-
+    font-size: 16px;
+    z-index: 1;
+    max-width: 100%;
+    background-color: #161a1e;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    color: #FFFFFF;
 }
 
 
@@ -816,6 +820,88 @@ a.btn.retrain_model {
 .form-check{
   display: none;
 }
+
+.lf-fcst-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+}
+
+.lf-fcst-name {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.lf-fcst-value {
+  font-size: 30px;
+  font-weight: bold;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.lf-fcst-value-unit {
+  font-size: 14px;
+}
+
+.lf-fcst-change-rate {
+  font-size: 14px;
+  color: #28A745;
+  display: flex;
+  align-items: center;
+}
+
+.lf-fcst-change-rate i.fa-caret-up {
+  color: #28A745;
+  margin-right: 5px;
+}
+
+.lf-fcst-change-rate i.fa-caret-down {
+  color: #DC3545;
+  margin-right: 5px;
+}
+
+.trend-down .lf-fcst-value{
+    color: rgb(63 203 129);
+}
+.trend-down .lf-fcst-change{
+    color: rgb(63 203 129);
+}
+.trend-up > .lf-fcst-value, .lf-fcst-change {
+    color: rgb(246, 70, 93);
+}
+.trend-up .lf-fcst-change{
+    color: rgb(246, 70, 93);
+}
+
+.lf-fcst-value span {
+    font-size: 13px;
+    font-weight: initial;
+}
+
+#loading-screen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgb(0 0 0 / 85%);
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#loading-screen .spinner-border {
+  margin-bottom: 10px;
+}
+
+
 </style>
 <div class="container forecasts-box">
     <div class="modal-dialog modal-dialog-centered modal-md">
@@ -825,18 +911,14 @@ a.btn.retrain_model {
                 <div class="forecasts-view row text-center">
                     <h3 class="module_title location_parameter_name">
                     </h3>
+                    
                     <h1 class="sub-title site-name11"><span class="current_location_name"></span>
                     </h1>
-                    <!--
-                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <h5 class="current_param_1"></h5>
+                    <div class="row local_forecats_window">
+                      
+                    </div>
 
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="pills-profile-tab" data-bs-toggle="pill"
-                                data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
-                                aria-selected="false">Forecasts</button>
-                        </li>
-                    </ul>
-                    -->
                     <div class="tab-content" id="pills-tabContent">
                         <div class="tab-pane fade" id="pills-home" role="tabpanel"
                             aria-labelledby="pills-home-tab">
@@ -851,16 +933,14 @@ a.btn.retrain_model {
                                                 <div class="obs_value_container">
                                                     <h1 class="observation_value current_observation_value">
                                                     </h1>
-                                                    <span class="observation_unit  current_observation_unit_span">ppm</span>
+                                                    <span class="observation_unit  current_observation_unit_span"></span>
                                                 </div>
                                                 
                                             </div>
                                     </div>
 
                                     <div id="observations_only"></div>
-                                    <p class="caption">
-                                        Source: <a href="https://openaq.org/#/">OpenAQ</a>
-                                    </p>
+                                   
                                 </div>
                             </div>
                             
@@ -869,27 +949,17 @@ a.btn.retrain_model {
                         <div class="tab-pane fade show active" id="pills-profile" role="tabpanel"
                             aria-labelledby="pills-profile-tab">
                             <div class="row">
-                                <div class="col-md-4">
-                                    <h5 class="current_param_1"></h5>
-                                        <div class="">
-                                            
-                                            <div class="obs_value_container">
-                                                <span class="latest-obs">Next Hour Forecast</span>
-                                                <h1 class="observation_value current_observation_value">
-                                                </h1>
-                                                <span class="observation_unit current_observation_unit_span">testtt</span>
-                                            </div>
-                                            
-                                        </div>
-                                </div>
+                              
+                                
                                 <div class="btn-group plot_additional_features" role="group">
 
                                 </div>
-                                <div class="loading_forecasts">
-                                    <div class="load">
-                                        <div class="dot"></div>
-                                        <div class="outline"><span></span></div>
-                                     </div>
+                                
+                                <div id="loading-screen">
+                                  <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                  </div>
+                                  <p>Loading content...</p>
                                 </div>
                                 
                                 <div class="lf-container">
@@ -897,24 +967,27 @@ a.btn.retrain_model {
                                     
                                      <div class="api_baker_field">
                                       <div id='main_plot_for_api_baker' class='model_plots main_plot_for_api_baker' ></div>
-                                      <div class="plot_options">
+
+
+                                      <div class="plot_options" >
                                         <div class="form-check form-switch">
                                           <input class="form-check-input retrain_model" name="auto_ref" type="checkbox" role="switch" site="" param="" unit="" id="auto_refresh">
                                           <label class="form-check-label">Auto Refresh</label>
                                         </div>
                                         <div class="form-check form-switch">
                                           <input class="form-check-input retrain_model" name="model_update"  type="checkbox" role="switch"  site="" param="" unit="" id="model_update" >
-                                          <label class="form-check-label" >Update Forecasts Model</label>
+                                          <label class="form-check-label" >Retraining</label>
                                         </div>
                                         <div class="form-check form-switch">
                                           <input class="form-check-input retrain_model" name="model_update_hpt" type="checkbox" role="switch"  site="" param="" unit="" id="model_update_hp">
-                                          <label class="form-check-label" >Update Forecasts with Hyperparameter Tunned</label>
+                                          <label class="form-check-label" >Fine-tuning</label>
                                         </div>
                                         <div class="form-check form-switch">
                                           <input class="form-check-input retrain_model" name="display_historical"  type="checkbox" role="switch" site="" param="" unit="" id="display_historical">
-                                          <label class="form-check-label" >Display Historical Time Series</label>
+                                          <label class="form-check-label" >Historical Data</label>
                                         </div>
                                       </div>
+                                      
                                       
                                       <div class="overlay-api-baker"> retraining model.....</div>
                                      </div>

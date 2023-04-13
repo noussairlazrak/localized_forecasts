@@ -75,6 +75,17 @@ input#filter-input:focus{
     outline: none;
 }
 
+.modal-body {
+    background: #161a1e;
+    color: white !important;
+}
+
+
+
+.modal-body h1, h2,h3,h4,h5 {
+    color: white !important;
+}
+
 </style>
 </head>
 
@@ -194,12 +205,14 @@ input#filter-input:focus{
     </footer>
     
     <script src="./assets/js/plugins.js?v=1.2.2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.11/jquery.csv.min.js"></script>
     <script src="./assets/js/theme.js?v=1.2.2"></script>
 
-    <script src="https://js.pusher.com/7.2/pusher.min.js?v=1.2.2"></script>
     
-    <script src="local_forecasts.js?v=1.2.2"></script>
-    <script src="local_forecasts_assets.js?v=1.2.2"></script>
+    <script src="local_forecasts.js?v=1.3.2"></script>
+    <script src="local_forecasts_assets.js?v=1.3."></script>
+    
+
     <script>
     $(document).on('click', '.btn-close', function(e) {
         $('.forecasts_container').css('display', 'none');

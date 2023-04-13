@@ -54,6 +54,32 @@ function pollutant_details(code) {
     return pollutant_details;
 }
 
+function rewritePercentage(percentage) {
+    var roundedPercentage = parseFloat(percentage).toFixed(2);
+  
+    var rewrittenPercentage = roundedPercentage.toString() + '%';
+  
+    return rewrittenPercentage;
+  }
+
+  function calculateDifferenceAndPercentage(num1, num2) {
+    var difference = num2 - num1;
+    var percentageChange = ((num2 - num1) / num1) * 100;
+    return [difference, percentageChange];
+  }
+
+  function rewriteUnits(text) {
+    text = text.replace(/ugm-3/g, 'μg/m³');
+    text = text.replace(/ppb/g, 'μg/m³');
+    text = text.replace(/ppm/g, 'mg/m³');
+    return text;
+  }
+
+  function cleanText(text) {
+    text = text.replace(/-/g, ' '); 
+    return text.trim(); 
+  }
+  
 
 
 function add_marker(map, lat, long, open_aq_id, param, site) {
@@ -379,7 +405,7 @@ function create_map(sites, param) {
         const precomputed_forecasts = $.parseJSON(e.features[0].properties.precomputed_forecasts);
         const obs_option =  $.parseJSON( e.features[0].properties.obs_options);
         const observation_unit= obs_option[0].pm25.unit;
-        console.log(observation_unit);
+
         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
             coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
         }
@@ -426,7 +452,7 @@ function add_the_banner(site, param) {
  
 
         animateValue(obj, 100, 0, 5000);
-        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "' + site.forecasted_value + '" current_observation_unit= "' + obs_options[0].pm25.unit+ ' " latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+precomputed_forecasts[0].pm25.forecasts+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last model update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value"></span> </h1> <span class="source">Forecasts Source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';
+        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "' + site.forecasted_value + '" current_observation_unit= "' + obs_options[0].pm25.unit+ ' " latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+precomputed_forecasts[0].pm25.forecasts+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last model update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value">'+obs_values+'</span> </h1> <span class="source">Forecasts Source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';
         $(".pollutant-banner-o").prepend(html);
 
         
@@ -535,7 +561,7 @@ function csvToArray(str, delimiter = ",") {
 
 
 function read_api_baker(location,param,unit,forecasts_div,button_option=false, historical=2, reinforce_training=2,hpTunning=2, resample = false){
-    var title = 'Near Realtime Forecasts';
+    var title = 'Live';
     if (button_option){
         $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'_color"  href="#">'+title+'</button>');
     }
@@ -653,13 +679,8 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                         master_data.master_localized_2023 = localizedArray;
                         master_data.master_uncorrected_2023 = uncorrectedArray;
                     }
-                    // Update the master_data object with the new date and observation arrays
-                    
-
-                    console.log(master_data.master_uncorrected_2023);
-
-
-
+                   
+      
                                 
                     draw_plot(master_data,param,unit,forecasts_div,title,false, button = false,[2023] )
 
@@ -971,23 +992,30 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
 
         var layout = {
             title: title,
+            plot_bgcolor: 'rgb(22 26 30)',
+            paper_bgcolor: 'rgb(22 26 30)',
+            
             legend: {
-                orientation: 'h',
-                y: 1.2
+                orientation: 'v',
+                x: 1.1,
+                y: 0.5
               },
+            
             font: {
-                family: 'Manrope, sans-serif',
-                size: 18,
-                color: 'rgb(0 0 0)'
-            },
+                family: 'Roboto, sans-serif',
+                color: '#FFFFFF'
+                },
+             
             xaxis: {
-                type: 'date'
+                type: 'date',
+                color: '#FFFFFF'
             },
     
             yaxis: {
                 autorange: true,
                 type: 'linear',
                 title: param+' ' +'[ '+ unit +']',
+                color: '#FFFFFF'
     
             }
         };
@@ -1038,93 +1066,247 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
     
 }
 
-function side_by_side_plots(param, unit, title, precomputer_forecasts){
+function side_by_side_plots(param, unit, title, precomputer_forecasts, observation_unit){
     $(document).ready(function() {
 
         var year1_file = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/" + precomputer_forecasts;
         var year2_file = year1_file.replace('.json', '_historical.json');
         
-        
-        $.getJSON(year1_file, function(data) {
-          var currentYearData = data.latest_forecast.data.split('\n').slice(1,-1);
-          var currentYearUncorrected = currentYearData.map(function(row) {
-            return row.split(',')[1];
-          });
-          var currentYearLocalized = currentYearData.map(function(row) {
-            return row.split(',')[2];
-          });
-          var currentYearObservation = currentYearData.map(function(row) {
-            return row.split(',')[3];
-          });
-          var currentYearUncorrectedTrace = {
-            name: 'Current Year Model',
-            y: currentYearUncorrected,
-            type: 'scatter'
-          };
-          var currentYearLocalizedTrace = {
-            name: 'Current Year Model + ML',
-            y: currentYearLocalized,
-            type: 'scatter'
-          };
-          var currentYearObservationTrace = {
-            name: 'Current Year Observation',
-            y: currentYearObservation,
-            type: 'scatter'
-          };
-          $.getJSON(year2_file, function(data) {
-            var previousYearData = data.latest_forecast.data.split('\n').slice(1,-1);
+        $.getJSON(year1_file, function(dataset1) {
+            var dataArray =  csvToArray(dataset1.latest_forecast.data);
+            var renamedArray_year1 = dataArray.map(function(forecast) {
+                var date = new Date(forecast.forecast_datetime);
+                var formattedDate = date.toLocaleString('en-US', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                return {
+                  datetime: formattedDate.replace(/\d{4}/, '').trim(),
+                  uncorrected_pm25_2022: forecast.uncorrected_pm25,
+                  localized_pm25_2022: forecast.localized_pm25,
+                  observation_2022: forecast.observation,
+                  uncorrected_pm25_24H_2022: forecast.uncorrected_pm25_24H,
+                  observation_24H_2022: forecast.observation_24H,
+                  localized_pm25_24H_2022: forecast.localized_pm25_24H,
+                };
+              });
+
+            $.getJSON(year2_file, function(dataset2) {
+                
+                var dataArray_year2 =  csvToArray(dataset2.latest_forecast.data);
+                var renamedArray_year2 = dataArray_year2.map(function(forecast) {
+                    var date = new Date(forecast.forecast_datetime);
+                    var formattedDate = date.toLocaleString('en-US', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                    return {
+                        datetime: formattedDate.replace(/\d{4}/, '').trim(),
+                        uncorrected_pm25_2023: forecast.uncorrected_pm25,
+                        localized_pm25_2023: forecast.localized_pm25,
+                        observation_2023: forecast.observation,
+                        uncorrected_pm25_24H_2023: forecast.uncorrected_pm25_24H,
+                        observation_24H_2023: forecast.observation_24H,
+                        localized_pm25_24H_2023: forecast.localized_pm25_24H,
+                    };
+                });
+
+              var mergedArray = [];
+
+
+            renamedArray_year1.forEach(function(item1) {
+
+
+            var item2 = renamedArray_year2.find(function(item) {
+                return item.datetime === item1.datetime;
+            });
+
             
-            var previousYearUncorrected = previousYearData.map(function(row) {
-              return row.split(',')[1];
+
+            if (item2) {
+                mergedArray.push({
+                datetime: item1.datetime,
+                uncorrected_pm25_2022: item1.uncorrected_pm25_2022,
+                localized_pm25_2022: item1.localized_pm25_2022,
+                observation_2022: item1.observation_2022,
+                uncorrected_pm25_24H_2022: item1.uncorrected_pm25_24H_2022,
+                localized_pm25_24H_2022: item1.localized_pm25_24H_2022,
+                observation_24H_2022: item1.observation_24H_2022,
+                
+                
+                uncorrected_pm25_2023: item2.uncorrected_pm25_2023,
+                localized_pm25_2023: item2.localized_pm25_2023,
+                observation_2023: item2.observation_2023,
+                uncorrected_pm25_24H_2023: item2.uncorrected_pm25_24H_2023,
+                localized_pm25_24H_2023: item2.localized_pm25_24H_2023,
+                observation_24H_2023: item2.observation_24H_2023,
+
+
+                });
+            }
             });
-            var previousYearLocalized = previousYearData.map(function(row) {
-              return row.split(',')[2];
+
+
+            function formatDate(datetime) {
+                var date = new Date(datetime);
+                var day = date.getDate();
+                var month = date.getMonth() + 1;
+                var hour = date.getHours();
+                var minute = date.getMinutes();
+            
+                return day + '/' + month + ' ' + hour + ':' + minute;
+            }
+            
+            mergedArray.forEach(function(item, index) {
+                item.datetime = formatDate(item.datetime);
+                var changePercentage = ((item.localized_pm25_2023 - item.localized_pm25_2022) / item.localized_pm25_2022) * 100;
+                item.change_percentage = changePercentage;
+                if (index > 0) {
+                    var prevItem = mergedArray[index - 1];
+                    var changePercentage2022 = ((item.localized_pm25_2022 - prevItem.localized_pm25_2022) / prevItem.localized_pm25_2022) * 100;
+                    item.change_percentage_prev_hour = changePercentage2022;
+                  } else {
+                    item.change_percentage_prev_hour = null;
+                  }
             });
-            var previousYearObservation = previousYearData.map(function(row) {
-              return row.split(',')[3];
-            });
-            var previousYearUncorrectedTrace = {
-              name: 'Previous Year Model',
-              y: previousYearUncorrected,
-              type: 'scatter'
-            };
-            var previousYearLocalizedTrace = {
-              name: 'Previous Year Model + ML',
-              y: previousYearLocalized,
-              type: 'scatter'
-            };
-            var previousYearObservationTrace = {
-              name: 'Previous Year Observation',
-              y: previousYearObservation,
-              type: 'scatter'
-            };
-            var data = [
-              currentYearUncorrectedTrace,
-              currentYearLocalizedTrace,
-              currentYearObservationTrace,
-              previousYearUncorrectedTrace,
-              previousYearLocalizedTrace,
-              previousYearObservationTrace
-            ];
-            var layout = {
-              title: title,
-              xaxis: {
-                title: 'Datetime',
-                tickformat: '%m-%d',
-                type: 'Date'
-              },
-              
-              yaxis: {
-                title: param+ ' Concentration ('+unit+')'
-              },
-              legend: {
-                x: 1,
-                y: 1
+
+            function findRowByDateTime(data, month, day, hour) {
+                for (var i = 0; i < data.length; i++) {
+                  var datetime = data[i].datetime;
+                  var datetimeParts = datetime.split(' ');
+                  var dateParts = datetimeParts[0].split('/');
+                  var rowMonth = parseInt(dateParts[1]);
+                  var rowDay = parseInt(dateParts[0]);
+                  var rowHour = parseInt(datetimeParts[1].split(':')[0]);
+                  
+                  if (rowMonth === month && rowDay === day && rowHour === hour) {
+                    return data[i];
+                  }
+                }
+                
+                return null;
               }
+            var currentDate = new Date();
+            var currentDay = currentDate.getDate();
+            var currentMonth = currentDate.getMonth() + 1; 
+            var currentHour = currentDate.getHours();
+
+              var row = findRowByDateTime(mergedArray, currentMonth, currentDay, currentHour);
+              if (row !== null) {
+                console.log(row)
+                var localized_pm25_2022 = row.localized_pm25_2022;
+                var localized_pm25_2023 = row.localized_pm25_2023;
+                var observation_2022 = row.observation_2022;
+                var observation_2023 = row.observation_2023;
+                var uncorrected_pm25_2022 = row.uncorrected_pm25_2022;
+                var uncorrected_pm25_2023 = row.uncorrected_pm25_2023;
+               
+                var localized_pm25_24H_2022 = row.localized_pm25_24H_2022;
+                var localized_pm25_24H_2023 = row.localized_pm25_24H_2023;
+                var uncorrected_pm25_24H_2022 = row.uncorrected_pm25_24H_2022;
+                var uncorrected_pm25_24H_2023 = row.uncorrected_pm25_24H_2023;
+                var observation_24H_2022 = row.observation_24H_2022;
+                var observation_24H_2023 = row.observation_24H_2023;
+                
+                
+                var change_percentage = row.change_percentage;
+                var change_percentage_prev_hour = row.change_percentage_prev_hour;
+
+                var diffrence_last_year = calculateDifferenceAndPercentage(localized_pm25_2022,localized_pm25_2023)
+
+
+                $('.local_forecats_window').html('<div class="col-md-4"> <div class="lf-fcst-info"> <div class="lf-fcst-name">CURRENT</div> <div class="lf-fcst-value">'+localized_pm25_2022+'<span>'+rewriteUnits(observation_unit)+'</span></div> <div class="lf-fcst-change current_observation_unit_span"><i class="fas fa-arrow-up"></i> </div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info years_difference"> <div class="lf-fcst-name">SAME DAY/ LAST YEAR </div> <div class="lf-fcst-value">'+localized_pm25_2023+'<span>'+rewriteUnits(observation_unit)+'</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_year"></span> '+rewritePercentage(diffrence_last_year[1])+'</div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info days_difference"> <div class="lf-fcst-name">PREVIOUS HOUR</div> <div class="lf-fcst-value"><span class="trend_sign_diffrence_last_day"></span>'+rewritePercentage(change_percentage_prev_hour)+'</div> <div class="lf-fcst-change"><i class="fas fa-arrow-up"></i> </div> </div> </div>')
+                
+                
+                if (diffrence_last_year[0] > 0) {
+                  $(".trend_sign_diffrence_last_year").html('<svg style="color: red" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z" fill="red"></path> </svg>');
+                  $('.years_difference').addClass("trend-up");
+
+                } else {
+                    $(".trend_sign_diffrence_last_year").html('<svg style="color: rgb(48, 169, 4);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z" fill="#30a904"></path> </svg>');
+                    $('.years_difference').addClass("trend-down");
+                }
+
+                if (change_percentage_prev_hour > 0) {
+                    $(".trend_sign_diffrence_last_day").html('<svg style="color: red" xmlns="http://www.w3.org/2000/svg" width="40" height="25" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z" fill="red"></path> </svg>');
+                    $('.days_difference').addClass("trend-up");
+  
+                  } else {
+                      $(".trend_sign_diffrence_last_day").html('<svg style="color: rgb(48, 169, 4);" xmlns="http://www.w3.org/2000/svg" width="40" height="25" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z" fill="#30a904"></path> </svg>');
+                      $('.days_difference').addClass("trend-down");
+                  }
+            
+
+              } else {
+                console.log('Row not found');
+              }
+
+            var dates = mergedArray.map(function(item) { return item.datetime; });
+            var uncorrected_pm25_2022 = mergedArray.map(function(item) { return item.uncorrected_pm25_2022; });
+            var uncorrected_pm25_24H_2022 = mergedArray.map(function(item) { return item.uncorrected_pm25_24H_2022; });
+            var observation_2022 = mergedArray.map(function(item) { return item.observation_2022; });
+            var observation_24H_2022 = mergedArray.map(function(item) { return item.observation_24H_2022; });
+            var localized_pm25_2022 = mergedArray.map(function(item) { return item.localized_pm25_2022; });
+            var localized_pm25_24H_2022 = mergedArray.map(function(item) { return item.localized_pm25_24H_2022; });
+           
+
+            var uncorrected_pm25_2023 = mergedArray.map(function(item) { return item.uncorrected_pm25_2023; });
+            var uncorrected_pm25_24H_2023 = mergedArray.map(function(item) { return item.uncorrected_pm25_24H_2023; });
+            var observation_2023 = mergedArray.map(function(item) { return item.observation_2023; });
+            var observation_24H_2023 = mergedArray.map(function(item) { return item.observation_24H_2023; });
+            var localized_pm25_2023 = mergedArray.map(function(item) { return item.localized_pm25_2023; });
+            var localized_pm25_24H_2023 = mergedArray.map(function(item) { return item.localized_pm25_24H_2023; });
+
+            console.log(mergedArray);
+
+            var trace_uncorrected_pm25_2022 = {
+            x: dates,
+            y: uncorrected_pm25_2022,
+            mode: 'lines',
+            name: 'uncorrected_pm25_2022'
             };
-            Plotly.newPlot('comparaison_plot_js', data, layout);
+            
+            var trace_localized_pm25_2022 = {
+                x: dates,
+                y: localized_pm25_2022,
+                mode: 'lines',
+                name: 'localized_pm25_2022'
+                };
+
+            var trace_uncorrected_pm25_2023 = {
+            x: dates,
+            y: uncorrected_pm25_2023,
+            mode: 'lines',
+            name: 'uncorrected_pm25_2023'
+            };
+
+            var trace_localized_pm25_2023 = {
+                x: dates,
+                y: localized_pm25_2023,
+                mode: 'lines',
+                name: 'localized_pm25_2023'
+                };
+
+
+            var layout = {
+            title: 'PM2.5 Data for 2022 and 2023',
+            plot_bgcolor: 'rgb(22 26 30)',
+            paper_bgcolor: 'rgb(22 26 30)',
+
+            font: {
+                family: 'Roboto, sans-serif',
+                color: '#FFFFFF'
+            },
+                        
+            xaxis: {
+                title: 'Date',
+                color: '#FFFFFF'
+            },
+            yaxis: {
+                title: 'PM2.5',
+                color: '#FFFFFF'
+            },
+            };
+
+
+            Plotly.newPlot('comparaison_plot_js', [trace_uncorrected_pm25_2022, trace_uncorrected_pm25_2023, trace_localized_pm25_2022,trace_localized_pm25_2023], layout);
+        
+            });
           });
-        });
 
         $('.plot_additional_features').append('<button type="button" change_to="comparaison_plot_js" class="btn btn-outline-primary change_plot comparaison_plot_js"  href="#">'+title+'</button>');
       });
@@ -1312,19 +1494,22 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
 
                     var layout = {
                         title: 'Bias Corrected Model',
+                        plot_bgcolor: 'rgb(22 26 30)',
+                        paper_bgcolor: 'rgb(22 26 30)',
                         font: {
-                            family: 'Helvetica, sans-serif',
-                            size: 18,
-                            color: '#7f7f7f'
+                            family: 'Roboto, sans-serif',
+                            color: '#FFFFFF'
                         },
                         xaxis: {
-                            type: 'date'
+                            type: 'date',
+                            color: '#FFFFFF'
                         },
 
                         yaxis: {
                             autorange: true,
                             type: 'linear',
-                            title: param+' ' +'[ '+ unit +']'
+                            title: param+' ' +'[ '+ unit +']',
+                            color: '#FFFFFF'
 
                         },
                         shapes: [{
@@ -1348,20 +1533,25 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
 
                     var layout_resample = {
                         title: 'Bias Corrected Model '+ historical +' '+ resample_window+"H Rolling Averages",
+
+                        plot_bgcolor: 'rgb(22 26 30)',
+                        paper_bgcolor: 'rgb(22 26 30)',
+
                         font: {
-                            family: 'Helvetica, sans-serif',
-                            size: 18,
-                            color: '#7f7f7f'
+                            family: 'Roboto, sans-serif',
+                            color: '#FFFFFF'
                         },
                         xaxis: {
                             type: 'date',
+                            color: '#FFFFFF'
                            
                         },
 
                         yaxis: {
                             autorange: true,
                             type: 'linear',
-                            title: param+' ' +'[ '+ unit +']'
+                            title: param+' ' +'[ '+ unit +']',
+                            color: '#FFFFFF'
 
                         },
                         shapes: [{
@@ -1459,16 +1649,19 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
 
 function open_forecats_window (messages, st_id, param, location_name, observation_value, current_observation_unit, obs_src,precomputer_forecasts){
     $(".loading_div").fadeIn(10);
-    console.log(location_name);
-    console.log('st_id : '+st_id);
+
+   
+
     $(".forecasts_container").load("vues/location.html?st=" + st_id + '&param=' + param + '&location_name=' + location_name +'&obs_src='+obs_src, function() {
+        $('#loading-screen').show();
         $(this).fadeOut(10);
         $(this).fadeIn(10);
         setInterval(function() {
             var message = messages[Math.floor(Math.random() * messages.length)];
             $(".messages").html(message)
         }, 100);
-        $('.current_location_name').html(location_name.replace(/\_/g, ' ').replace(/\./g, ' ') );
+        var location_name_clean = cleanText(location_name);
+        $('.current_location_name').html(location_name_clean);
         $('.current_param').html(pollutant_details(param)).name;
         $('.current_param_1').html(pollutant_details(param).name);
         $('.current_observation_value').html(observation_value);
@@ -1478,7 +1671,7 @@ function open_forecats_window (messages, st_id, param, location_name, observatio
         $("button").css({ "button": "animation: intro 2s cubic-bezier(0.03, 1.08, 0.56, 1); animation-delay: 2s;" });
 
         try {
-            side_by_side_plots(param, current_observation_unit, 'Model comparison', precomputer_forecasts);
+            side_by_side_plots(param, current_observation_unit, 'Model comparison', precomputer_forecasts, current_observation_unit);
         }catch (error) {
             console.error('An error occurred while running the side_by_side_plots function:', error);
           }
@@ -1490,6 +1683,8 @@ function open_forecats_window (messages, st_id, param, location_name, observatio
           }
        
         read_api_baker(st_id,param,current_observation_unit,'main_plot_for_api_baker', true, historical=2, reinforce_training=2,hpTunning=2);
+
+        $('#loading-screen').hide();
         
     });
 }
@@ -1506,6 +1701,8 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
     var current_observation_unit = $(this).attr("current_observation_unit");
     var obs_src = $(this).attr("obs_src");
     open_forecats_window (["Loading", "Please hold"], location_id, 'pm25', location_name, observation_value, current_observation_unit, observation_source, precomputed_forecasts)
+
+    
 
 
 
@@ -1576,7 +1773,7 @@ function update_api_baker(location,param,unit,forecasts_div){
                     master_data.master_datetime = master_datetime;
                     master_data.master_observation = master_observation;
                     master_data.master_localized = master_localized;
-                    //console.log(master_data);
+
                     draw_plot(master_data,param,unit,forecasts_div,'Localized forecasts (Pretrained model)',false)
 
                     $('.retrain_model').attr("param",param);
@@ -1605,15 +1802,6 @@ $(document).on("click", '.retrain_model', function() {
     
    });
 
-   Pusher.logToConsole = true;
-   var pusher = new Pusher('66c4558c3fed9445e375', {
-     cluster: 'eu'
-   });
-
-   var channel = pusher.subscribe('my-channel');
-   channel.bind('my-event', function(data) {
-     alert(JSON.stringify(data));
-   });
 
 
    $(document).on("change", '.form-check-input', function() {
@@ -1677,7 +1865,12 @@ create_map('test','pm25')
 //const sites = ["3995", "8645", "739", "5282"];
 
 //get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param));
-
+$('.modal-dialog').on('show.bs.modal', function () {
+    $('#loading-screen').show();
+  });
+  
+ 
+  
 
 $(document).on('click', '.routing_pollutant_param', function(e) {
     $(".loading_div").fadeIn(100);
