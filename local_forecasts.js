@@ -1014,7 +1014,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
             yaxis: {
                 autorange: true,
                 type: 'linear',
-                title: param+' ' +'[ '+ unit +']',
+                title: pollutant_details(param)+' ' +'[ '+ rewriteUnits(unit) +']',
                 color: '#FFFFFF'
     
             }
@@ -1508,7 +1508,7 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                         yaxis: {
                             autorange: true,
                             type: 'linear',
-                            title: param+' ' +'[ '+ unit +']',
+                            title: pollutant_details('param')+' ' +'[ '+ rewriteUnits(unit) +']',
                             color: '#FFFFFF'
 
                         },
@@ -1550,7 +1550,7 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                         yaxis: {
                             autorange: true,
                             type: 'linear',
-                            title: param+' ' +'[ '+ unit +']',
+                            title: pollutant_details(param)+' ' +'[ '+ rewriteUnits(unit) +']',
                             color: '#FFFFFF'
 
                         },
@@ -1671,7 +1671,7 @@ function open_forecats_window (messages, st_id, param, location_name, observatio
         $("button").css({ "button": "animation: intro 2s cubic-bezier(0.03, 1.08, 0.56, 1); animation-delay: 2s;" });
 
         try {
-            side_by_side_plots(param, current_observation_unit, 'Model comparison', precomputer_forecasts, current_observation_unit);
+            side_by_side_plots(param, current_observation_unit, 'Historical Comparison', precomputer_forecasts, current_observation_unit);
         }catch (error) {
             console.error('An error occurred while running the side_by_side_plots function:', error);
           }
