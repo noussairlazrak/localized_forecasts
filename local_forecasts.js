@@ -582,37 +582,31 @@ function csvToArray(str, delimiter = ",") {
 
 function read_api_baker(location,param,unit,forecasts_div,button_option=false, historical=1, reinforce_training=2,hpTunning=2, resample = false){
     var title = 'Live';
+    var messages1 = ["Please hold", "Connecting with API Baker", "Pretrained model not found"];
+    var messages2 = ["Retraining....", "Connecting with SMCE", "Waiting for SMCE"];
+    
+    var index = 0;
+
+    $('.loader').show();
     if (button_option){
         $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'_color"  href="#">'+title+'</button>');
+        $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'_historical" class="btn btn-outline-primary change_plot '+forecasts_div+'_color"  href="#">model historical data</button>');
     }
    
  
-    $(".overlay-api-baker").fadeIn(10);
+   // $(".overlay-api-baker").fadeIn(10);
     var messages = ["Generating data", "Connecting to SMCE", "Fetching the data from API Baker", "Fetching data from GMAO FTP", "Fetching observations", "Getting the forecasts", "Please wait...", "Connecting...."];
    
     
     var param_code = pollutant_details(param).id
-    var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
+    var file_url = "https://ngoschatbot.com/cls/api-calls.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
     console.log(file_url);
-    var progressBar = $('<div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div></div>');
-    $('.overlay-api-baker').append(progressBar);
+
     
-    $(".progress-bar").css("width", "0%").attr("aria-valuenow", 0).text("0%");
-    $.ajax({
+
+    var ajaxCall = $.ajax({
         url: file_url, 
-        xhr: function() {
-            var xhr = new window.XMLHttpRequest();
-            xhr.addEventListener("progress", function(evt) {
-                if (evt.lengthComputable) {
-                    var percentComplete = evt.loaded / evt.total;
-                    percentComplete = parseInt(percentComplete * 100);
-                    $(".progress-bar").css("width", percentComplete + "%").attr("aria-valuenow", percentComplete).text(percentComplete + "%");
-                }
-            }, false);
-            return xhr;
-        },
         success: function() {
-            progressBar.remove(); 
             d3.json(file_url, function(error, data) {
                 if (error) {
                     alert(error);
@@ -641,9 +635,13 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                    var current_data = get_current_hour_forecasts(master_data);
                    var filteredmaster_data = filter_data_set_by_date(master_data,2,-5)
                    
+                   var historical_master_data = filter_data_set_by_date(master_data,365,20)
+                   
    
                     draw_plot(filteredmaster_data,param,unit,forecasts_div,title,false, button = false )
-
+                    draw_plot(historical_master_data,param,unit,'main_plot_for_api_baker_historical','Model data (historical)',false, button = false )
+                    
+                    $('.loader').hide();
 
 
                     $('.retrain_model').attr("param",param);
@@ -655,7 +653,7 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
 
                     $('.model_data').html('<div class="container my-5"> <h1> Bias Corrected Model Information</h1><div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Total Observations</h5> <p class="card-text fs-3 fw-bold">'+data_str.metrics.total_observation+'</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Last Model Update</h5> <p class="card-text fs-3 fw-bold">'+data_str.metrics.latest_training.substring(0, 19)+'</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Mean Square Error</h5> <p class="card-text"> '+data_str.metrics["mse after training"]+'<br> </p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Mean Absolute Error</h5> <p class="card-text"> '+data_str.metrics["mae after training"]+' </p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">R2 Score</h5> <p class="card-text"> '+data_str.metrics["r2 after training"]+'</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Observation Dates</h5> <p class="card-text"> '+data_str.metrics.start_date.substring(0, 10)+' to '+data_str.metrics.end_date.substring(0, 10)+'  </p> </div> </div> </div> </div> </div>');
 
-                    $('.main_plot_for_api_baker').prepend('<div class="row local_forecats_window"><div class="col-md-4"> <div class="lf-fcst-info"> <div class="lf-fcst-name">CURRENT</div> <div class="lf-fcst-value">'+current_data[0].toString().substring(0, 10)+'<span>μg/m³</span></div> <div class="lf-fcst-change current_observation_unit_span"><i class="fas fa-arrow-up"></i> </div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info years_difference trend-down"> <div class="lf-fcst-name">NEXT HOUR</div> <div class="lf-fcst-value">'+current_data[1].toString().substring(0, 10)+'<span>μg/m³</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_year"><svg style="color: rgb(48, 169, 4);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z" fill="#30a904"></path> </svg></span> -0.74%</div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info days_difference trend-down"> <div class="lf-fcst-name">PREVIOUS HOUR</div> <div class="lf-fcst-value">'+current_data[2].toString().substring(0, 10)+'<span>μg/m³</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_day"><svg style="color: rgb(48, 169, 4);" xmlns="http://www.w3.org/2000/svg" width="40" height="25" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z" fill="#30a904"></path> </svg></span> -6.35%</div> </div> </div></div>');
+                    $('.api_baker_plots').prepend('<div class="row local_forecats_window"><div class="col-md-4"> <div class="lf-fcst-info"> <div class="lf-fcst-name">CURRENT</div> <div class="lf-fcst-value">'+current_data[0].toString().substring(0, 10)+'<span>μg/m³</span></div> <div class="lf-fcst-change current_observation_unit_span"><i class="fas fa-arrow-up"></i> </div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info years_difference trend-down"> <div class="lf-fcst-name">NEXT HOUR</div> <div class="lf-fcst-value">'+current_data[1].toString().substring(0, 10)+'<span>μg/m³</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_year"><svg style="color: rgb(48, 169, 4);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z" fill="#30a904"></path> </svg></span> -0.74%</div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info days_difference trend-down"> <div class="lf-fcst-name">PREVIOUS HOUR</div> <div class="lf-fcst-value">'+current_data[2].toString().substring(0, 10)+'<span>μg/m³</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_day"><svg style="color: rgb(48, 169, 4);" xmlns="http://www.w3.org/2000/svg" width="40" height="25" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z" fill="#30a904"></path> </svg></span> -6.35%</div> </div> </div></div>');
 
                 }
                 else {
@@ -663,11 +661,51 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                 }
                 
             });
-            $(".overlay-api-baker").fadeOut(10);
-            $(".progress-bar").removeClass("progress-bar-striped progress-bar-animated").text("Complete");
+
         
         },
     });
+
+    setInterval(function() {
+        if (ajaxCall.readyState === 1) {
+          $("#call_messages").html("Waiting for model output...");
+        } else if (ajaxCall.readyState === 2) {
+          $("#call_messages").html("Processing request...");
+        } else if (ajaxCall.readyState === 3) {
+          $("#call_messages").html("Loading data...");
+        } else if (ajaxCall.readyState === 4 && ajaxCall.status === 200) {
+          $("#call_messages").html("Success!");
+        } else if (ajaxCall.readyState === 4 && ajaxCall.status !== 200) {
+          $("#call_messages").html("Error!");
+        }
+        
+        index++;
+        
+        if (index >= messages1.length + messages2.length) {
+          index = 0;
+        }
+        
+        if (ajaxCall.readyState === 4 && ajaxCall.status !== 200 && index >= messages1.length) {
+          $("#call_messages").fadeOut(1000, function() {
+            $(this).html(messages2[index - messages1.length]).fadeIn(1000);
+          });
+        } else if (ajaxCall.readyState === 4 && ajaxCall.status !== 200 && index < messages1.length) {
+          $("#call_messages").fadeOut(1000, function() {
+            $(this).html(messages1[index]).fadeIn(1000);
+          });
+        }
+        
+        if (ajaxCall.readyState === 4 && ajaxCall.status === 200 && index >= messages1.length + messages2.length) {
+          $("#call_messages").fadeOut(1000, function() {
+            $(this).html("Success!").fadeIn(1000);
+          });
+        } else if (ajaxCall.readyState === 4 && ajaxCall.status === 200 && index < messages1.length + messages2.length) {
+          $("#call_messages").fadeOut(1000, function() {
+            $(this).html(messages1[index]).fadeIn(1000);
+          });
+        }
+        
+      }, 5000);
 }
 
 
@@ -863,13 +901,15 @@ function getDates(startDate, stopDate) {
 
 function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges = false, button=false){
   
-
+        var now = new Date();
+        var dividerDate = now.toISOString().slice(0, 19).replace("T", " ");
 
         var localized_data = combined_dataset["master_localized"];
         var uncorrected_data = combined_dataset["master_uncorrected"];
         var observation_data = combined_dataset["master_observation"];
         var datetime_data = combined_dataset["master_datetime"];
 
+        console.log(dividerDate);
 
         var master_localized = {
         type: "scatter",
@@ -914,31 +954,43 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
             title: title,
             plot_bgcolor: 'rgb(22 26 30)',
             paper_bgcolor: 'rgb(22 26 30)',
-            
+           
             legend: {
-                orientation: 'v',
-                x: 1.1,
-                y: 0.5
-              },
-            
-            font: {
-                family: 'Roboto, sans-serif',
-                color: '#FFFFFF'
-                },
-             
-            xaxis: {
-                type: 'date',
-                color: '#FFFFFF'
+              orientation: 'v',
+              x: 1.1,
+              y: 0.5
             },
-    
+           
+            font: {
+              family: 'Roboto, sans-serif',
+              color: '#FFFFFF'
+            },
+           
+            xaxis: {
+              type: 'date',
+              color: '#FFFFFF',
+              shapes: [{
+                type: 'line',
+                x0: dividerDate,
+                y0: 0,
+                x1: dividerDate,
+                yref: 'paper',
+                y1: 1,
+                line: {
+                  color: 'green',
+                  width: 2,
+                  dash: 'dashdot'
+                }
+              }]
+            },
+           
             yaxis: {
-                autorange: true,
-                type: 'linear',
-                title: pollutant_details(param)+' ' +'[ '+ rewriteUnits(unit) +']',
-                color: '#FFFFFF'
-    
+              autorange: true,
+              type: 'linear',
+              title: pollutant_details(param)+' ' +'[ '+ rewriteUnits(unit) +']',
+              color: '#FFFFFF'
             }
-        };
+          };
 
 
     if(dates_ranges){
@@ -1538,21 +1590,6 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
 
                     $('.lf-operations_1').prepend('| <a class="change_plot" change_to ="main_plot_'+historical+'" href="#"> Raw '+historical+' data</a> | <a change_to ="resample_main_plot_'+historical+'" class=" change_plot resample'+'_'+historical+'" href="#">'+historical+' '+resample_window+'H Rolling averages</a> ');
                     
-                    $(document).on("click", '.change_plot', function() {
-
-                        var change_to_val = $(this).attr("change_to");
-                           $('.model_plots').hide();
-                            $('.'+change_to_val).show(); 
-
-                            if (change_to_val == "main_plot_for_api_baker"){
-                                $('.form-check').show()
-                            }else{
-                                $('.form-check').hide()
-                            }
-                       });
-                       
-
-                       
 
                    
                
@@ -1831,7 +1868,18 @@ $(document).on('click', '.routing_pollutant_param', function(e) {
 
 });
 
+    $(document).on("click", '.change_plot', function() {
 
+    var change_to_val = $(this).attr("change_to");
+       $('.model_plots').hide();
+        $('.'+change_to_val).show(); 
+
+        if (change_to_val == "main_plot_for_api_baker"){
+            $('.form-check').show()
+        }else{
+            $('.form-check').hide()
+        }
+   });
 
     $(document).on('keyup', '#filter-input', function() {
 

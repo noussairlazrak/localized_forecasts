@@ -992,7 +992,12 @@ a.btn.retrain_model {
                                   <div class="plots_container">
                                     
                                      <div class="api_baker_field">
-                                      <div id='main_plot_for_api_baker' class='model_plots main_plot_for_api_baker' ></div>
+                                      <div class="loader"><div id="call_messages"></div> <div class="loader__dot"></div> <div class="loader__dot"></div> <div class="loader__dot"></div> </div>
+                                       <div class="api_baker_plots">
+                                        <div id='main_plot_for_api_baker' class='model_plots main_plot_for_api_baker' ></div>
+                                        <div id='main_plot_for_api_baker_historical' class='model_plots main_plot_for_api_baker_historical' ></div>
+                                       </div>
+                                      
 
 
                                       <div class="plot_options" >
@@ -1015,7 +1020,7 @@ a.btn.retrain_model {
                                       </div>
                                       
                                       
-                                      <div class="overlay-api-baker"> Loading Model .....</div>
+
                                      </div>
                                      
                                       <div id='main_plot_for_comparaison' class='model_plots main_plot_for_comparaison'></div>
