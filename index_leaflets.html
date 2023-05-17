@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Global NO2 Concentration Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map {
+      height: 500px;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/geotiff/dist/geotiff.bundle.min.js"></script>
+  <script>
+    var map = L.map('map').setView([0, 0], 2);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+      maxZoom: 18,
+    }).addTo(map);
+
+    // Load the GeoTIFF file
+    fetch('compress.tiff')
+      .then(function (response) {
+        return response.arrayBuffer();
+      })
+      .then(function (arrayBuffer) {
+        return parseGeotiff(arrayBuffer);
+      })
+      .then(function (tiff) {
+        var image = tiff.getImage(); // Assuming there is only one image in the GeoTIFF
+        var rgba = image.readRasters()[0]; // Reading the first band (assuming it contains the desired data)
+
+        var bounds = [
+          [image.getBoundingBox()[1], image.getBoundingBox()[0]],
+          [image.getBoundingBox()[3], image.getBoundingBox()[2]]
+        ];
+
+        var geoTiffLayer = L.imageOverlay(rgbaToDataURL(rgba, image.getWidth(), image.getHeight()), bounds).addTo(map);
+
+        // Adjust map view to fit the GeoTIFF layer
+        map.fitBounds(bounds);
+
+        // Function to convert RGBA array to a data URL
+        function rgbaToDataURL(rgbaArray, width, height) {
+          var canvas = document.createElement('canvas');
+          var ctx = canvas.getContext('2d');
+          canvas.width = width;
+          canvas.height = height;
+
+          var imageData = ctx.createImageData(width, height);
+          imageData.data.set(rgbaArray);
+          ctx.putImageData(imageData, 0, 0);
+
+          return canvas.toDataURL();
+        }
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+
+    // Parse the GeoTIFF from the array buffer
+    function parseGeotiff(arrayBuffer) {
+      return new Promise(function (resolve, reject) {
+        GeoTIFF.fromArrayBuffer(arrayBuffer).then(resolve).catch(reject);
+      });
+    }
+  </script>
+</body>
+</html>

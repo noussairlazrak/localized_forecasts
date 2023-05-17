@@ -62,6 +62,33 @@ function rewritePercentage(percentage) {
     return rewrittenPercentage;
   }
 
+  function get_current_hour_forecasts(dataset) {
+    var masterData = []; 
+    var currentDate = new Date(); 
+    var currentHour = currentDate.getHours(); 
+    var nextHour = currentHour + 1; 
+    var previousHour = currentHour - 1; 
+
+    $.each(dataset.master_datetime, function(index, value) {
+
+      var dateTimeStr = value; 
+      var dateTime = new Date(dateTimeStr); 
+      var hour = dateTime.getHours(); 
+
+      
+      if (hour === currentHour) {
+        masterData.push(dataset.master_localized[index]);
+     
+      } else if (hour === previousHour) {
+        masterData.push(dataset.master_localized[index]);
+      } else if (hour === nextHour) {
+        masterData.push(dataset.master_localized[index]);
+      }
+    });
+  
+    return masterData; 
+  }
+
   function calculateDifferenceAndPercentage(num1, num2) {
     var difference = num2 - num1;
     var percentageChange = ((num2 - num1) / num1) * 100;
@@ -81,7 +108,56 @@ function rewritePercentage(percentage) {
   }
   
 
+function filter_data_set_by_date(master_data,start,end){
 
+    var filteredmaster_data = [];
+    var currentDate = new Date();
+
+    // Get the date 5 days ago
+    var fiveDaysAgo = new Date();
+    fiveDaysAgo.setDate(currentDate.getDate() - start);
+
+    // Get the date 5 days from now
+    var fiveDaysFromNow = new Date();
+    fiveDaysFromNow.setDate(currentDate.getDate() - end);
+
+    // Filter datetime_data based on date range
+    var filteredDatetimeData = master_data.master_datetime.filter(function(dateString) {
+        var date = new Date(dateString);
+        return date >= fiveDaysAgo && date <= fiveDaysFromNow;
+    });
+
+    // Get the indices of the filtered dates in datetime_data
+    var filteredDatetimeIndices = filteredDatetimeData.map(function(dateString) {
+        return master_data.master_datetime.indexOf(dateString);
+    });
+
+    var filteredDatetime = filteredDatetimeIndices.map(function(index) {
+        return master_data.master_datetime[index];
+    });
+
+    // Filter the other data columns based on the indices of the filtered dates
+    var filteredLocalizedData = filteredDatetimeIndices.map(function(index) {
+        return master_data.master_localized[index];
+    });
+
+    var filteredUncorrectedData = filteredDatetimeIndices.map(function(index) {
+        return master_data.master_uncorrected[index];
+    });
+
+    var filteredObservationData = filteredDatetimeIndices.map(function(index) {
+        return master_data.master_observation[index];
+    });
+
+    
+    filteredmaster_data.master_datetime = filteredDatetime;
+    filteredmaster_data.master_observation = filteredObservationData;
+    filteredmaster_data.master_localized = filteredLocalizedData;
+    filteredmaster_data.master_uncorrected = filteredUncorrectedData;
+
+    return filteredmaster_data;
+
+    }
 function add_marker(map, lat, long, open_aq_id, param, site) {
 
     var station_id = document.createAttribute("station_id");
@@ -207,106 +283,32 @@ function create_map(sites, param) {
     var deltaDistance = 100;
     var center_point = [30.1272444, -1.9297706];
     var map = new mapboxgl.Map({
-        style: 'mapbox://styles/lazrakn/ck2g4kozj0q3w1cmx5tig3gnp',
+        style: 'mapbox://styles/lazrakn/clhpicf8e01vz01p62hgucf1r',
         center: center_point,
         zoom: 2,
         pitch: 0,
         bearing: 0,
         container: 'map',
-        cluster: true,
-        clusterMaxZoom: 2, 
-        clusterRadius: 2
+       
     });
+
+    
+   
+        
+  
+    
     map.on('load', () => {
         map.addSource('locations_dst', {
             type: 'geojson',
             data: 'https://www.noussair.com/get_data.php?type=location2&param=pm25',
-            cluster: true,
-            clusterMaxZoom: 10, 
-            clusterRadius: 2 
+            cluster: false,
+            clusterMaxZoom: 2, 
+            clusterRadius: 100 
         });
-    
-        map.addLayer({
-            id: 'clusters',
-            type: 'circle',
-            source: 'locations_dst',
-            filter: ['has', 'point_count'],
-            paint: {
-                'circle-color': [
-                    'step',
-                    ['get', 'point_count'],
-                    '#51bbd6',
-                    100,
-                    '#f1f075',
-                    750,
-                    '#f28cb1'
-                ],
-                'circle-radius': [
-                    'step',
-                    ['get', 'point_count'],
-                    20,
-                    100,
-                    30,
-                    750,
-                    40
-                ]
-            }
-        });
-
+       
+       
         
 
-        map.on('load', function() {
-            map.addSource('pm25', {
-                type: 'geojson',
-                data: 'https://gis.epa.ie/geoserver/EPA/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=EPA:AIR_PM2_5&maxFeatures=50&outputFormat=application%2Fjson'
-            });
-        
-            // add the heatmap layer
-            map.addLayer({
-                id: 'pm25-heatmap',
-                type: 'heatmap',
-                source: 'pm25',
-                paint: {
-                    // increase intensity as zoom level increases
-                    'heatmap-intensity': {
-                        stops: [
-                            [11, 1],
-                            [15, 3]
-                        ]
-                    },
-                    // increase radius as zoom level increases
-                    'heatmap-radius': {
-                        stops: [
-                            [11, 15],
-                            [15, 20]
-                        ]
-                    },
-                    // decrease opacity to transition into the circle layer
-                    'heatmap-opacity': {
-                        default: 1,
-                        stops: [
-                            [14, 1],
-                            [15, 0]
-                        ]
-                    },
-                    // color ramp for heatmap density
-                    'heatmap-color': [
-                        'interpolate',
-                        ['linear'],
-                        ['heatmap-density'],
-                        0, 'rgba(33,102,172,0)',
-                        0.2, 'rgb(103,169,207)',
-                        0.4, 'rgb(209,229,240)',
-                        0.6, 'rgb(253,219,199)',
-                        0.8, 'rgb(239,138,98)',
-                        1, 'rgb(178,24,43)'
-                    ]
-                }
-            });
-        });
-
-        
-    
         map.addLayer({
             id: 'cluster-count',
             type: 'symbol',
@@ -325,23 +327,42 @@ function create_map(sites, param) {
             source: 'locations_dst',
             filter: ['!', ['has', 'point_count']],
             paint: {
-                'circle-color': [
-                    'case',
-                ["<=", ["get", "forecasted_value"], 20], "#fbb03b",
-                [">=", ["get", "forecasted_value"], 20], "#e55e5e",
-                [">", ["get", "forecasted_value"], 30], "#3bb2d0",
-                "#ccc"
-
-                    ],
-                'circle-radius': 6,
-                'circle-stroke-width': 0,
-                'circle-stroke-color': 'black'
+              'circle-color': [
+                'case',
+                ['>', ['get', 'forecasted_value'], 1], '#7967eb',
+                '#ccc'
+              ],
+              'circle-radius': 6,
+              'circle-stroke-width': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                2, 0,
+                4, 2,
+                6, 4,
+                8, 8,
+                10, 16
+              ],
+              'circle-stroke-color': 'black',
+              'circle-stroke-opacity': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                2, 0,
+                4, 1,
+                6, 1,
+                8, 0.5,
+                10, 0
+              ]
             }
-        });
+          });
 
 
+         
+
+           
         
-
+        
       
     
         map.on('click', 'clusters', (e) => {
@@ -363,10 +384,9 @@ function create_map(sites, param) {
         });
         
             
-    })
+    });
 
-    
-
+ 
     var list_in = [];
     map.on("sourcedata", function(e) {
         if (map.getSource('locations_dst') && map.isSourceLoaded('locations_dst')) {
@@ -560,26 +580,39 @@ function csvToArray(str, delimiter = ",") {
 }
 
 
-function read_api_baker(location,param,unit,forecasts_div,button_option=false, historical=2, reinforce_training=2,hpTunning=2, resample = false){
+function read_api_baker(location,param,unit,forecasts_div,button_option=false, historical=1, reinforce_training=2,hpTunning=2, resample = false){
     var title = 'Live';
     if (button_option){
         $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'_color"  href="#">'+title+'</button>');
     }
    
-    $("."+forecasts_div).empty();
+ 
     $(".overlay-api-baker").fadeIn(10);
     var messages = ["Generating data", "Connecting to SMCE", "Fetching the data from API Baker", "Fetching data from GMAO FTP", "Fetching observations", "Getting the forecasts", "Please wait...", "Connecting...."];
-    setInterval(function() {
-        var message = messages[Math.floor(Math.random() * messages.length)];
-        $(".overlay-api-baker").html(message)
-    }, 4000);
+   
     
     var param_code = pollutant_details(param).id
     var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
     console.log(file_url);
+    var progressBar = $('<div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div></div>');
+    $('.overlay-api-baker').append(progressBar);
+    
+    $(".progress-bar").css("width", "0%").attr("aria-valuenow", 0).text("0%");
     $.ajax({
         url: file_url, 
-        success: function() { 
+        xhr: function() {
+            var xhr = new window.XMLHttpRequest();
+            xhr.addEventListener("progress", function(evt) {
+                if (evt.lengthComputable) {
+                    var percentComplete = evt.loaded / evt.total;
+                    percentComplete = parseInt(percentComplete * 100);
+                    $(".progress-bar").css("width", percentComplete + "%").attr("aria-valuenow", percentComplete).text(percentComplete + "%");
+                }
+            }, false);
+            return xhr;
+        },
+        success: function() {
+            progressBar.remove(); 
             d3.json(file_url, function(error, data) {
                 if (error) {
                     alert(error);
@@ -588,6 +621,7 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                 if(data){
 
                     master_datetime = []
+                    filteredmaster_data = []
                     master_observation = []
                     master_localized = []
                     master_uncorrected = []
@@ -596,93 +630,19 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
 
                     data_str = data.replace(/NaN/g, '""')
                     data_str = JSON.parse(data_str);
-
+                    
                     master_data.master_datetime = data_str.forecasts.time;
                     master_data.master_observation = data_str.forecasts.value;
                     master_data.master_localized = data_str.forecasts.prediction;
                     master_data.master_uncorrected = data_str.forecasts.pm25_rh35_gcc;
-
-
-                    // Find the first and last dates in the dataset
-                    const firstDate = new Date(master_data.master_datetime[0]);
-                    const lastDate = new Date(master_data.master_datetime[master_data.master_datetime.length - 1]);
-
-                    // Create an array of dates for each hour between the first and last dates
-                    const dateArray = [];
-                    let currentDate = new Date(firstDate);
-                    while (currentDate <= lastDate) {
-                    const formattedDate = currentDate.toISOString().slice(0, 19).replace('T', ' ');
-                    dateArray.push(formattedDate);
-                    currentDate.setHours(currentDate.getHours() + 1);
-                    }
-
-                    // Create a new array for the observation values with empty values for missing dates
-                    const observationArray = [];
-                    const localizedArray = [];
-                    const uncorrectedArray = [];
-                    let dataIndex = 0;
-                    for (let i = 0; i < dateArray.length; i++) {
-                    const date = dateArray[i];
-                    const dataDate = new Date(master_data.master_datetime[dataIndex]);
-                    if (date === dataDate.toISOString().slice(0, 19).replace('T', ' ')) {
-                        observationArray.push(master_data.master_observation[dataIndex]);
-                        localizedArray.push(master_data.master_localized[dataIndex]);
-                        uncorrectedArray.push(master_data.master_uncorrected[dataIndex]);
-                        dataIndex++;
-                    } else {
-                        observationArray.push("");
-                        localizedArray.push("");
-                        uncorrectedArray.push("");
-                    }
-                    }
-
-                    
-                    if (resample){
-                        // Calculate the 24-hour averages for observation, localized, and uncorrected arrays
-                        const observation24HourArray = [];
-                        const localized24HourArray = [];
-                        const uncorrected24HourArray = [];
-                        for (let i = 0; i < observationArray.length; i++) {
-                        if (i < 24) {
-                            observation24HourArray.push("");
-                            localized24HourArray.push("");
-                            uncorrected24HourArray.push("");
-                        } else {
-                            const observationSum = observationArray.slice(i - 24, i).reduce((a, b) => a + b, 0);
-                            const localizedSum = localizedArray.slice(i - 24, i).reduce((a, b) => a + b, 0);
-                            const uncorrectedSum = uncorrectedArray.slice(i - 24, i).reduce((a, b) => a + b, 0);
-                            const observationAverage = observationSum / 24;
-                            const localizedAverage = localizedSum / 24;
-                            const uncorrectedAverage = uncorrectedSum / 24;
-                            
-                            if (localizedAverage > 0) {
-                                observation24HourArray.push(observationAverage);
-                                localized24HourArray.push(localizedAverage);
-                                uncorrected24HourArray.push(uncorrectedAverage);
-                              } else {
-                                uncorrected24HourArray.push("");
-                                localized24HourArray.push("");
-                                observation24HourArray.push("");
-                            }
-
-                            
-                        }
-                        }
-                            master_data.master_datetime_2023 = dateArray;
-                            master_data.master_observation_2023 = observation24HourArray;
-                            master_data.master_localized_2023 = localized24HourArray;
-                            master_data.master_uncorrected_2023 = uncorrected24HourArray;
-                    }
-                    else{
-                        master_data.master_datetime_2023 = dateArray;
-                        master_data.master_observation_2023 = observationArray;
-                        master_data.master_localized_2023 = localizedArray;
-                        master_data.master_uncorrected_2023 = uncorrectedArray;
-                    }
                    
-      
-                                
-                    draw_plot(master_data,param,unit,forecasts_div,title,false, button = false,[2023] )
+                   
+                   
+                   var current_data = get_current_hour_forecasts(master_data);
+                   var filteredmaster_data = filter_data_set_by_date(master_data,2,-5)
+                   
+   
+                    draw_plot(filteredmaster_data,param,unit,forecasts_div,title,false, button = false )
 
 
 
@@ -691,7 +651,11 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                     $('.retrain_model').attr("unit",unit);
                     
                     
-                    $('.model_data').html('<h1>Model information</h1> <ul><li>Total observations: '+data_str.metrics.total_observation+'</li><li>Last model update: '+data_str.metrics.latest_training.substring(0, 19)+'</li><li>Mean Square Error:  <b> Before training</b> -> '+data_str.metrics["mse before training"]+' | <b>After training </b> -> '+data_str.metrics["mse after training"]+' </li><li>Mean Absolute Error: <b> Before training</b> -> '+data_str.metrics["mae before training"]+' | <b>After training </b> -> '+data_str.metrics["mae after training"]+' </li><li>R2 Score: <b> Before training</b> -> '+data_str.metrics["r2 before training"]+' | <b>After training </b> -> '+data_str.metrics["r2 after training"]+' </li></ul><span class="model_general_info">Bias-corrected model is provided for dates between '+data_str.metrics.start_date.substring(0, 10)+' and '+data_str.metrics.end_date.substring(0, 10)+' </span>');
+                
+
+                    $('.model_data').html('<div class="container my-5"> <h1> Bias Corrected Model Information</h1><div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Total Observations</h5> <p class="card-text fs-3 fw-bold">'+data_str.metrics.total_observation+'</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Last Model Update</h5> <p class="card-text fs-3 fw-bold">'+data_str.metrics.latest_training.substring(0, 19)+'</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Mean Square Error</h5> <p class="card-text"> '+data_str.metrics["mse after training"]+'<br> </p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Mean Absolute Error</h5> <p class="card-text"> '+data_str.metrics["mae after training"]+' </p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">R2 Score</h5> <p class="card-text"> '+data_str.metrics["r2 after training"]+'</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Observation Dates</h5> <p class="card-text"> '+data_str.metrics.start_date.substring(0, 10)+' to '+data_str.metrics.end_date.substring(0, 10)+'  </p> </div> </div> </div> </div> </div>');
+
+                    $('.main_plot_for_api_baker').prepend('<div class="row local_forecats_window"><div class="col-md-4"> <div class="lf-fcst-info"> <div class="lf-fcst-name">CURRENT</div> <div class="lf-fcst-value">'+current_data[0].toString().substring(0, 10)+'<span>μg/m³</span></div> <div class="lf-fcst-change current_observation_unit_span"><i class="fas fa-arrow-up"></i> </div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info years_difference trend-down"> <div class="lf-fcst-name">NEXT HOUR</div> <div class="lf-fcst-value">'+current_data[1].toString().substring(0, 10)+'<span>μg/m³</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_year"><svg style="color: rgb(48, 169, 4);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z" fill="#30a904"></path> </svg></span> -0.74%</div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info days_difference trend-down"> <div class="lf-fcst-name">PREVIOUS HOUR</div> <div class="lf-fcst-value">'+current_data[2].toString().substring(0, 10)+'<span>μg/m³</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_day"><svg style="color: rgb(48, 169, 4);" xmlns="http://www.w3.org/2000/svg" width="40" height="25" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z" fill="#30a904"></path> </svg></span> -6.35%</div> </div> </div></div>');
 
                 }
                 else {
@@ -700,6 +664,8 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                 
             });
             $(".overlay-api-baker").fadeOut(10);
+            $(".progress-bar").removeClass("progress-bar-striped progress-bar-animated").text("Complete");
+        
         },
     });
 }
@@ -856,7 +822,7 @@ function combine_historical_and_forecasts(location_name, param, unit, forecasts_
                         dates_ranges.push(date_time.slice(-2, -1).toString());
                         
                         if(activate_number == 2){
-                            draw_plot(combined_dataset,param,unit,forecasts_div,'Historical Simulation Comparison',false, button= true,  [2022,2023])
+                            draw_plot(combined_dataset,param,unit,forecasts_div,'Historical Simulation Comparison',false, button= true)
                         }
                         
                       
@@ -895,46 +861,15 @@ function getDates(startDate, stopDate) {
     return dateArray;
 }
 
-function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges = ["2021-04-20","2023-02-10"], button=false, years=false){
-    var plot = []
-    var line_type = ""
-   if(years){
-    
-    years.forEach(function(year, index){
-        var title = " "
-        if(years.length > 2){
-            var title = year
-        }
-        
-       
-        var start_date = new Date('2020-01-01');
-        var end_date = new Date('2023-03-08');
+function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges = false, button=false){
+  
 
-        var all_dates = [];
-        var current_date = start_date;
-        while (current_date <= end_date) {
-        all_dates.push(current_date.toISOString().split('T')[0]);
-        current_date.setDate(current_date.getDate() + 1);
-        }
 
-        var localized_data = combined_dataset["master_localized_"+year];
-        var uncorrected_data = combined_dataset["master_uncorrected_"+year];
-        var observation_data = combined_dataset["master_observation_"+year];
-        var datetime_data = combined_dataset["master_datetime_"+year];
+        var localized_data = combined_dataset["master_localized"];
+        var uncorrected_data = combined_dataset["master_uncorrected"];
+        var observation_data = combined_dataset["master_observation"];
+        var datetime_data = combined_dataset["master_datetime"];
 
-        var missing_dates = all_dates.filter(function(date) {
-        return datetime_data.indexOf(date) === -1;
-        });
-
-        missing_dates.forEach(function(date) {
-        var index = datetime_data.indexOf(date);
-        if (index >= 0) {
-            localized_data.splice(index, 1);
-            uncorrected_data.splice(index, 1);
-            observation_data.splice(index, 1);
-            datetime_data.splice(index, 1);
-        }
-        });
 
         var master_localized = {
         type: "scatter",
@@ -974,21 +909,6 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         },
         name: 'Observation'
         };
-
-        if (index == 1) {
-        master_observation.line = {dash: 'dashdot', width: 4};
-        master_localized.line = {dash: 'dashdot', width: 4};
-        master_uncorrected.line = {dash: 'dashdot', width: 4};
-        }
-
-        // add the traces to the plot
-        plot.push(master_localized);
-        plot.push(master_uncorrected);
-        plot.push(master_observation);
-
-    });
-   }
-   
 
         var layout = {
             title: title,
@@ -1052,10 +972,8 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         ]
     }
 
-
-    
-
-        Plotly.newPlot(forecasts_div, plot, layout);
+ 
+        Plotly.newPlot(forecasts_div, [master_localized,master_uncorrected,master_observation], layout);
         
         if(button){
             $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'"  href="#">'+title+'</button>');
@@ -1071,7 +989,8 @@ function side_by_side_plots(param, unit, title, precomputer_forecasts, observati
 
         var year1_file = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/" + precomputer_forecasts;
         var year2_file = year1_file.replace('.json', '_historical.json');
-        
+        try {
+            
         $.getJSON(year1_file, function(dataset1) {
             var dataArray =  csvToArray(dataset1.latest_forecast.data);
             var renamedArray_year1 = dataArray.map(function(forecast) {
@@ -1158,7 +1077,9 @@ function side_by_side_plots(param, unit, title, precomputer_forecasts, observati
                 if (index > 0) {
                     var prevItem = mergedArray[index - 1];
                     var changePercentage2022 = ((item.localized_pm25_2022 - prevItem.localized_pm25_2022) / prevItem.localized_pm25_2022) * 100;
+                    var change_prev_hour = prevItem.localized_pm25_2023
                     item.change_percentage_prev_hour = changePercentage2022;
+                    item.change_prev_hour = change_prev_hour;
                   } else {
                     item.change_percentage_prev_hour = null;
                   }
@@ -1187,7 +1108,7 @@ function side_by_side_plots(param, unit, title, precomputer_forecasts, observati
 
               var row = findRowByDateTime(mergedArray, currentMonth, currentDay, currentHour);
               if (row !== null) {
-                console.log(row)
+               
                 var localized_pm25_2022 = row.localized_pm25_2022;
                 var localized_pm25_2023 = row.localized_pm25_2023;
                 var observation_2022 = row.observation_2022;
@@ -1205,11 +1126,14 @@ function side_by_side_plots(param, unit, title, precomputer_forecasts, observati
                 
                 var change_percentage = row.change_percentage;
                 var change_percentage_prev_hour = row.change_percentage_prev_hour;
+                var change_prev_hour = row.change_prev_hour;
 
                 var diffrence_last_year = calculateDifferenceAndPercentage(localized_pm25_2022,localized_pm25_2023)
+                var diffrence_last_hour = calculateDifferenceAndPercentage(change_prev_hour,localized_pm25_2023)
+               
 
 
-                $('.local_forecats_window').html('<div class="col-md-4"> <div class="lf-fcst-info"> <div class="lf-fcst-name">CURRENT</div> <div class="lf-fcst-value">'+localized_pm25_2022+'<span>'+rewriteUnits(observation_unit)+'</span></div> <div class="lf-fcst-change current_observation_unit_span"><i class="fas fa-arrow-up"></i> </div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info years_difference"> <div class="lf-fcst-name">SAME DAY/ LAST YEAR </div> <div class="lf-fcst-value">'+localized_pm25_2023+'<span>'+rewriteUnits(observation_unit)+'</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_year"></span> '+rewritePercentage(diffrence_last_year[1])+'</div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info days_difference"> <div class="lf-fcst-name">PREVIOUS HOUR</div> <div class="lf-fcst-value"><span class="trend_sign_diffrence_last_day"></span>'+rewritePercentage(change_percentage_prev_hour)+'</div> <div class="lf-fcst-change"><i class="fas fa-arrow-up"></i> </div> </div> </div>')
+                $('.local_forecats_window').html('<div class="col-md-4"> <div class="lf-fcst-info"> <div class="lf-fcst-name">CURRENT</div> <div class="lf-fcst-value">'+localized_pm25_2023+'<span>'+rewriteUnits(observation_unit)+'</span></div> <div class="lf-fcst-change current_observation_unit_span"><i class="fas fa-arrow-up"></i> </div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info years_difference"> <div class="lf-fcst-name">SAME DAY/ LAST YEAR </div> <div class="lf-fcst-value">'+localized_pm25_2022+'<span>'+rewriteUnits(observation_unit)+'</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_year"></span> '+rewritePercentage(diffrence_last_year[1])+'</div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info days_difference"> <div class="lf-fcst-name">PREVIOUS HOUR</div> <div class="lf-fcst-value">'+change_prev_hour+'<span>'+rewriteUnits(observation_unit)+'</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_day"></span> '+rewritePercentage(diffrence_last_hour[1])+'</div> </div> </div>')
                 
                 
                 if (diffrence_last_year[0] > 0) {
@@ -1251,7 +1175,6 @@ function side_by_side_plots(param, unit, title, precomputer_forecasts, observati
             var localized_pm25_2023 = mergedArray.map(function(item) { return item.localized_pm25_2023; });
             var localized_pm25_24H_2023 = mergedArray.map(function(item) { return item.localized_pm25_24H_2023; });
 
-            console.log(mergedArray);
 
             var trace_uncorrected_pm25_2022 = {
             x: dates,
@@ -1302,13 +1225,20 @@ function side_by_side_plots(param, unit, title, precomputer_forecasts, observati
             },
             };
 
-
-            Plotly.newPlot('comparaison_plot_js', [trace_uncorrected_pm25_2022, trace_uncorrected_pm25_2023, trace_localized_pm25_2022,trace_localized_pm25_2023], layout);
+            if (mergedArray.length>0){
+                Plotly.newPlot('comparaison_plot_js', [trace_uncorrected_pm25_2022, trace_uncorrected_pm25_2023, trace_localized_pm25_2022,trace_localized_pm25_2023], layout);
+                $('.plot_additional_features').append('<button type="button" change_to="comparaison_plot_js" class="btn btn-outline-primary change_plot comparaison_plot_js"  href="#">'+title+'</button>');
+            }
+           
         
             });
           });
 
-        $('.plot_additional_features').append('<button type="button" change_to="comparaison_plot_js" class="btn btn-outline-primary change_plot comparaison_plot_js"  href="#">'+title+'</button>');
+        
+
+        }catch (error) {
+            console.error('An error occurred while running the side_by_side_plots function:', error);
+          }
       });
       
 }
@@ -1670,19 +1600,19 @@ function open_forecats_window (messages, st_id, param, location_name, observatio
         $(".loading_div").fadeOut(10);
         $("button").css({ "button": "animation: intro 2s cubic-bezier(0.03, 1.08, 0.56, 1); animation-delay: 2s;" });
 
-        try {
-            side_by_side_plots(param, current_observation_unit, 'Historical Comparison', precomputer_forecasts, current_observation_unit);
-        }catch (error) {
-            console.error('An error occurred while running the side_by_side_plots function:', error);
-          }
+    
         try {
             get_plot(location_name, param, current_observation_unit, 'plot_model_', 'plot_resample_', false, precomputer_forecasts, '');
             get_plot(location_name, param, current_observation_unit, 'plot_model_historical', 'plot_resample_historical', false, precomputer_forecasts, 'historical');
+            //side_by_side_plots(param, current_observation_unit, 'Historical Comparison', precomputer_forecasts, current_observation_unit);
           } catch (error) {
             console.error('An error occurred while running the get_plot function:', error);
           }
-       
-        read_api_baker(st_id,param,current_observation_unit,'main_plot_for_api_baker', true, historical=2, reinforce_training=2,hpTunning=2);
+          try {
+            read_api_baker(st_id,param,current_observation_unit,'main_plot_for_api_baker', true, historical=1, reinforce_training=2,hpTunning=2);
+            } catch (error) {
+                console.error('An error occurred while running the get_plot function:', error);
+            }
 
         $('#loading-screen').hide();
         
@@ -1750,6 +1680,8 @@ function update_api_baker(location,param,unit,forecasts_div){
                 }
                 
                 if(data){
+                    console.log("date")
+                    console.log(data);
                     master_datetime = []
                     master_observation = []
                     master_localized = []
@@ -1773,6 +1705,13 @@ function update_api_baker(location,param,unit,forecasts_div){
                     master_data.master_datetime = master_datetime;
                     master_data.master_observation = master_observation;
                     master_data.master_localized = master_localized;
+
+
+
+                    var currentDate = new Date();
+
+                   
+
 
                     draw_plot(master_data,param,unit,forecasts_div,'Localized forecasts (Pretrained model)',false)
 
@@ -1835,7 +1774,7 @@ $(document).on("click", '.retrain_model', function() {
         
         
     }
-    read_api_baker(current_site,current_param,current_unit,'main_plot_for_api_baker', false, historical=historical, reinforce_training= reinforce_training,hpTunning=hpTunning)
+    read_api_baker(current_site,current_param,current_unit,'main_plot_for_api_baker', false, historical=1, reinforce_training= reinforce_training,hpTunning=hpTunning)
     });
     
    
@@ -1893,18 +1832,17 @@ $(document).on('click', '.routing_pollutant_param', function(e) {
 });
 
 
-    // Bind a click event to the filter button
+
     $(document).on('keyup', '#filter-input', function() {
-      // Get the user input
+
       var locationName = $('#filter-input').val().toLowerCase();
   
-      // Loop through each forecast item
+
       $('.launch-local-forecasts').each(function() {
         var item = $(this);
         var item_parent = $(this).parent();
         var itemName = item.attr('location_name').toLowerCase();
   
-        // If the item name contains the user input, show it, else hide it
         if (itemName.includes(locationName)) {
             item_parent.show();
         } else {
@@ -1913,4 +1851,3 @@ $(document).on('click', '.routing_pollutant_param', function(e) {
       });
     });
 
-  
