@@ -319,7 +319,17 @@ function create_map(sites, param) {
             clusterRadius: 100 
         });
        
-       
+        map.addLayer({
+            'id': 'circles',
+            'type': 'circle',
+            'source': 'lazrakn.dbwajdpp',
+            'source-layer': 'lazrakn-dbwajdpp',
+            'paint': {
+              'circle-color': '#7F3121', // Change this color to your desired color scale
+              'circle-opacity': 0.75,
+              'circle-radius': 5
+            }
+          });
         
 
         map.addLayer({
@@ -602,8 +612,9 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
 
     $('.loader').show();
     if (button_option){
-        $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'_color"  href="#">'+title+'</button>');
         $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'_historical" class="btn btn-outline-primary change_plot"  href="#">model historical data</button>');
+        $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'_color"  href="#">'+title+'</button>');
+       
     }
    
  
@@ -690,12 +701,16 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                    var historical_master_data = filter_data_set_by_date(master_data,365,20)
                    
    
-                    draw_plot(filteredmaster_data,param,unit,forecasts_div,'',false, button = false )
+                    
                     draw_plot(historical_master_data,param,unit,'main_plot_for_api_baker_historical','',false, button = false )
+                    draw_plot(filteredmaster_data,param,unit,forecasts_div,'',false, button = false )
                     
                     $('.loader').hide();
 
-
+                    
+                        $(".main_plot_for_api_baker_color").click();
+                        console.log("click performed");
+                    
                     $('.retrain_model').attr("param",param);
                     $('.retrain_model').attr("site",location);
                     $('.retrain_model').attr("unit",unit);
