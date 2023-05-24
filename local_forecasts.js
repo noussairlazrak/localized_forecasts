@@ -318,32 +318,20 @@ function create_map(sites, param) {
             clusterMaxZoom: 2, 
             clusterRadius: 100 
         });
-       
-        map.addLayer({
-            'id': 'circles',
-            'type': 'circle',
-            'source': 'lazrakn.dbwajdpp',
-            'source-layer': 'lazrakn-dbwajdpp',
-            'paint': {
-              'circle-color': '#7F3121', // Change this color to your desired color scale
-              'circle-opacity': 0.75,
-              'circle-radius': 5
-            }
-          });
+        map.on('click', 'clustered-point', function(e) {
+            var features = map.queryRenderedFeatures(e.point, { layers: ['clustered-point'] });
+            var clusterId = features[0].properties.cluster_id;
         
+            map.getSource('locations_dst').getClusterExpansionZoom(clusterId, function(err, zoom) {
+              if (err) return;
+        
+              map.easeTo({
+                center: features[0].geometry.coordinates,
+                zoom: zoom
+              });
+            });
+          });
 
-        map.addLayer({
-            id: 'cluster-count',
-            type: 'symbol',
-            source: 'locations_dst',
-            filter: ['has', 'point_count'],
-            layout: {
-                'text-field': ['get', 'point_count_abbreviated'],
-                'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-                'text-size': 12
-            }
-        });
-    
         map.addLayer({
             id: 'unclustered-point',
             type: 'circle',
@@ -352,8 +340,8 @@ function create_map(sites, param) {
             paint: {
               'circle-color': [
                 'case',
-                ['>', ['get', 'forecasted_value'], 1], '#7967eb',
-                '#ccc'
+                ['>', ['get', 'forecasted_value'], 1], '#1da1f2',
+                '#66757f'
               ],
               'circle-radius': 6,
               'circle-stroke-width': [
@@ -379,32 +367,47 @@ function create_map(sites, param) {
               ]
             }
           });
-
-
-         
-
-           
         
+          map.addLayer({
+            id: 'clustered-point',
+            type: 'circle',
+            source: 'locations_dst',
+            filter: ['has', 'point_count'],
+            paint: {
+              'circle-color': [
+                'case',
+                ['>', ['get', 'point_count'], 10], '#1da1f2',
+                ['>', ['get', 'point_count'], 5], '#1da1f2',
+                '#1da1f2'
+              ],
+              'circle-radius': [
+                'step',
+                ['get', 'point_count'],
+                20, 10,
+                30, 100,
+                40
+              ],
+              'circle-stroke-width': 2,
+              'circle-stroke-color': 'black'
+            }
+          });
         
-      
+          map.addLayer({
+            id: 'cluster-count',
+            type: 'symbol',
+            source: 'locations_dst',
+            filter: ['has', 'point_count'],
+            layout: {
+              'text-field': '{point_count_abbreviated}',
+              'text-font': ['Open Sans Bold'],
+              'text-size': 12
+            },
+            paint: {
+              'text-color': '#ffffff'
+            }
+          });
     
-        map.on('click', 'clusters', (e) => {
-            const features = map.queryRenderedFeatures(e.point, {
-                layers: ['clusters']
-            });
-            const clusterId = features[0].properties.cluster_id;
-            map.getSource('locations_dst').getClusterExpansionZoom(
-                clusterId,
-                (err, zoom) => {
-                    if (err) return;
-    
-                    map.easeTo({
-                        center: features[0].geometry.coordinates,
-                        zoom: 10
-                    });
-                }
-            );
-        });
+
         
             
     });
@@ -433,7 +436,17 @@ function create_map(sites, param) {
         }
     });
     
-
+    map.on('click', function(e) {
+        var lngLat = e.lngLat;
+        var longitude = lngLat.lng;
+        var latitude = lngLat.lat;
+    
+        console.log('Longitude: ' + longitude);
+        console.log('Latitude: ' + latitude);
+        
+        // Perform additional actions with the coordinates here
+    
+      });
 
 
     map.on('click', 'unclustered-point', (e) => {
@@ -611,11 +624,7 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
     var index = 0;
 
     $('.loader').show();
-    if (button_option){
-        $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'_historical" class="btn btn-outline-primary change_plot"  href="#">model historical data</button>');
-        $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'_color"  href="#">'+title+'</button>');
-       
-    }
+    
    
  
    // $(".overlay-api-baker").fadeIn(10);
@@ -623,7 +632,7 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
    
     
     var param_code = pollutant_details(param).id
-    var file_url = "https://ngoschatbot.com/cls/api-calls.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
+    var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
     console.log(file_url);
 
     
@@ -702,8 +711,14 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                    
    
                     
-                    draw_plot(historical_master_data,param,unit,'main_plot_for_api_baker_historical','',false, button = false )
-                    draw_plot(filteredmaster_data,param,unit,forecasts_div,'',false, button = false )
+                    draw_plot(historical_master_data,param,unit,'main_plot_for_api_baker_historical','',false, button = false );
+                    draw_plot(filteredmaster_data,param,unit,forecasts_div,'',false, button = false );
+
+                    if (button_option){
+                        $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'_historical" class="btn btn-outline-primary change_plot"  href="#">model historical data</button>');
+                        $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'_color"  href="#">'+title+'</button>');
+                       
+                    }
                     
                     $('.loader').hide();
 
@@ -725,6 +740,8 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                 }
                 else {
                    console.log("ERROR");
+                   $('.api_baker_plots').html('Sorry, we are not able to connect with openaq api at this moment, please check back later...');
+                   $('.loader').hide();
                 }
                 
             });
