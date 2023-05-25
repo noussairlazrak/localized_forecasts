@@ -139,6 +139,27 @@ div#call_messages {
     margin-top: 55px;
     
 }
+
+div#replay-animation {
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    opacity: 0.5;
+    top: -4px;
+    display:none;
+}
+
+div#replay-animation img {
+    width: 100%;
+    height: auto;
+}
+
+a#global-view {
+    background: #ca4e00;
+    border: #ca4e00;
+    margin-right: 15px;
+    margin-top: 15px;
+}
 </style>
 </head>
 
@@ -201,6 +222,9 @@ div#call_messages {
                                         <a class="nav-link" href="https://github.com/GEOS-CF/MLpred">Documentation</a>
                                     </li>
                                     <li class="nav-item">
+                                        <a id="global-view" class="nav-link btn btn-primary replay_model" href="#">Replay</a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a class="nav-link btn btn-primary upload-your-data">Upload Your Local Data</a>
                                     </li>
                                 </ul>
@@ -213,6 +237,12 @@ div#call_messages {
         </header>
         <section class="wrapper image-wrapper bg-image bg-overlay bg-overlay-300">
             <div id='map'></div>
+            <div id='replay-animation'>
+                <img src="geos-cf.gif"/>
+            </div>
+            
+
+            
         </section>
 
     </div>

@@ -305,7 +305,29 @@ function create_map(sites, param) {
        
     });
 
+    var mapVisible = true;
+
+    $(document).on('click', '#global-view', function() {
+    if (mapVisible) {
+        map.fitBounds([[-180, -90], [180, 90]], {
+            duration: 20, // Animation duration in milliseconds
+            padding: 0, 
+            margin: 0
+          });
+
+        $('#replay-animation').css({
+            'opacity': 0.7
+          }).fadeIn('fast');
+    } else {
+        
+        $('#replay-animation').fadeOut('fast');
+    }
     
+    mapVisible = !mapVisible;
+    });
+
+        
+      
    
         
   
