@@ -310,7 +310,7 @@ function create_map(sites, param) {
     $(document).on('click', '#global-view', function() {
     if (mapVisible) {
         map.fitBounds([[-180, -90], [180, 90]], {
-            duration: 20, // Animation duration in milliseconds
+            duration: 20, 
             padding: 0, 
             margin: 0
           });
@@ -654,7 +654,8 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
    
     
     var param_code = pollutant_details(param).id
-    var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
+    //var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
+    var file_url = "https://www.noussair.com/fetch.php?url=https://africai.org/api-calls/all_precomputed/"+location+".json";
     console.log(file_url);
 
     
@@ -695,7 +696,7 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                    var diffrence_last_hour = calculateDifferenceAndPercentage(current_data.previous_fcst,current_data.current_fcst);
                
                 //$('.api_baker_plots').prepend('<div class="row local_forecats_window"></div>');
-
+                $('.local_forecats_window').html('')
                 
                 if (diffrence_last_year[0] > 0) {
                     var diffrence_last_year_html_precentage ='<svg style="color: rgb(246, 70, 93);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z" fill="#d60b15"></path> </svg>';
@@ -1015,7 +1016,10 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         var observation_data = combined_dataset["master_observation"];
         var datetime_data = combined_dataset["master_datetime"];
 
-        console.log(dividerDate);
+        console.log(datetime_data);
+        console.log(localized_data);
+        console.log(uncorrected_data);
+        console.log(observation_data);
 
         var master_localized = {
         type: "scatter",
@@ -1075,17 +1079,15 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
             xaxis: {
               type: 'date',
               color: '#FFFFFF',
-              shapes: [{
-                type: 'line',
-                x0: dividerDate,
-                y0: 0,
-                x1: dividerDate,
-                yref: 'paper',
-                y1: 1,
-                line: {
-                  color: 'green',
-                  width: 2,
-                  dash: 'dashdot'
+              shapes: [ {
+                type:'line',
+                x0:'2023-05-25 16:00',
+                y0:-2,
+                x1:'2023-05-28 16:00',
+                y1:7,
+                line:{
+                  color:'red',
+                  width:4
                 }
               }]
             },
@@ -1096,7 +1098,8 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
               title: pollutant_details(param)+' ' +'[ '+ rewriteUnits(unit) +']',
               color: '#FFFFFF'
             }
-          };
+          }; 
+          
 
 
     if(dates_ranges){
