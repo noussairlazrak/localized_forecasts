@@ -336,7 +336,7 @@ function create_map(sites, param) {
         map.addSource('locations_dst', {
             type: 'geojson',
             data: 'https://www.noussair.com/get_data.php?type=location2&param=pm25',
-            cluster: false,
+            cluster: true,
             clusterMaxZoom: 2, 
             clusterRadius: 100 
         });
@@ -354,41 +354,44 @@ function create_map(sites, param) {
             });
           });
 
+       // Add background circle layer
         map.addLayer({
-            id: 'unclustered-point',
+            id: 'background-circle',
             type: 'circle',
             source: 'locations_dst',
             filter: ['!', ['has', 'point_count']],
             paint: {
-              'circle-color': [
-                'case',
-                ['>', ['get', 'forecasted_value'], 1], '#1da1f2',
-                '#66757f'
-              ],
-              'circle-radius': 6,
-              'circle-stroke-width': [
+            'circle-color': [
                 'interpolate',
                 ['linear'],
-                ['zoom'],
-                2, 0,
-                4, 2,
-                6, 4,
-                8, 8,
-                10, 16
-              ],
-              'circle-stroke-color': 'black',
-              'circle-stroke-opacity': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                2, 0,
-                4, 1,
-                6, 1,
-                8, 0.5,
-                10, 0
-              ]
+                ['get', 'forecasted_value'],
+                1, '#1da1f2',
+                40, '#ff0000'
+            ],
+            'circle-radius': 13
             }
-          });
+        });
+        
+        // Add label symbol layer
+        map.addLayer({
+            id: 'unclustered-point',
+            type: 'symbol',
+            source: 'locations_dst',
+            filter: ['!', ['has', 'point_count']],
+            layout: {
+            'text-field': ['to-string', ['get', 'forecasted_value']],
+            'text-font': ['Manrope Bold'],
+            'text-size': 14,
+            'text-offset': [0, 0.5],
+            'text-anchor': 'bottom'
+            },
+            paint: {
+            'text-color': '#000000',
+            'text-halo-color': '#ffffff',
+            'text-halo-width': 1
+            }
+        });
+  
         
           map.addLayer({
             id: 'clustered-point',
@@ -408,9 +411,8 @@ function create_map(sites, param) {
                 20, 10,
                 30, 100,
                 40
-              ],
-              'circle-stroke-width': 2,
-              'circle-stroke-color': 'black'
+              ]
+
             }
           });
         
@@ -696,7 +698,7 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                    var diffrence_last_hour = calculateDifferenceAndPercentage(current_data.previous_fcst,current_data.current_fcst);
                
                 //$('.api_baker_plots').prepend('<div class="row local_forecats_window"></div>');
-                $('.local_forecats_window').html('')
+                $('.local_forecats_window').html('');
                 
                 if (diffrence_last_year[0] > 0) {
                     var diffrence_last_year_html_precentage ='<svg style="color: rgb(246, 70, 93);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z" fill="#d60b15"></path> </svg>';
@@ -723,7 +725,11 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                     $('.local_forecats_window').prepend('<div class="col-md-4"> <div class="lf-fcst-info years_difference '+diffrence_last_year_html_trend+'"> <div class="lf-fcst-name">SAME DAY / LAST YEAR</div> <div class="lf-fcst-value">'+rewrite_number(current_data.last_yea_fcst)+'<span>μg/m³</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_year">'+diffrence_last_year_html_precentage+'</span> '+rewrite_number(diffrence_last_year[1])+' % ('+rewrite_number(diffrence_last_year[0])+' <span>μg/m³</span>)</div> </div> </div>');
                 }   
                 if (rewrite_number(current_data.previous_fcst) !== 'N/A') {
-                    $('.local_forecats_window').prepend('<div class="col-md-4"> <div class="lf-fcst-info years_difference '+diffrence_last_hour_html_trend+'"> <div class="lf-fcst-name">CURRENT FORECAST</div> <div class="lf-fcst-value">'+rewrite_number(current_data.current_fcst)+'<span>μg/m³</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_year">'+diffrence_last_hour_html_precentage+'</span> '+rewrite_number(diffrence_last_hour[1])+' % ('+rewrite_number(diffrence_last_hour[0])+' <span>μg/m³</span>)</div> </div> </div>');
+                    $('.local_forecats_window').prepend('<div class="col-md-4"> <div class="lf-fcst-info years_difference '+diffrence_last_hour_html_trend+'"> <div class="lf-fcst-name">NEXT HOUR FORECAST</div> <div class="lf-fcst-value">'+rewrite_number(current_data.current_fcst)+'<span>μg/m³</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_year">'+diffrence_last_hour_html_precentage+'</span> '+rewrite_number(diffrence_last_hour[1])+' % ('+rewrite_number(diffrence_last_hour[0])+' <span>μg/m³</span>)</div> </div> </div>');
+                }
+
+                if (rewrite_number(current_data.previous_fcst) !== 'N/A') {
+                    $('.local_forecats_window').prepend('<div class="col-md-4"> <div class="lf-fcst-info years_difference '+diffrence_last_hour_html_trend+'"> <div class="lf-fcst-name">CURRENT ESTIMATES</div> <div class="lf-fcst-value">'+rewrite_number(current_data.previous_fcst)+'<span>μg/m³</span></div> </div> </div>');
                 }
 
                 
@@ -1016,10 +1022,23 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         var observation_data = combined_dataset["master_observation"];
         var datetime_data = combined_dataset["master_datetime"];
 
-        console.log(datetime_data);
-        console.log(localized_data);
-        console.log(uncorrected_data);
-        console.log(observation_data);
+        
+
+        var currentDate = new Date();
+        var currentDateString = currentDate.toISOString().slice(0, 13) + ":00:00";
+        currentDateString = currentDateString.replace("T", " ")
+        console.log("currentDateString");
+        console.log(currentDateString);
+
+
+        var currentDateIndex = datetime_data.indexOf(currentDateString);
+        console.log("currentDateIndex");
+        console.log(currentDateIndex);
+
+        var localizedValue = localized_data[currentDateIndex];
+
+
+
 
         var master_localized = {
         type: "scatter",
@@ -1027,6 +1046,11 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         connectgaps: false,
         x: datetime_data,
         y: localized_data,
+        mode: 'lines',
+        marker: {
+            color: 'red',
+            size: 10
+        },
         line: {
             color: 'rgba(59, 59, 59, 0.8)',
             width: 3
@@ -1061,6 +1085,20 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         };
 
         var layout = {
+            shapes: [
+                {
+                    type: 'line',
+                    x0: datetime_data[currentDateIndex],
+                    y0: localizedValue,
+                    x1: datetime_data[currentDateIndex],
+                    y1: 0,
+                    line: {
+                        color: 'green',
+                        width: 2,
+                        dash: 'dot'
+                    }
+                }
+            ],
             title: title,
             plot_bgcolor: 'rgb(22 26 30)',
             paper_bgcolor: 'rgb(22 26 30)',
@@ -1068,12 +1106,13 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
             legend: {
               orientation: 'v',
               x: 1.1,
-              y: 0.5
+              y: 0.5,
             },
            
             font: {
               family: 'Roboto, sans-serif',
-              color: '#FFFFFF'
+              color: '#FFFFFF',
+              size: 16
             },
            
             xaxis: {
@@ -1091,6 +1130,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
                 }
               }]
             },
+
            
             yaxis: {
               autorange: true,
@@ -1136,6 +1176,30 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
  
         Plotly.newPlot(forecasts_div, [master_localized,master_uncorrected,master_observation], layout);
         
+        
+
+        Plotly.addTraces(forecasts_div, {
+            x: [datetime_data[currentDateIndex]],
+            y: [localizedValue],
+            mode: 'markers',
+            marker: {
+                color: 'green',
+                size: 20
+            },
+            name: 'Current Value'
+        });
+
+        var markerVisible = true;
+        setInterval(function() {
+            if (markerVisible) {
+                Plotly.restyle('main_plot_for_api_baker', { 'marker.opacity': 0 }, [0]);
+            } else {
+                Plotly.restyle('main_plot_for_api_baker', { 'marker.opacity': 1 }, [0]);
+            }
+            markerVisible = !markerVisible;
+        }, 500);
+
+
         if(button){
             $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'"  href="#">'+title+'</button>');
         }
