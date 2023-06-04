@@ -336,7 +336,7 @@ function create_map(sites, param) {
         map.addSource('locations_dst', {
             type: 'geojson',
             data: 'https://www.noussair.com/get_data.php?type=location2&param=pm25',
-            cluster: true,
+            cluster: false,
             clusterMaxZoom: 2, 
             clusterRadius: 100 
         });
@@ -657,7 +657,7 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
     
     var param_code = pollutant_details(param).id
     //var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
-    var file_url = "https://www.noussair.com/fetch.php?url=https://africai.org/api-calls/all_precomputed/"+location+".json";
+    var file_url = "https://www.noussair.com/fetch.php?url=https://noussair.net/api-calls/all_precomputed/"+location+".json";
     console.log(file_url);
 
     
