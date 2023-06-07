@@ -740,8 +740,8 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                    
    
                     
-                    draw_plot(historical_master_data,param,unit,'main_plot_for_api_baker_historical','',false, button = false );
-                    draw_plot(filteredmaster_data,param,unit,forecasts_div,'',false, button = false );
+                    draw_plot(historical_master_data,param,unit,'main_plot_for_api_baker_historical','',false, button = false, historical = true );
+                    draw_plot(filteredmaster_data,param,unit,forecasts_div,'',false, button = false, historical = false );
 
                     if (button_option){
                         $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'_historical" class="btn btn-outline-primary change_plot"  href="#">model historical data</button>');
@@ -1012,7 +1012,7 @@ function getDates(startDate, stopDate) {
     return dateArray;
 }
 
-function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges = false, button=false){
+function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges = false, button=false, historical = false){
   
         var now = new Date();
         var dividerDate = now.toISOString().slice(0, 19).replace("T", " ");
@@ -1022,22 +1022,43 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         var observation_data = combined_dataset["master_observation"];
         var datetime_data = combined_dataset["master_datetime"];
 
+        if (!historical){
+            var currentDate = new Date();
+            var currentDateString = currentDate.toISOString().slice(0, 13) + ":00:00";
+            currentDateString = currentDateString.replace("T", " ")
+            console.log("currentDateString");
+            console.log(currentDateString);
+
+
+            var currentDateIndex = datetime_data.indexOf(currentDateString);
+            console.log("currentDateIndex");
+            console.log(currentDateIndex);
+
+            var localizedValue = localized_data[currentDateIndex];
+
+
+            
+            var shapes_layouts = { shapes: [
+                {
+                    type: 'line',
+                    x0: datetime_data[currentDateIndex],
+                    y0: localizedValue,
+                    x1: datetime_data[currentDateIndex],
+                    y1: 0,
+                    line: {
+                        color: 'green',
+                        width: 5,
+                        dash: 'dot'
+                    }
+                }
+            ],
+        }
+
+        }else{
+            shapes_layouts = {};
+        }
+
         
-
-        var currentDate = new Date();
-        var currentDateString = currentDate.toISOString().slice(0, 13) + ":00:00";
-        currentDateString = currentDateString.replace("T", " ")
-        console.log("currentDateString");
-        console.log(currentDateString);
-
-
-        var currentDateIndex = datetime_data.indexOf(currentDateString);
-        console.log("currentDateIndex");
-        console.log(currentDateIndex);
-
-        var localizedValue = localized_data[currentDateIndex];
-
-
 
 
         var master_localized = {
@@ -1083,22 +1104,8 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         },
         name: 'Observation'
         };
-
+        
         var layout = {
-            shapes: [
-                {
-                    type: 'line',
-                    x0: datetime_data[currentDateIndex],
-                    y0: localizedValue,
-                    x1: datetime_data[currentDateIndex],
-                    y1: 0,
-                    line: {
-                        color: 'green',
-                        width: 2,
-                        dash: 'dot'
-                    }
-                }
-            ],
             title: title,
             plot_bgcolor: 'rgb(22 26 30)',
             paper_bgcolor: 'rgb(22 26 30)',
@@ -1120,15 +1127,16 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
               color: '#FFFFFF',
               shapes: [ {
                 type:'line',
-                x0:'2023-05-25 16:00',
+                x0:'2023-06-6 16:00',
                 y0:-2,
-                x1:'2023-05-28 16:00',
+                x1:'2023-06-6 16:00',
                 y1:7,
                 line:{
                   color:'red',
                   width:4
                 }
-              }]
+              }],
+              shapes_layouts
             },
 
            
