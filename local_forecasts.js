@@ -1,3 +1,5 @@
+
+// LF V1.0
 $(document).ready(function() {
     $('body').on('click', '.nl_wave_routing', function() {
         var page = $(this).attr('href');
@@ -2027,7 +2029,7 @@ $('.modal-dialog').on('show.bs.modal', function () {
   });
   
  
-  
+  // LF V1.1 starts here
 
 $(document).on('click', '.routing_pollutant_param', function(e) {
     $(".loading_div").fadeIn(100);
