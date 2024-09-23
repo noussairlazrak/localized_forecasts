@@ -1,3 +1,5 @@
+
+// OPENAQ locations
 {
 	"-102": {
 	"location_name": "Kenya_Nairobi",
@@ -7477,3 +7479,5 @@
 	}
 }
 }
+
+// Pandora locations
