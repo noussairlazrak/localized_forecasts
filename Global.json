@@ -7481,3 +7481,322 @@
 }
 
 // Pandora locations
+
+### PANDORA
+
+site_settings = {'l_name': f'Washington DC', 
+                 'species': 'no2', 
+                 'lat': 38.9218, 
+                 'lon': -77.0124, 
+                 'model_src': 's3',
+                 'obs_src': 'local',
+                 'openaq_id': 739,
+                 'model_tuning' : False,
+                 'model_url': '#',
+                 'obs_url': f'pandora/pandora_cf_dc.csv',
+                 'resample' : '10D',
+                 'unit' : 'ppbv',
+                 'interpolation': False,
+                 'remove_outlier': False,
+                 'start' : None,   
+                 'end': dt.datetime.today()
+                }
+
+obs_settings = {'time_col': 'date', 
+                     'date_format': '%Y-%m-%d %H:%M', 
+                     'obs_val_col': 'sfcmr', 
+                     'lat_col': None, 
+                     'lon_col': None,
+                    }
+                    
+## Cambridge
+site_settings = {'l_name': f'Cambridge MA', 
+                 'species': 'no2', 
+                 'lat': 42.3800, 
+                 'lon': -71.1100,
+                 'silent': False,
+                 'model_src': 's3',
+                 'obs_src': 'local',
+                 'openaq_id': None,
+                 'model_tuning' : False,
+                 'model_url': '#',
+                 'obs_url': f'pandora/SNWG/Pandora26s1_CambridgeMA_L2_rnvh3p1-8+GEOSCF_cleaned.csv',
+                 'resample' : '5D',
+                 'unit' : 'ppb',
+                 'interpolation': False,
+                 'remove_outlier': True,
+                 'start' : None,   
+                 'end': dt.datetime.today()
+                }
+
+obs_settings = {'time_col': 'date', 
+                     'date_format': '%Y-%m-%d %H:%M', 
+                     'obs_val_col': 'sfcmr', 
+                     'lat_col': None, 
+                     'lon_col': None,
+                    }
+
+validation_sets = [
+    {
+        'source': 'openaq',
+        'openaq_id': 521,
+        'name': 'openaq',
+        'species': 'no2',
+        'url': None,
+        'time_col': 'date',
+        'date_format': '%Y-%m-%d %H:%M',
+        'obs_val_col': None,
+        'lat_col': None,
+        'lon_col': None,
+        'start':dt.datetime(2021, 1, 1),
+        'end': dt.datetime.today(),
+        'unit': 'ppb'
+    },
+    {
+        'source': 'local',
+        'openaq_id': None,
+        'name': 'cf_sfcmr',
+        'species': 'no2',
+        'url': 'pandora/SNWG/Pandora238s1_Granada_L2_rnvh3p1-8+GEOSCF_cleaned.csv',
+        'time_col': 'date',
+        'date_format': '%Y-%m-%d %H:%M', 
+        'obs_val_col': 'cf_sfcmr',
+        'lat_col': None,
+        'lon_col': None,
+        'start':dt.datetime(2023, 1, 1),
+        'end': dt.datetime.today(),
+        'unit': 'ppb'
+    }
+]
+
+
+
+site_settings = {'l_name': f'Rome IIA, Italy', 
+                 'species': 'no2', 
+                 'lat': 42.1057, 
+                 'lon': 12.6402,
+                 'silent': False,
+                 'model_src': 's3',
+                 'obs_src': 'local',
+                 'openaq_id': None,
+                 'model_tuning' : False,
+                 'model_url': '#',
+                 'obs_url': f'pandora/SNWG/Pandora138s1_Rome-IIA_L2_rnvh3p1-8+GEOSCF_cleaned.csv',
+                 'resample' : '10D',
+                 'unit' : 'ppb',
+                 'interpolation': False,
+                 'remove_outlier': True,
+                 'start' : None,   
+                 'end': dt.datetime.today()
+                }
+
+obs_settings = {'time_col': 'date', 
+                     'date_format': '%Y-%m-%d %H:%M', 
+                     'obs_val_col': 'sfcmr', 
+                     'lat_col': None, 
+                     'lon_col': None,
+                    }
+
+validation_sets = [
+    {
+        'source': 'openaq',
+        'openaq_id': 7534,
+        'name': 'openaq',
+        'species': 'no2',
+        'url': None,
+        'time_col': 'date',
+        'date_format': '%Y-%m-%d %H:%M',
+        'obs_val_col': None,
+        'lat_col': None,
+        'lon_col': None,
+        'start':dt.datetime(2023, 1, 1),
+        'end': dt.datetime.today(),
+        'unit': 'ugm3'
+    },
+    {
+        'source': 'local',
+        'openaq_id': None,
+        'name': 'l1hgt',
+        'species': 'no2',
+        'url': 'pandora/SNWG/Pandora238s1_Granada_L2_rnvh3p1-8+GEOSCF_cleaned.csv',
+        'time_col': 'date',
+        'date_format': '%Y-%m-%d %H:%M', 
+        'obs_val_col': 'l1hgt',
+        'lat_col': None,
+        'lon_col': None,
+        'start':dt.datetime(2022, 1, 1),
+        'end': dt.datetime.today(),
+        'unit': 'm'
+    },
+     {
+        'source': 'local',
+        'openaq_id': None,
+        'name': 'cf_pbl',
+        'species': 'no2',
+        'url': 'pandora/SNWG/Pandora238s1_Granada_L2_rnvh3p1-8+GEOSCF_cleaned.csv',
+        'time_col': 'date',
+        'date_format': '%Y-%m-%d %H:%M', 
+        'obs_val_col': 'cf_pbl',
+        'lat_col': None,
+        'lon_col': None,
+        'start':dt.datetime(2022, 1, 1),
+        'end': dt.datetime.today(),
+        'unit': 'm'
+    }
+   
+]
+
+
+
+
+site_settings = {'l_name': f'Bronx NY', 
+                 'species': 'no2', 
+                 'lat': 40.8679, 
+                 'lon': -73.8781,
+                 'silent': False,
+                 'model_src': 's3',
+                 'obs_src': 'local',
+                 'openaq_id': None,
+                 'model_tuning' : False,
+                 'model_url': '#',
+                 'obs_url': f'pandora/SNWG/Pandora180s1_BronxNY_L2_rnvh3p1-8+GEOSCF_cleaned.csv',
+                 'resample' : '10D',
+                 'unit' : 'ppb',
+                 'interpolation': False,
+                 'remove_outlier': True,
+                 'start' : None,   
+                 'end': dt.datetime.today()
+                }
+
+obs_settings = {'time_col': 'date', 
+                     'date_format': '%Y-%m-%d %H:%M', 
+                     'obs_val_col': 'sfcmr', 
+                     'lat_col': None, 
+                     'lon_col': None,
+                    }
+
+validation_sets = [
+    {
+        'source': 'openaq',
+        'openaq_id': 857,
+        'name': 'openaq',
+        'species': 'no2',
+        'url': None,
+        'time_col': 'date',
+        'date_format': '%Y-%m-%d %H:%M',
+        'obs_val_col': None,
+        'lat_col': None,
+        'lon_col': None,
+        'start':dt.datetime(2023, 1, 1),
+        'end': dt.datetime.today(),
+        'unit': 'ugm3'
+    },
+    {
+        'source': 'local',
+        'openaq_id': None,
+        'name': 'cf_sfcmr',
+        'species': 'no2',
+        'url': 'pandora/SNWG/Pandora180s1_BronxNY_L2_rnvh3p1-8+GEOSCF_cleaned.csv',
+        'time_col': 'date',
+        'date_format': '%Y-%m-%d %H:%M', 
+        'obs_val_col': 'cf_sfcmr',
+        'lat_col': None,
+        'lon_col': None,
+        'start':dt.datetime(2022, 1, 1),
+        'end': dt.datetime.today(),
+        'unit': 'm'
+    },
+    {
+        'source': 'local',
+        'openaq_id': None,
+        'name': 'l1hgt',
+        'species': 'no2',
+        'url': 'pandora/SNWG/Pandora180s1_BronxNY_L2_rnvh3p1-8+GEOSCF_cleaned.csv',
+        'time_col': 'date',
+        'date_format': '%Y-%m-%d %H:%M', 
+        'obs_val_col': 'l1hgt',
+        'lat_col': None,
+        'lon_col': None,
+        'start':dt.datetime(2022, 1, 1),
+        'end': dt.datetime.today(),
+        'unit': 'm'
+    },
+     {
+        'source': 'local',
+        'openaq_id': None,
+        'name': 'cf_pbl',
+        'species': 'no2',
+        'url': 'pandora/SNWG/Pandora180s1_BronxNY_L2_rnvh3p1-8+GEOSCF_cleaned.csv',
+        'time_col': 'date',
+        'date_format': '%Y-%m-%d %H:%M', 
+        'obs_val_col': 'cf_pbl',
+        'lat_col': None,
+        'lon_col': None,
+        'start':dt.datetime(2022, 1, 1),
+        'end': dt.datetime.today(),
+        'unit': 'm'
+    }
+   
+]
+
+
+
+
+
+#### Mexico City
+
+site_settings = {'l_name': f'ACO Mexico City', 
+             'species': 'no2', 
+             'silent': True, 
+             'lat': None, 
+             'lon': None, 
+             'model_src': 'local',
+             'obs_src': 'local',
+             'openaq_id': None,
+             'model_tuning' : False,
+             'model_url': 'geos-cf/MexicoCity_AJM_GEOS_CF_DATA.csv',
+             'obs_url': f'obs/mexico_city/ACO_no2.csv',
+             'resample' : '5D',
+             'unit' : 'ppb',
+             'interpolation': True,
+             'remove_outlier': False,
+             'start' : None,   
+             'end': dt.datetime.today()
+            }
+
+obs_settings = {'time_col': 'date', 
+                 'date_format': '%Y-%m-%d %H:%M:%S', 
+                 'obs_val_col': 'valor', 
+                 'lat_col': 'latitud', 
+                 'lon_col': 'longitud',
+                }
+
+
+## RIO SITES
+
+site_settings = {'l_name': f'Centro, Rio', 
+                 'species': 'o3', 
+                 'lat': -22.90834428, 
+                 'lon': -43.17815176,
+                 'silent': False,
+                 'model_src': 's3',
+                 'obs_src': 'local',
+                 'openaq_id': None,
+                 'model_tuning' : False,
+                 'model_url': '#',
+                 'obs_url': f'obs/rio/centro.csv',
+                 'resample' : '5D',
+                 'unit' : 'ppb',
+                 'interpolation': False,
+                 'remove_outlier': False,
+                 'start' : dt.datetime(2015, 1, 1),   
+                 'end': dt.datetime.today()
+                }
+
+obs_settings = {'time_col': 'Ano base', 
+                     'date_format': '%d/%m/%Y %H:%M', 
+                     'obs_val_col': 'O3', 
+                     'lat_col': None, 
+                     'lon_col': None,
+                    }
+
