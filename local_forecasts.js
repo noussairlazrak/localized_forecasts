@@ -642,7 +642,7 @@ function csvToArray(str, delimiter = ",") {
 }
 
 
-function read_api_baker(location,param,unit,forecasts_div,button_option=false, historical=1, reinforce_training=2,hpTunning=2, resample = false){
+function read_api_baker(location,param,unit,forecasts_div,button_option=false, historical=1, reinforce_training=2,hpTunning=2, resample = false, update=2){
     var title = 'Live';
     var messages1 = ["Please hold", "Connecting with API Baker", "Pretrained model not found"];
     var messages2 = ["Retraining....", "Connecting with SMCE", "Waiting for SMCE"];
@@ -657,9 +657,14 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
     var messages = ["Generating data", "Connecting to SMCE", "Fetching the data from API Baker", "Fetching data from GMAO FTP", "Fetching observations", "Getting the forecasts", "Please wait...", "Connecting...."];
    
     
-    var param_code = pollutant_details(param).id
+    var param_code = pollutant_details(param).id;
+
+    if(update == 1){
+    var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
+    }else{
+    var file_url = "https://www.noussair.com/fetch.php?url=https://www.noussair.com/api_baker/api-calls/all_precomputed_3_6_2023/"+location+".json";
+    }
     //var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
-    var file_url = "https://www.noussair.com/fetch.php?url=https://noussair.net/api-calls/all_precomputed/"+location+".json";
     console.log(file_url);
 
     
@@ -673,6 +678,8 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                 }
                 
                 if(data){
+
+                    
 
                     master_datetime = []
                     filteredmaster_data = []
@@ -690,6 +697,17 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                     master_data.master_localized = data_str.forecasts.prediction;
                     master_data.master_uncorrected = data_str.forecasts.pm25_rh35_gcc;
                    
+
+                    $(document).on("click", ".download_forecasts_data", function() {
+                        var csv_file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '('+'_'+historical+').csv';
+                        let csvContent = "data:text/csv;charset=utf-8," + master_datas;
+                        var encodedUri = encodeURI(csvContent);
+                        var link = document.createElement("a");
+                        link.setAttribute("href", encodedUri);
+                        link.setAttribute("download", csv_file_name);
+                        document.body.appendChild(link); 
+                        link.click();
+                    });
                    
                    
                    var current_data = get_current_hour_forecasts(master_data);
@@ -766,6 +784,8 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
 
                     $('.model_data').html('<div class="container my-5"> <h1> Bias Corrected Model Information</h1><div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Total Observations</h5> <p class="card-text fs-3 fw-bold">'+data_str.metrics.total_observation+'</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Last Model Update</h5> <p class="card-text fs-3 fw-bold">'+data_str.metrics.latest_training.substring(0, 19)+'</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Mean Square Error</h5> <p class="card-text"> '+data_str.metrics["mse after training"]+'<br> </p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Mean Absolute Error</h5> <p class="card-text"> '+data_str.metrics["mae after training"]+' </p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">R2 Score</h5> <p class="card-text"> '+data_str.metrics["r2 after training"]+'</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Observation Dates</h5> <p class="card-text"> '+data_str.metrics.start_date.substring(0, 10)+' to '+data_str.metrics.end_date.substring(0, 10)+'  </p> </div> </div> </div> </div> </div>');
 
+
+                    
                     
 
                 }
@@ -1064,92 +1084,97 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
 
 
         var master_localized = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: localized_data,
-        mode: 'lines',
-        marker: {
-            color: 'red',
-            size: 10
-        },
-        line: {
-            color: 'rgba(59, 59, 59, 0.8)',
-            width: 3
-        },
-        name: 'ML + Model '
-        };
-
-        var master_uncorrected = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: uncorrected_data,
-        line: {
-            color: 'rgba(142, 142, 142, 0.8)',
-            width: 3
-        },
-        name: 'Model'
-        };
-
-        var master_observation = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: observation_data,
-        line: {
-            color: 'rgba(255, 0, 0, 0.8)',
-            width: 3
-        },
-        name: 'Observation'
-        };
-        
-        var layout = {
+            type: "scatter",
+            mode: "lines",
+            connectgaps: false,
+            x: datetime_data,
+            y: localized_data,
+            mode: 'lines',
+            marker: {
+              color: 'red',
+              size: 10
+            },
+            line: {
+              color: 'green',
+              width: 3
+            },
+            name: 'ML + Model '
+          };
+          
+          var master_uncorrected = {
+            type: "scatter",
+            mode: "lines",
+            connectgaps: false,
+            x: datetime_data,
+            y: uncorrected_data,
+            line: {
+              color: 'rgba(142, 142, 142, 0.8)',
+              width: 3
+            },
+            name: 'Model'
+          };
+          
+          var master_observation = {
+            type: "scatter",
+            mode: "lines",
+            connectgaps: false,
+            x: datetime_data,
+            y: observation_data,
+            line: {
+              color: 'rgba(255, 0, 0, 0.8)',
+              width: 3
+            },
+            name: 'Observation'
+          };
+          
+          var whoPm25Limit = 10; // WHO PM2.5 concentration limit
+          
+          var layout = {
             title: title,
             plot_bgcolor: 'rgb(22 26 30)',
             paper_bgcolor: 'rgb(22 26 30)',
-           
+          
             legend: {
               orientation: 'v',
               x: 1.1,
               y: 0.5,
             },
-           
+          
             font: {
               family: 'Roboto, sans-serif',
               color: '#FFFFFF',
               size: 16
             },
-           
+          
             xaxis: {
-              type: 'date',
-              color: '#FFFFFF',
-              shapes: [ {
-                type:'line',
-                x0:'2023-06-6 16:00',
-                y0:-2,
-                x1:'2023-06-6 16:00',
-                y1:7,
-                line:{
-                  color:'red',
-                  width:4
-                }
-              }],
-              shapes_layouts
-            },
-
-           
+                type: 'date',
+                color: '#FFFFFF',
+                rangeslider: {},
+                range: [datetime_data[0], datetime_data[datetime_data.length - 1]],
+            
+                shapes: [{
+                  type: 'line',
+                  x0: datetime_data[0],
+                  y0: whoPm25Limit,
+                  x1: datetime_data[datetime_data.length - 1],
+                  y1: 10,
+                  line: {
+                    color: 'red',
+                    width: 2,
+                    dash: 'dash',
+                  }
+                }]
+              },
+          
+          
             yaxis: {
               autorange: true,
               type: 'linear',
-              title: pollutant_details(param)+' ' +'[ '+ rewriteUnits(unit) +']',
+              title: pollutant_details(param) + ' ' + '[ ' + rewriteUnits(unit) + ']',
               color: '#FFFFFF'
             }
-          }; 
-          
+          };
+   
 
 
     if(dates_ranges){
@@ -1199,20 +1224,28 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
             name: 'Current Value'
         });
 
-        var markerVisible = true;
-        setInterval(function() {
-            if (markerVisible) {
-                Plotly.restyle('main_plot_for_api_baker', { 'marker.opacity': 0 }, [0]);
-            } else {
-                Plotly.restyle('main_plot_for_api_baker', { 'marker.opacity': 1 }, [0]);
-            }
-            markerVisible = !markerVisible;
-        }, 500);
+        
 
 
         if(button){
             $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'"  href="#">'+title+'</button>');
         }
+        if(historical){
+            var label_text = "historical simulation";
+            var label_text_rolling_average = "historical simulation";
+            var downlaod_label_text = "download historical simulation data";
+
+        }else{
+            var label_text = "Forecasts";
+            var label_text_rolling_average = "Forecasts ";
+            var downlaod_label_text = "download forecast data";
+        }
+
+        
+        
+        $('.plot_additional_features').prepend('<button type="button" class="btn btn-outline-primary change_plot" change_to="main_plot_'+historical+'" href="#"> '+label_text+'</button><button type="button" change_to="resample_main_plot_'+historical+'" change_to ="resample_main_plot_'+historical+'" class="btn btn-outline-primary change_plot change_plot resample'+'_'+historical+'" href="#">'+label_text_rolling_average+'</button>');
+
+        $('.lf-downloads').append('<a class="download_forecasts_data" href="#">| '+downlaod_label_text+' </button>');
        
         
 
@@ -1823,7 +1856,7 @@ function open_forecats_window (messages, st_id, param, location_name, observatio
     
         try {
             get_plot(location_name, param, current_observation_unit, 'plot_model_', 'plot_resample_', false, precomputer_forecasts, '');
-            get_plot(location_name, param, current_observation_unit, 'plot_model_historical', 'plot_resample_historical', false, precomputer_forecasts, 'historical');
+            //get_plot(location_name, param, current_observation_unit, 'plot_model_historical', 'plot_resample_historical', false, precomputer_forecasts, 'historical');
             //side_by_side_plots(param, current_observation_unit, 'Historical Comparison', precomputer_forecasts, current_observation_unit);
           } catch (error) {
             console.error('An error occurred while running the get_plot function:', error);
@@ -1850,6 +1883,7 @@ $(document).on("click", ".launch-local-forecasts", function(param) {
     var observation_value = $(this).attr("observation_value");
     var current_observation_unit = $(this).attr("current_observation_unit");
     var obs_src = $(this).attr("obs_src");
+
     open_forecats_window (["Loading", "Please hold"], location_id, 'pm25', location_name, observation_value, current_observation_unit, observation_source, precomputed_forecasts)
 
     
@@ -1886,70 +1920,6 @@ function save_data_to_csv(data) {
     });
     saveAs(blob, "file.csv");
 }
-
-function update_api_baker(location,param,unit,forecasts_div){
-
-    var file_url = "https://www.noussair.com/api_baker.php?st="+location;
-   // $(".loading_forecasts").fadeIn(10);
-    $.ajax({
-        url: file_url, 
-        success: function() { 
-            d3.json(file_url, function(error, data) {
-                if (error) {
-                    alert(error);
-                }
-                
-                if(data){
-                    console.log("date")
-                    console.log(data);
-                    master_datetime = []
-                    master_observation = []
-                    master_localized = []
-                    residuals = []
-                    master_data = []
-
-                    
-                    
-                    data_str = data.split('} {').join('},{');
-                    data_str = '['+data_str+']';
-                    data_str = JSON.parse(data_str);
-                    
-                    console.log(data_str[0].time);
-
-                    $.each(data_str,function(key,value){
-                        master_datetime.push(data_str[key]["time"])
-                        master_observation.push(data_str[key]["value"])
-                        master_localized.push(data_str[key]["prediction"])
-                        residuals.push(data_str[key]["residuals"])
-                    });
-                    master_data.master_datetime = master_datetime;
-                    master_data.master_observation = master_observation;
-                    master_data.master_localized = master_localized;
-
-
-
-                    var currentDate = new Date();
-
-                   
-
-
-                    draw_plot(master_data,param,unit,forecasts_div,'Localized forecasts (Pretrained model)',false)
-
-                    $('.retrain_model').attr("param",param);
-                    $('.retrain_model').attr("site",location);
-                    $('.retrain_model').attr("unit",unit);
-
-                }
-                else {
-                   console.log("ERROR");
-                }
-                
-            });
-
-        },
-    });
-}
-
 
 
 $(document).on("click", '.retrain_model', function() {
@@ -1994,7 +1964,11 @@ $(document).on("click", '.retrain_model', function() {
         
         
     }
-    read_api_baker(current_site,current_param,current_unit,'main_plot_for_api_baker', false, historical=1, reinforce_training= reinforce_training,hpTunning=hpTunning)
+
+
+    read_api_baker(current_site,current_param,current_unit,'main_plot_for_api_baker', button_option = false, historical=1, reinforce_training=2,hpTunning=2, resample = false, update=1);
+
+
     });
     
    
