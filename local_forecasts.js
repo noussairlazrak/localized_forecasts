@@ -183,7 +183,7 @@ function add_marker(map, lat, long, open_aq_id, param, site) {
 
     if(site.site_data.obs_source == 's3'){
         location_name.value = site.site_data.location.replace(/[_\W]+/g, "_");
-        observation_value.value = '--';
+        observation_value.value = 'PND';
         current_observation_unit.value = site.obs_options.pm25.unit;
     }
     else{
@@ -388,7 +388,7 @@ function create_map(sites, param) {
             'text-anchor': 'bottom'
             },
             paint: {
-            'text-color': '#000000',
+            'text-color': '#152c1c',
             'text-halo-color': '#ffffff',
             'text-halo-width': 1
             }
