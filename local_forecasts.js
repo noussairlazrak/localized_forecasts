@@ -696,10 +696,10 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                         data = JSON.parse(data);
                     }
                     
-                    master_data.master_datetime = data_str.forecasts.time;
-                    master_data.master_observation = data_str.forecasts.value;
-                    master_data.master_localized = data_str.forecasts.prediction;
-                    master_data.master_uncorrected = data_str.forecasts.pm25_rh35_gcc;
+                    master_data.master_datetime = data.forecasts.time;
+                    master_data.master_observation = data.forecasts.value;
+                    master_data.master_localized = data.forecasts.predicted;
+                    master_data.master_uncorrected = data.forecasts.predicted;
                    
 
                     $(document).on("click", ".download_forecasts_data", function() {
