@@ -660,9 +660,11 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
     var param_code = pollutant_details(param).id;
 
     if(update == 1){
-    var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
+    var file_url ="https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Athens-NOA.json"
+    //var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
     }else{
-    var file_url = "https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/"+location+".json";
+    //var file_url = "https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/"+location+".json";
+    var file_url ="https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Athens-NOA.json"
     }
     //var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
     console.log(file_url);
@@ -1513,13 +1515,13 @@ function side_by_side_plots(param, unit, title, precomputer_forecasts, observati
 
 function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_div,merge,precomputer_forecasts,historical){
 
-    var file_url = "https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Athens-NOA.json";
+    var file_url = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_FR40008_no2.json";
     $(".loading_forecasts").fadeIn(10);
     if(merge){
-        //file_url.replace('.json', '_historical.json');
+        file_url.replace('.json', '_historical.json');
     }
     if(historical == "historical"){
-       // file_url = file_url.replace('.json', '_historical.json');
+        file_url = file_url.replace('.json', '_historical.json');
     }
    
  
@@ -1855,20 +1857,20 @@ function open_forecats_window (messages, st_id, param, location_name, observatio
 
     
         try {
-            get_plot(location_name, param, current_observation_unit, 'plot_model_', 'plot_resample_', false, precomputer_forecasts, '');
+            //get_plot(location_name, param, current_observation_unit, 'plot_model_', 'plot_resample_', false, precomputer_forecasts, '');
             //get_plot(location_name, param, current_observation_unit, 'plot_model_historical', 'plot_resample_historical', false, precomputer_forecasts, 'historical');
             //side_by_side_plots(param, current_observation_unit, 'Historical Comparison', precomputer_forecasts, current_observation_unit);
           } catch (error) {
             console.error('An error occurred while running the get_plot function:', error);
           }
-          /*
+          
           try {
             read_api_baker(st_id,param,current_observation_unit,'main_plot_for_api_baker', true, historical=1, reinforce_training=2,hpTunning=2);
             } catch (error) {
                 console.error('An error occurred while running the get_plot function:', error);
             }
             
-        */
+        
 
         $('#loading-screen').hide();
         
