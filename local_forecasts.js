@@ -662,7 +662,7 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
     if(update == 1){
     var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
     }else{
-    var file_url = "https://www.noussair.com/fetch.php?url=https://www.noussair.com/api_baker/api-calls/all_precomputed_3_6_2023/"+location+".json";
+    var file_url = "https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/"+location+".json";
     }
     //var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
     console.log(file_url);
