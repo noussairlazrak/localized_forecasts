@@ -1513,7 +1513,7 @@ function side_by_side_plots(param, unit, title, precomputer_forecasts, observati
 
 function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_div,merge,precomputer_forecasts,historical){
 
-    var file_url = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/forecast_latest_FR40008_no2.json";
+    var file_url = "https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Athens-NOA.json";
     $(".loading_forecasts").fadeIn(10);
     if(merge){
         //file_url.replace('.json', '_historical.json');
