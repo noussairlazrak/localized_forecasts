@@ -691,8 +691,10 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
                     residuals = []
                     master_data = []
 
-                    //data_str = data.replace(/NaN/g, '""')
-                    data_str = JSON.parse(data_str);
+                    if (typeof data === 'string') {
+                        data = data.replace(/NaN/g, '""');
+                        data = JSON.parse(data);
+                    }
                     
                     master_data.master_datetime = data_str.forecasts.time;
                     master_data.master_observation = data_str.forecasts.value;
