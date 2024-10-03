@@ -337,7 +337,7 @@ function create_map(sites, param) {
     map.on('load', () => {
         map.addSource('locations_dst', {
             type: 'geojson',
-            data: 'https://www.noussair.com/get_data.php?type=location2&param=pm25',
+            data: 'https://www.noussair.com/get_data.php?type=location2&param=no2',
             cluster: false,
             clusterMaxZoom: 2, 
             clusterRadius: 100 
