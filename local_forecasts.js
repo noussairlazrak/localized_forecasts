@@ -642,7 +642,7 @@ function csvToArray(str, delimiter = ",") {
 }
 
 
-function read_api_baker(location,param,unit,forecasts_div,button_option=false, historical=1, reinforce_training=2,hpTunning=2, resample = false, update=2){
+function read_api_baker(location,param,unit,forecasts_div,button_option=false, historical=0, reinforce_training=2,hpTunning=2, resample = false, update=2){
     var title = 'Live';
     var messages1 = ["Please hold", "Connecting with API Baker", "Pretrained model not found"];
     var messages2 = ["Retraining....", "Connecting with SMCE", "Waiting for SMCE"];
@@ -668,10 +668,9 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
     }
     //var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
     console.log(file_url);
+    
 
-
-    d3.json(file_url)
-    .then(function(data) {
+    var ajaxCall =  d3.json(file_url) .then(function(data) {
         // Check if data is valid
         if (!data) {
             throw new Error("No data received");
@@ -1772,11 +1771,9 @@ function open_forecats_window (messages, st_id, param, location_name, observatio
             console.error('An error occurred while running the get_plot function:', error);
           }
           
-          try {
-            read_api_baker(st_id,param,current_observation_unit,'main_plot_for_api_baker', true, historical=1, reinforce_training=2,hpTunning=2);
-            } catch (error) {
-                console.error('An error occurred while running the get_plot function:', error);
-            }
+          
+        read_api_baker(st_id,param,current_observation_unit,'main_plot_for_api_baker', true, historical=1, reinforce_training=2,hpTunning=2);
+           
             
         
 
@@ -1879,7 +1876,7 @@ $(document).on("click", '.retrain_model', function() {
     }
 
 
-    read_api_baker(current_site,current_param,current_unit,'main_plot_for_api_baker', button_option = false, historical=1, reinforce_training=2,hpTunning=2, resample = false, update=1);
+    //(current_site,current_param,current_unit,'main_plot_for_api_baker', button_option = false, historical=1, reinforce_training=2,hpTunning=2, resample = false, update=1);
 
 
     });
