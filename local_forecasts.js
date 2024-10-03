@@ -669,7 +669,33 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
     //var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
     console.log(file_url);
 
-    
+    d3.json(file_url)
+    .then(function(data) {
+        // Handle successful data loading
+        console.log("Data loaded successfully:", data);
+
+        // Initialize arrays to hold processed data
+        const master_data = {
+            master_datetime: [],
+            master_observation: [],
+            master_localized: [],
+            master_uncorrected: []
+        };
+
+        // Process the forecasts from the loaded data
+        data.forecasts.forEach(forecast => {
+            master_data.master_datetime.push(forecast.time);
+            master_data.master_observation.push(forecast.value);
+            master_data.master_localized.push(forecast.predicted);
+            master_data.master_uncorrected.push(forecast.predicted); // Assuming you want to keep it the same
+        });
+
+        console.log(master_data);
+    })
+    .catch(function(error) {
+        // Handle errors during data loading
+        console.error("Error loading data:", error);
+    });
 
     var ajaxCall = $.ajax({
         url: file_url, 
