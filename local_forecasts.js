@@ -750,46 +750,7 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
         $('.loader').hide(); // Hide loader on error
     });
 
-    setInterval(function() {
-        if (ajaxCall.readyState === 1) {
-          $("#call_messages").html("Waiting for model output...");
-        } else if (ajaxCall.readyState === 2) {
-          $("#call_messages").html("Processing request...");
-        } else if (ajaxCall.readyState === 3) {
-          $("#call_messages").html("Loading data...");
-        } else if (ajaxCall.readyState === 4 && ajaxCall.status === 200) {
-          $("#call_messages").html("Finilizing your request");
-        } else if (ajaxCall.readyState === 4 && ajaxCall.status !== 200) {
-          $("#call_messages").html("Error!");
-        }
-        
-        index++;
-        
-        if (index >= messages1.length + messages2.length) {
-          index = 0;
-        }
-        
-        if (ajaxCall.readyState === 4 && ajaxCall.status !== 200 && index >= messages1.length) {
-          $("#call_messages").fadeOut(1000, function() {
-            $(this).html(messages2[index - messages1.length]).fadeIn(1000);
-          });
-        } else if (ajaxCall.readyState === 4 && ajaxCall.status !== 200 && index < messages1.length) {
-          $("#call_messages").fadeOut(1000, function() {
-            $(this).html(messages1[index]).fadeIn(1000);
-          });
-        }
-        
-        if (ajaxCall.readyState === 4 && ajaxCall.status === 200 && index >= messages1.length + messages2.length) {
-          $("#call_messages").fadeOut(1000, function() {
-            $(this).html("Success!").fadeIn(1000);
-          });
-        } else if (ajaxCall.readyState === 4 && ajaxCall.status === 200 && index < messages1.length + messages2.length) {
-          $("#call_messages").fadeOut(1000, function() {
-            $(this).html(messages1[index]).fadeIn(1000);
-          });
-        }
-        
-      }, 5000);
+   
 }
 
 
