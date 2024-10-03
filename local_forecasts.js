@@ -670,7 +670,7 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
     console.log(file_url);
     
 
-    var ajaxCall =  d3.json(file_url) .then(function(data) {
+    $(d3.json(file_url) .then(function(data) {
         // Check if data is valid
         if (!data) {
             throw new Error("No data received");
@@ -747,7 +747,7 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
         console.error("Error loading data:", error);
         $('.api_baker_plots').html('Sorry, we are not able to connect with openaq api at this moment, please check back later...');
         $('.loader').hide(); // Hide loader on error
-    });
+    }));
 
    
 }
