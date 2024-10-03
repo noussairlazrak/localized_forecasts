@@ -723,14 +723,10 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
             var diffrence_last_year_html_trend = "trend-down";
         }
 
-        // Similar logic for last hour differences...
-
-        // Update UI with forecast information
         if (rewrite_number(current_data.last_yea_fcst) !== 'N/A') {
             $('.local_forecats_window').prepend('<div class="col-md-4"> <div class="lf-fcst-info years_difference ' + diffrence_last_year_html_trend + '"> <div class="lf-fcst-name">SAME DAY / LAST YEAR</div> <div class="lf-fcst-value">' + rewrite_number(current_data.last_yea_fcst) + '<span>μg/m³</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_year">' + diffrence_last_year_html_precentage + '</span> ' + rewrite_number(diffrence_last_year[1]) + ' % (' + rewrite_number(diffrence_last_year[0]) + ' <span>μg/m³</span>)</div> </div> </div>');
         }
 
-        // Additional UI updates...
 
         // Call plotting functions
         var filteredmaster_data = filter_data_set_by_date(master_data,2,-5);
@@ -739,14 +735,13 @@ function read_api_baker(location,param,unit,forecasts_div,button_option=false, h
         draw_plot(historical_master_data, param, unit, 'main_plot_for_api_baker_historical', '', false, button = false, historical = true);
         draw_plot(filteredmaster_data, param, unit, forecasts_div, '', false, button = false, historical = false);
 
-        // Additional button options...
-        
-        $('.loader').hide(); // Hide loader after processing
+  
+        $('.loader').hide(); 
     })
     .catch(function(error) {
         console.error("Error loading data:", error);
         $('.api_baker_plots').html('Sorry, we are not able to connect with openaq api at this moment, please check back later...');
-        $('.loader').hide(); // Hide loader on error
+        $('.loader').hide(); 
     }));
 
    
