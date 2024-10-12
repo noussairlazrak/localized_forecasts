@@ -1800,6 +1800,7 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
        
         clearInterval(intervalId); 
         $loadingScreen.hide();
+        $(this).fadeOut(10)
     });
 }
 
@@ -1928,7 +1929,7 @@ create_map('test','pm25')
 
 //get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param));
 $('.modal-dialog').on('show.bs.modal', function () {
-    $('#loading-screen').show();
+    //$('#loading-screen').show();
   });
   
  
