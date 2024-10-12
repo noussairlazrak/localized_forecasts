@@ -504,9 +504,9 @@ function create_map(sites, param) {
                 `location_id: ${location_id}<br>Was there a location_name?: ${location_name}`
             ).on('open', e => {
 
-                open_forecats_window (["Loading", "Please hold"], location_id, 'pm25', location_name, observation_value, observation_unit, observation_source, precomputed_forecasts[0].pm25.forecasts)
+                openForecastsWindow (["Loading", "Please hold"], location_id, 'pm25', location_name, observation_value, observation_unit, observation_source, precomputed_forecasts[0].pm25.forecasts)
 
-                //open_forecats_window (messages, st_id, param, location_name, observation_value, current_observation_unit, obs_src,precomputer_forecasts)
+                //openForecastsWindow (messages, st_id, param, location_name, observation_value, current_observation_unit, obs_src,precomputer_forecasts)
        
             })
            
@@ -1761,6 +1761,7 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
     const $loadingDiv = $(".loading_div");
     const $forecastsContainer = $(".forecasts_container");
     const $loadingScreen = $('#loading-screen');
+    alert("version 1.1")
 
     $loadingDiv.fadeIn(10);
     $forecastsContainer.load(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`, function() {
