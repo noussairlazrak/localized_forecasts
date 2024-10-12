@@ -668,7 +668,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = false,
         : "https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Athens-NOA.json";
 
     console.log(fileUrl);
-
+    console.log("fitching...");
     fetch(fileUrl)
         .then(response => {
             if (!response.ok) {
