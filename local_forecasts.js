@@ -664,8 +664,8 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = false,
     
     const paramCode = pollutant_details(param).id;
     const fileUrl = update === 1 
-        ? "https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Athens-NOA.json"
-        : "https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Athens-NOA.json";
+        ? "https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/"+location+".json"
+        : "https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/"+location+".json";
 
     console.log(fileUrl);
 
