@@ -668,7 +668,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = false,
         : "https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Athens-NOA.json";
 
     console.log(fileUrl);
-    console.log("fitching...");
+
     fetch(fileUrl)
         .then(response => {
             if (!response.ok) {
@@ -680,7 +680,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = false,
             if (!data) {
                 throw new Error("No data received");
             }
-            console.log(data);
+
             // Initialize arrays to hold processed data
             let masterData = {
                 master_datetime: [],
@@ -696,7 +696,6 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = false,
                 masterData.master_localized.push(forecast.predicted);
                 masterData.master_uncorrected.push(forecast.predicted);
             });
-            console.log(masterData)
 
             // Event listener for downloading forecasts data
             $(document).off("click", ".download_forecasts_data").on("click", ".download_forecasts_data", function() {
@@ -716,6 +715,15 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = false,
 
             // Update UI based on differences (implement this as needed)
             
+            // Filtering data for plotting
+            console.log(masterData);
+            var filteredMasterData = filter_data_set_by_date(masterData, 2, -5);
+            var historicalMasterData = filter_data_set_by_date(masterData, 365, 20);
+
+            // Drawing plots
+            draw_plot(historicalMasterData, param, unit, 'main_plot_for_api_baker_historical', '', false, false, true);
+            draw_plot(filteredMasterData, param, unit, forecastsDiv, '', false, false, false);
+
             $('.loader').hide(); // Hide loader after processing
         })
         .catch(error => {
@@ -723,6 +731,19 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = false,
             $('.api_baker_plots').html('Sorry, we are not able to connect with OpenAQ API at this moment. Please check back later...');
             $('.loader').hide(); // Hide loader on error
         });
+}
+
+// Helper function to format master data to CSV
+function formatToCSV(data) {
+    let csvContent = '';
+    const headers = ['Datetime', 'Observation', 'Localized', 'Uncorrected'];
+    csvContent += headers.join(',') + '\n';
+    
+    data.master_datetime.forEach((datetime, index) => {
+        csvContent += `${datetime},${data.master_observation[index]},${data.master_localized[index]},${data.master_uncorrected[index]}\n`;
+    });
+    
+    return csvContent;
 }
 
 // Helper function to format master data to CSV
