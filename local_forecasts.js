@@ -696,6 +696,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = false,
                 masterData.master_localized.push(forecast.predicted);
                 masterData.master_uncorrected.push(forecast.predicted);
             });
+            console.log(masterData)
 
             // Event listener for downloading forecasts data
             $(document).off("click", ".download_forecasts_data").on("click", ".download_forecasts_data", function() {
