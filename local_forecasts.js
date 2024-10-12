@@ -721,8 +721,8 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = false,
             var historicalMasterData = filter_data_set_by_date(masterData, 365, 20);
 
             // Drawing plots
-            draw_plot(historicalMasterData, param, unit, 'main_plot_for_api_baker_historical', '', false, false, true);
-            draw_plot(filteredMasterData, param, unit, forecastsDiv, '', false, false, false);
+            draw_plot(historicalMasterData, param, unit, 'main_plot_for_api_baker_historical', '', false, false, false);
+            //draw_plot(filteredMasterData, param, unit, forecastsDiv, '', false, false, false);
 
             $('.loader').hide(); // Hide loader after processing
         })
@@ -1795,7 +1795,7 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
             console.error('An error occurred while running the get_plot function:', error);
         }
         
-        //readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker', true, { historical: 1, reinforce_training: 2, hpTunning: 2 });
+        readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker', true, { historical: 1, reinforce_training: 2, hpTunning: 2 });
         
         $loadingScreen.hide();
         clearInterval(intervalId); 
