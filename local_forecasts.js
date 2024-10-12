@@ -1755,12 +1755,12 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
     const $loadingDiv = $(".loading_div");
     const $forecastsContainer = $(".forecasts_container");
     const $loadingScreen = $('#loading-screen');
-    alert("version 1.6")
+    alert("version 1.4")
 
-    //$loadingDiv.fadeOut(10);
+    $loadingDiv.fadeIn(10);
     $forecastsContainer.load(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`, function() {
-        //$loadingScreen.show();
-        //$(this).fadeOut(10).fadeIn(10);
+        $loadingScreen.show();
+        $(this).fadeOut(10).fadeIn(10);
 
 
         const intervalId = setInterval(() => {
@@ -1778,6 +1778,7 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
         
 
         $forecastsContainer.addClass("noussair_animations zoom_in");
+        $loadingDiv.fadeOut(10);
         
         $("button").css({
             "animation": "intro 2s cubic-bezier(0.03, 1.08, 0.56, 1)",
@@ -1796,10 +1797,8 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
         
         readApiBaker(st_id, param, current_observation_unit, 'main_plot_for_api_baker', true, { historical: 1, reinforce_training: 2, hpTunning: 2 });
         
-       
+        $loadingScreen.hide();
         clearInterval(intervalId); 
-       // $loadingScreen.hide();
-        
     });
 }
 
@@ -1905,6 +1904,7 @@ $(document).on("click", '.retrain_model', function() {
    
 
 
+
 // MAIN APP
 
 const location_modules = "https://www.noussair.com/get_data.php?type=ftp&url=https://www.noussair.com/global.json";
@@ -1928,7 +1928,7 @@ create_map('test','pm25')
 
 //get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param));
 $('.modal-dialog').on('show.bs.modal', function () {
-    //$('#loading-screen').show();
+    $('#loading-screen').show();
   });
   
  
