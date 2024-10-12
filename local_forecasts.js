@@ -1795,7 +1795,7 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
             console.error('An error occurred while running the get_plot function:', error);
         }
         
-        readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker', true, { historical: 1, reinforce_training: 2, hpTunning: 2 });
+        //readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker', true, { historical: 1, reinforce_training: 2, hpTunning: 2 });
         
         $loadingScreen.hide();
         clearInterval(intervalId); 
