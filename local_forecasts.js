@@ -1755,9 +1755,9 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
     const $loadingDiv = $(".loading_div");
     const $forecastsContainer = $(".forecasts_container");
     const $loadingScreen = $('#loading-screen');
-    alert("version 1.5")
+    alert("version 1.6")
 
-    $loadingDiv.fadeOut(10);
+    //$loadingDiv.fadeOut(10);
     $forecastsContainer.load(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`, function() {
         //$loadingScreen.show();
         //$(this).fadeOut(10).fadeIn(10);
