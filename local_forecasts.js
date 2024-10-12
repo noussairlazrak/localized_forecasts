@@ -1757,7 +1757,7 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
     const $loadingScreen = $('#loading-screen');
     alert("version 1.4")
 
-    $loadingDiv.fadeIn(10);
+    $loadingDiv.fadeOut(10);
     $forecastsContainer.load(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`, function() {
         $loadingScreen.show();
         $(this).fadeOut(10).fadeIn(10);
@@ -1778,7 +1778,6 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
         
 
         $forecastsContainer.addClass("noussair_animations zoom_in");
-        $loadingDiv.fadeOut(10);
         
         $("button").css({
             "animation": "intro 2s cubic-bezier(0.03, 1.08, 0.56, 1)",
@@ -1800,7 +1799,7 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
        
         clearInterval(intervalId); 
         $loadingScreen.hide();
-        $(this).fadeOut(10)
+        
     });
 }
 
