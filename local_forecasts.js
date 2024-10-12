@@ -1,27 +1,33 @@
 
 // LF V1.0
 $(document).ready(function() {
-    $('body').on('click', '.nl_wave_routing', function() {
-        var page = $(this).attr('href');
-        $(".loading_div").fadeIn(10);
-        var messages = ["please wait...", "connecting...."];
-        setInterval(function() {
-            var message = messages[Math.floor(Math.random() * messages.length)];
-            $(".messages").html(message)
+    $('body').on('click', '.nl_wave_routing', function(e) {
+        e.preventDefault(); 
+
+        const page = $(this).attr('href');
+        const $loadingDiv = $(".loading_div");
+        const $forecastsContainer = $(".forecasts_container");
+        const messages = ["Please wait...", "Connecting..."];
+        
+
+        $loadingDiv.fadeIn(10);
+        let intervalId = setInterval(() => {
+            const message = messages[Math.floor(Math.random() * messages.length)];
+            $(".messages").html(message);
         }, 100);
 
-        $(".forecasts_container").load("vues/" + page, function() {
-            $(this).fadeOut(10);
-            $(this).fadeIn(10);
-            $(".forecasts_ container").addClass("noussair_animations zoom_in");
-            $(".loading_div").fadeOut(10);
+
+        $forecastsContainer.load("vues/" + page, function() {
+            $forecastsContainer.fadeOut(10, function() {
+                $(this).fadeIn(10).addClass("noussair_animations zoom_in");
+            });
+            $loadingDiv.fadeOut(10);
+            clearInterval(intervalId); 
         });
-        return false;
     });
-
-
-
 });
+
+
 
 mapboxgl.accessToken = 'pk.eyJ1IjoibGF6cmFrbiIsImEiOiJjanZodzV3OXUwNmEwNDRxdnVsZGhnaml4In0.-ES_Lt127Id6DEf8H9E3rg';
 
