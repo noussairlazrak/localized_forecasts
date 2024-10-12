@@ -1797,8 +1797,9 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
         
         readApiBaker(st_id, param, current_observation_unit, 'main_plot_for_api_baker', true, { historical: 1, reinforce_training: 2, hpTunning: 2 });
         
-        $loadingScreen.hide();
+       
         clearInterval(intervalId); 
+        $loadingScreen.hide();
     });
 }
 
@@ -1902,8 +1903,6 @@ $(document).on("click", '.retrain_model', function() {
     });
     
    
-
-
 
 
 // MAIN APP
