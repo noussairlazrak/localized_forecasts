@@ -669,7 +669,13 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = false,
 
     console.log(fileUrl);
 
-    d3.json(fileUrl)
+    fetch(fileUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             if (!data) {
                 throw new Error("No data received");
@@ -707,25 +713,8 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = false,
             const currentData = get_current_hour_forecasts(masterData);
             console.log(currentData);
 
-            const differences = {
-                lastYear: calculateDifferenceAndPercentage(currentData.last_yea_fcst, currentData.current_fcst),
-                nextHour: calculateDifferenceAndPercentage(currentData.current_fcst, currentData.next_fcst),
-                lastHour: calculateDifferenceAndPercentage(currentData.previous_fcst, currentData.current_fcst)
-            };
-
-            $('.local_forecats_window').html(''); // Clear previous content
-
-            // Update UI based on differences
-            updateUIWithDifferences(differences.lastYear, currentData.last_yea_fcst, 'SAME DAY / LAST YEAR');
-            // Additional UI updates for last hour and next hour...
-
-            // Call plotting functions
-            const filteredMasterData = filter_data_set_by_date(masterData, 2, -5);
-            const historicalMasterData = filter_data_set_by_date(masterData, 365, 20);
-
-            draw_plot(historicalMasterData, param, unit, 'main_plot_for_api_baker_historical', '', false, buttonOption = false, historical = true);
-            draw_plot(filteredMasterData, param, unit, forecastsDiv, '', false, buttonOption = false, historical = false);
-
+            // Update UI based on differences (implement this as needed)
+            
             $('.loader').hide(); // Hide loader after processing
         })
         .catch(error => {
@@ -1744,7 +1733,7 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
     const $loadingDiv = $(".loading_div");
     const $forecastsContainer = $(".forecasts_container");
     const $loadingScreen = $('#loading-screen');
-    alert("version 1.3")
+    alert("version 1.4")
 
     $loadingDiv.fadeIn(10);
     $forecastsContainer.load(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`, function() {
