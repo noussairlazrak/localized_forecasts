@@ -648,114 +648,126 @@ function csvToArray(str, delimiter = ",") {
 }
 
 
-function read_api_baker(location,param,unit,forecasts_div,button_option=false, historical=0, reinforce_training=2,hpTunning=2, resample = false, update=2){
-    var title = 'Live';
-    var messages1 = ["Please hold", "Connecting with API Baker", "Pretrained model not found"];
-    var messages2 = ["Retraining....", "Connecting with SMCE", "Waiting for SMCE"];
-    
-    var index = 0;
+function readApiBaker(location, param, unit, forecastsDiv, buttonOption = false, historical = 0, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
+    const messages = [
+        "Generating data", 
+        "Connecting to SMCE", 
+        "Fetching the data from API Baker", 
+        "Fetching data from GMAO FTP", 
+        "Fetching observations", 
+        "Getting the forecasts", 
+        "Please wait...", 
+        "Connecting..."
+    ];
 
     $('.loader').show();
     
-   
- 
-   // $(".overlay-api-baker").fadeIn(10);
-    var messages = ["Generating data", "Connecting to SMCE", "Fetching the data from API Baker", "Fetching data from GMAO FTP", "Fetching observations", "Getting the forecasts", "Please wait...", "Connecting...."];
-   
-    
-    var param_code = pollutant_details(param).id;
+    const paramCode = pollutant_details(param).id;
+    const fileUrl = update === 1 
+        ? "https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Athens-NOA.json"
+        : "https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Athens-NOA.json";
 
-    if(update == 1){
-    var file_url ="https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Athens-NOA.json"
-    //var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
-    }else{
-    //var file_url = "https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/"+location+".json";
-    var file_url ="https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Athens-NOA.json"
-    }
-    //var file_url = "https://www.noussair.com/get_data.php?type=apibaker&st="+location+"&param="+param_code+"&historical="+historical+"&reinforce_training="+reinforce_training+"&hpTunning="+hpTunning+"&latest_forecat=2";
-    console.log(file_url);
-    
+    console.log(fileUrl);
 
-    d3.json(file_url) .then(function(data) {
-        // Check if data is valid
-        if (!data) {
-            throw new Error("No data received");
-        }
+    d3.json(fileUrl)
+        .then(data => {
+            if (!data) {
+                throw new Error("No data received");
+            }
 
-        // Initialize arrays to hold processed data
-        let master_data = {
-            master_datetime: [],
-            master_observation: [],
-            master_localized: [],
-            master_uncorrected: []
-        };
+            // Initialize arrays to hold processed data
+            let masterData = {
+                master_datetime: [],
+                master_observation: [],
+                master_localized: [],
+                master_uncorrected: []
+            };
 
-        // Process forecasts from the loaded data
-        data.forecasts.forEach(forecast => {
-            master_data.master_datetime.push(forecast.time);
-            master_data.master_observation.push(forecast.value);
-            master_data.master_localized.push(forecast.predicted);
-            master_data.master_uncorrected.push(forecast.predicted);
+            // Process forecasts from the loaded data
+            data.forecasts.forEach(forecast => {
+                masterData.master_datetime.push(forecast.time);
+                masterData.master_observation.push(forecast.value);
+                masterData.master_localized.push(forecast.predicted);
+                masterData.master_uncorrected.push(forecast.predicted);
+            });
+
+            // Event listener for downloading forecasts data
+            $(document).off("click", ".download_forecasts_data").on("click", ".download_forecasts_data", function() {
+                const csvFileName = location.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '_' + historical + '.csv';
+                let csvContent = "data:text/csv;charset=utf-8," + formatToCSV(masterData); // Ensure you format this correctly for CSV
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", csvFileName);
+                document.body.appendChild(link);
+                link.click();
+            });
+
+            // Calculate current forecasts and differences
+            const currentData = get_current_hour_forecasts(masterData);
+            console.log(currentData);
+
+            const differences = {
+                lastYear: calculateDifferenceAndPercentage(currentData.last_yea_fcst, currentData.current_fcst),
+                nextHour: calculateDifferenceAndPercentage(currentData.current_fcst, currentData.next_fcst),
+                lastHour: calculateDifferenceAndPercentage(currentData.previous_fcst, currentData.current_fcst)
+            };
+
+            $('.local_forecats_window').html(''); // Clear previous content
+
+            // Update UI based on differences
+            updateUIWithDifferences(differences.lastYear, currentData.last_yea_fcst, 'SAME DAY / LAST YEAR');
+            // Additional UI updates for last hour and next hour...
+
+            // Call plotting functions
+            const filteredMasterData = filter_data_set_by_date(masterData, 2, -5);
+            const historicalMasterData = filter_data_set_by_date(masterData, 365, 20);
+
+            draw_plot(historicalMasterData, param, unit, 'main_plot_for_api_baker_historical', '', false, buttonOption = false, historical = true);
+            draw_plot(filteredMasterData, param, unit, forecastsDiv, '', false, buttonOption = false, historical = false);
+
+            $('.loader').hide(); // Hide loader after processing
+        })
+        .catch(error => {
+            console.error("Error loading data:", error);
+            $('.api_baker_plots').html('Sorry, we are not able to connect with OpenAQ API at this moment. Please check back later...');
+            $('.loader').hide(); // Hide loader on error
         });
+}
 
-        // Event listener for downloading forecasts data
-        $(document).on("click", ".download_forecasts_data", function() {
-            const csv_file_name = location_name.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '_' + historical + '.csv';
-            let csvContent = "data:text/csv;charset=utf-8," + master_data; // Ensure you format this correctly for CSV
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", csv_file_name);
-            document.body.appendChild(link);
-            link.click();
-        });
-
-        // Calculate current forecasts and differences
-        const current_data = get_current_hour_forecasts(master_data);
-        console.log(current_data);
-
-        const diffrence_last_year = calculateDifferenceAndPercentage(current_data.last_yea_fcst, current_data.current_fcst);
-        const diffrence_next_hour = calculateDifferenceAndPercentage(current_data.current_fcst, current_data.next_fcst);
-        const diffrence_last_hour = calculateDifferenceAndPercentage(current_data.previous_fcst, current_data.current_fcst);
-
-        $('.local_forecats_window').html(''); // Clear previous content
-
-        // Update UI based on differences
-        if (diffrence_last_year[0] > 0) {
-            var diffrence_last_year_html_precentage = '<svg style="color: rgb(246, 70, 93);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z" fill="#d60b15"></path> </svg>';
-            var diffrence_last_year_html_trend = "trend-up";
-        } else if (diffrence_last_year[0] < 0) {
-            var diffrence_last_year_html_precentage = '<svg style="color: rgb(48, 169, 4);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z" fill="#30a904"></path> </svg>';
-            var diffrence_last_year_html_trend = "trend-down";
-        }
-
-        // Similar logic for last hour differences...
-
-        // Update UI with forecast information
-        if (rewrite_number(current_data.last_yea_fcst) !== 'N/A') {
-            $('.local_forecats_window').prepend('<div class="col-md-4"> <div class="lf-fcst-info years_difference ' + diffrence_last_year_html_trend + '"> <div class="lf-fcst-name">SAME DAY / LAST YEAR</div> <div class="lf-fcst-value">' + rewrite_number(current_data.last_yea_fcst) + '<span>μg/m³</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_year">' + diffrence_last_year_html_precentage + '</span> ' + rewrite_number(diffrence_last_year[1]) + ' % (' + rewrite_number(diffrence_last_year[0]) + ' <span>μg/m³</span>)</div> </div> </div>');
-        }
-
-        // Additional UI updates...
-
-        // Call plotting functions
-        var filteredmaster_data = filter_data_set_by_date(master_data,2,-5);
-        var historical_master_data = filter_data_set_by_date(master_data,365,20);
-        
-        draw_plot(historical_master_data, param, unit, 'main_plot_for_api_baker_historical', '', false, button = false, historical = true);
-        draw_plot(filteredmaster_data, param, unit, forecasts_div, '', false, button = false, historical = false);
-
-        // Additional button options...
-        
-        $('.loader').hide(); // Hide loader after processing
-    })
-    .catch(function(error) {
-        console.error("Error loading data:", error);
-        $('.api_baker_plots').html('Sorry, we are not able to connect with openaq api at this moment, please check back later...');
-        $('.loader').hide(); // Hide loader on error
+// Helper function to format master data to CSV
+function formatToCSV(data) {
+    let csvContent = '';
+    const headers = ['Datetime', 'Observation', 'Localized', 'Uncorrected'];
+    csvContent += headers.join(',') + '\n';
+    
+    data.master_datetime.forEach((datetime, index) => {
+        csvContent += `${datetime},${data.master_observation[index]},${data.master_localized[index]},${data.master_uncorrected[index]}\n`;
     });
+    
+    return csvContent;
+}
 
-   
+// Function to update UI based on differences
+function updateUIWithDifferences(differenceLastYear, lastYearForecast, label) {
+    if (rewrite_number(lastYearForecast) !== 'N/A') {
+        const trendClass = differenceLastYear[0] > 0 ? 'trend-up' : 'trend-down';
+        const trendIcon = differenceLastYear[0] > 0 
+            ? '<svg style="color: rgb(246, 70, 93);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z" fill="#d60b15"></path> </svg>'
+            : '<svg style="color: rgb(48, 169, 4);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 a=0-1-1v5.793L5.3546a=.5=.5=1-1-.708-.708l3-3a=.5=.5=0l3-3a=.5=.5=1-.708-.708L8.5=10.293V4.5z" fill="#30a904"></path> </svg>';
+
+        $('.local_forecats_window').prepend(`
+            <div class="col-md-4">
+                <div class="lf-fcst-info years_difference ${trendClass}">
+                    <div class="lf-fcst-name">${label}</div>
+                    <div class="lf-fcst-value">${rewrite_number(lastYearForecast)}<span>μg/m³</span></div>
+                    <div class="lf-fcst-change">
+                        <span class="trend_sign_difference_last_year">${trendIcon}</span> ${rewrite_number(differenceLastYear[1])} % (${rewrite_number(differenceLastYear[0])} <span>μg/m³</span>)
+                    </div>
+                </div>
+            </div>
+        `);
+    }
 }
 
 
