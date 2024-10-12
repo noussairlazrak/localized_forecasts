@@ -1745,71 +1745,78 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
 }
 
 
-function open_forecats_window (messages, st_id, param, location_name, observation_value, current_observation_unit, obs_src,precomputer_forecasts){
-    $(".loading_div").fadeIn(10);
+function openForecastsWindow(messages, st_id, param, location_name, observation_value, current_observation_unit, obs_src, precomputed_forecasts) {
+    const $loadingDiv = $(".loading_div");
+    const $forecastsContainer = $(".forecasts_container");
+    const $loadingScreen = $('#loading-screen');
 
-   
+    $loadingDiv.fadeIn(10);
+    $forecastsContainer.load(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`, function() {
+        $loadingScreen.show();
+        $(this).fadeOut(10).fadeIn(10);
 
-    $(".forecasts_container").load("vues/location.html?st=" + st_id + '&param=' + param + '&location_name=' + location_name +'&obs_src='+obs_src, function() {
-        $('#loading-screen').show();
-        $(this).fadeOut(10);
-        $(this).fadeIn(10);
-        setInterval(function() {
-            var message = messages[Math.floor(Math.random() * messages.length)];
-            $(".messages").html(message)
+
+        const intervalId = setInterval(() => {
+            const message = messages[Math.floor(Math.random() * messages.length)];
+            $(".messages").html(message);
         }, 100);
-        var location_name_clean = cleanText(location_name);
+
+
+        const cleanLocationName = cleanText(location_name);
         $('.current_location_name').html(location_name.replace(/[_\W]+/g, " "));
-        $('.current_param').html(pollutant_details(param)).name;
+        $('.current_param').html(pollutant_details(param).name);
         $('.current_param_1').html(pollutant_details(param).name);
         $('.current_observation_value').html(observation_value);
         $('.current_observation_unit_span').html(current_observation_unit);
-        $(".forecasts_container").addClass("noussair_animations zoom_in");
-        $(".loading_div").fadeOut(10);
-        $("button").css({ "button": "animation: intro 2s cubic-bezier(0.03, 1.08, 0.56, 1); animation-delay: 2s;" });
+        
 
-    
+        $forecastsContainer.addClass("noussair_animations zoom_in");
+        $loadingDiv.fadeOut(10);
+        
+        $("button").css({
+            "animation": "intro 2s cubic-bezier(0.03, 1.08, 0.56, 1)",
+            "animation-delay": "2s"
+        });
+
+
         try {
-            //get_plot(location_name, param, current_observation_unit, 'plot_model_', 'plot_resample_', false, precomputer_forecasts, '');
-            //get_plot(location_name, param, current_observation_unit, 'plot_model_historical', 'plot_resample_historical', false, precomputer_forecasts, 'historical');
-            //side_by_side_plots(param, current_observation_unit, 'Historical Comparison', precomputer_forecasts, current_observation_unit);
-          } catch (error) {
+            // Uncomment if needed
+            // get_plot(location_name, param, current_observation_unit, 'plot_model_', 'plot_resample_', false, precomputed_forecasts, '');
+            // get_plot(location_name, param, current_observation_unit, 'plot_model_historical', 'plot_resample_historical', false, precomputed_forecasts, 'historical');
+            // side_by_side_plots(param, current_observation_unit, 'Historical Comparison', precomputed_forecasts, current_observation_unit);
+        } catch (error) {
             console.error('An error occurred while running the get_plot function:', error);
-          }
-          
-          
-        read_api_baker(st_id,param,current_observation_unit,'main_plot_for_api_baker', true, historical=1, reinforce_training=2,hpTunning=2);
-           
-            
+        }
         
-
-        $('#loading-screen').hide();
+        read_api_baker(st_id, param, current_observation_unit, 'main_plot_for_api_baker', true, { historical: 1, reinforce_training: 2, hpTunning: 2 });
         
+        $loadingScreen.hide();
+        clearInterval(intervalId); 
     });
 }
 
-$(document).on("click", ".launch-local-forecasts", function(param) {
-    var messages = ["Connecting to OpenAQ", "Connecting to GMAO", "fetching data from OpenAQ", "fetching data from GMAO FTP", "fetching observations", "getting the forecasts", "please wait...", "connecting...."];
-    var location_id = $(this).attr("station_id");
-    //var param = $('.g-lf-params').attr('param');
-    var param = $(this).attr('parameter');
-    var location_name = $(this).attr("location_name");
-    var observation_source = $(this).attr("observation_source");
-    var precomputed_forecasts = $(this).attr("precomputed_forecasts");
-    var observation_value = $(this).attr("observation_value");
-    var current_observation_unit = $(this).attr("current_observation_unit");
-    var obs_src = $(this).attr("obs_src");
+$(document).on("click", ".launch-local-forecasts", function() {
+    const messages = [
+        "Connecting to OpenAQ", 
+        "Connecting to GMAO", 
+        "Fetching data from OpenAQ", 
+        "Fetching data from GMAO FTP", 
+        "Fetching observations", 
+        "Getting the forecasts", 
+        "Please wait...", 
+        "Connecting..."
+    ];
 
-    open_forecats_window (["Loading", "Please hold"], location_id, 'no2', location_name, observation_value, current_observation_unit, observation_source, precomputed_forecasts)
+    const location_id = $(this).attr("station_id");
+    const param = $(this).attr('parameter');
+    const location_name = $(this).attr("location_name");
+    const observation_source = $(this).attr("observation_source");
+    const precomputed_forecasts = $(this).attr("precomputed_forecasts");
+    const observation_value = $(this).attr("observation_value");
+    const current_observation_unit = $(this).attr("current_observation_unit");
+    const obs_src = $(this).attr("obs_src");
 
-    
-
-
-
-
-
-
- 
+    openForecastsWindow(["Loading", "Please hold"], location_id, param || 'no2', location_name, observation_value, current_observation_unit, observation_source, precomputed_forecasts);
 });
 
 $(document).on("click", ".upload-your-data", function() {
