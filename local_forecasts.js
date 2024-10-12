@@ -680,7 +680,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = false,
             if (!data) {
                 throw new Error("No data received");
             }
-
+            console.log(data);
             // Initialize arrays to hold processed data
             let masterData = {
                 master_datetime: [],
