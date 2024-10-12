@@ -648,7 +648,7 @@ function csvToArray(str, delimiter = ",") {
 }
 
 
-function readApiBaker(location, param, unit, forecastsDiv, buttonOption = false, historical = 0, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
+function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
     const messages = [
         "Generating data", 
         "Connecting to SMCE", 
@@ -1755,7 +1755,7 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
     const $loadingDiv = $(".loading_div");
     const $forecastsContainer = $(".forecasts_container");
     const $loadingScreen = $('#loading-screen');
-    alert("version 1.4")
+    //alert("version 1.4")
 
     $loadingDiv.fadeIn(10);
     $forecastsContainer.load(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`, function() {
@@ -1795,7 +1795,7 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
             console.error('An error occurred while running the get_plot function:', error);
         }
         
-        readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker', true, { historical: 1, reinforce_training: 2, hpTunning: 2 });
+        readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
         
         $loadingScreen.hide();
         clearInterval(intervalId); 
