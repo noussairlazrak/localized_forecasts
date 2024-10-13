@@ -506,6 +506,26 @@ function create_map(sites, param) {
             )
             .on('open', () => {
 
+                const messages = [
+                    "Connecting to OpenAQ", 
+                    "Connecting to GMAO", 
+                    "Fetching data from OpenAQ", 
+                    "Fetching data from GMAO FTP", 
+                    "Fetching observations", 
+                    "Getting the forecasts", 
+                    "Please wait...", 
+                    "Connecting..."
+                ];
+            
+                const location_id = $(this).attr("station_id");
+                const param = $(this).attr('parameter');
+                const location_name = $(this).attr("location_name");
+                const observation_source = $(this).attr("observation_source");
+                const precomputed_forecasts = $(this).attr("precomputed_forecasts");
+                const observation_value = $(this).attr("observation_value");
+                const current_observation_unit = $(this).attr("current_observation_unit");
+                const obs_src = $(this).attr("obs_src");
+
                 console.log("Opening Popup with:");
                 console.log("Location ID:", location_id);
                 console.log("Location Name:", location_name);
@@ -522,7 +542,7 @@ function create_map(sites, param) {
                     observation_value || 'N/A', 
                     observation_unit || 'N/A', 
                     observation_source || 'N/A', 
-                    precomputed_forecasts.length > 0 ? precomputed_forecasts[0].no2.forecasts : [] // Default empty array if not available
+                    precomputed_forecasts.length > 0 ? precomputed_forecasts[0].no2.forecasts : [] 
                 );
             })
             .addTo(map);
