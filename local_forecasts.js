@@ -744,7 +744,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
             const plotElement = document.getElementById(plotElementId);
             
             if (plotElement) {
-                draw_plot(historicalMasterData, param, unit, plotElementId, 'Bias Corrected Forecasts', true, true, false);
+                draw_plot(historicalMasterData, param, unit, plotElementId, 'Bias Corrected Forecasts', false, false, false);
             } else {
                 console.error(`No DOM element with id '${plotElementId}' exists on the page.`);
             }
