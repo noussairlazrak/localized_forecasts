@@ -680,6 +680,8 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
             if (!data) {
                 throw new Error("No data received");
             }
+            console.log(data);
+            $('.model_data').html(` <div class="container my-5"> <h1>Bias Corrected Model Information</h1> <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Total Observations</h5> <p class="card-text fs-3 fw-bold">${data.metrics.total_observation}</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Last Model Update</h5> <p class="card-text fs-3 fw-bold">${data.metrics.latest_training.substring(0, 19)}</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Mean Square Error</h5> <p class="card-text">${data.metrics["mse after training"]}<br></p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Mean Absolute Error</h5> <p class="card-text">${data.metrics["mae after training"]}</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">R2 Score</h5> <p class="card-text">${data.metrics["r2 after training"]}</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Observation Dates</h5> <p class="card-text">${data.metrics.start_date.substring(0, 10)} to ${data.metrics.end_date.substring(0, 10)}</p> </div> </div> </div> </div> </div>`);
 
             // Initialize arrays to hold processed data
             let masterData = {
