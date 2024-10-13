@@ -723,7 +723,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
             var historicalMasterData = filter_data_set_by_date(masterData, 365, 20);
 
             // Drawing plots
-            draw_plot(historicalMasterData, param, unit, 'main_plot_for_api_baker_historical', '', false, false, false);
+            draw_plot(historicalMasterData, param, unit, 'main_plot_for_api_baker_historical', 'Bias Corrected Forecasts', true, true, false);
             //draw_plot(filteredMasterData, param, unit, forecastsDiv, '', false, false, false);
 
             $('.loader').hide(); // Hide loader after processing
