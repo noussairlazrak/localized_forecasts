@@ -481,38 +481,51 @@ function create_map(sites, param) {
       });
 
 
-    map.on('click', 'unclustered-point', (e) => {
+      map.on('click', 'unclustered-point', (e) => {
         const coordinates = e.features[0].geometry.coordinates.slice();
         const location_id = e.features[0].properties.location_id;
-        const location_name = e.features[0].properties.location_name.replace(/[^a-z0-9\s]/gi, '_').replace(/[_\s]/g, '_')
+        const location_name = e.features[0].properties.location_name.replace(/[^a-z0-9\s]/gi, '_').replace(/[_\s]/g, '_');
         const status = e.features[0].properties.status;
         const observation_source = e.features[0].properties.observation_source;
         const observation_value = e.features[0].properties.forecasted_value;
-        
+    
 
-        const precomputed_forecasts = $.parseJSON(e.features[0].properties.precomputed_forecasts);
-        const obs_option =  $.parseJSON( e.features[0].properties.obs_options);
-        const observation_unit= obs_option[0].no2.unit;
-
+        const precomputed_forecasts = e.features[0].properties.precomputed_forecasts ? $.parseJSON(e.features[0].properties.precomputed_forecasts) : [];
+        const obs_option = e.features[0].properties.obs_options ? $.parseJSON(e.features[0].properties.obs_options) : [];
+        const observation_unit = obs_option.length > 0 ? obs_option[0].no2.unit : 'N/A'; // Default value if not available
+    
+ 
         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
             coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
         }
-        
+    
         new mapboxgl.Popup()
             .setLngLat(coordinates)
             .setHTML(
                 `location_id: ${location_id}<br>Was there a location_name?: ${location_name}`
-            ).on('open', e => {
+            )
+            .on('open', () => {
 
-                openForecastsWindow (["Loading", "Please hold"], location_id, 'no2', location_name, observation_value, observation_unit, observation_source, precomputed_forecasts[0].no2.forecasts)
-                       
+                console.log("Opening Popup with:");
+                console.log("Location ID:", location_id);
+                console.log("Location Name:", location_name);
+                console.log("Observation Value:", observation_value);
+                console.log("Observation Unit:", observation_unit);
+                console.log("Precomputed Forecasts:", precomputed_forecasts);
+    
+
+                openForecastsWindow(
+                    ["Loading", "Please hold"], 
+                    location_id, 
+                    'no2', 
+                    location_name, 
+                    observation_value || 'N/A', 
+                    observation_unit || 'N/A', 
+                    observation_source || 'N/A', 
+                    precomputed_forecasts.length > 0 ? precomputed_forecasts[0].no2.forecasts : [] // Default empty array if not available
+                );
             })
-           
             .addTo(map);
-
-
-            
-        
     });
 
     map.on('mouseenter', 'clusters', () => {
