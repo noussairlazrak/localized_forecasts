@@ -343,7 +343,7 @@ function create_map(sites, param) {
     map.on('load', () => {
         map.addSource('locations_dst', {
             type: 'geojson',
-            data: 'https://www.noussair.com/get_data.php?type=location2&param=pm25',
+            data: 'https://www.noussair.com/get_data.php?type=location2&param=no2',
             cluster: false,
             clusterMaxZoom: 2, 
             clusterRadius: 100 
@@ -458,7 +458,7 @@ function create_map(sites, param) {
                 if(site.properties.location_id){
                     var l_id =site.properties.location_id;
                     if (!~$.inArray(l_id,list_in))  {
-                        add_the_banner(site.properties, 'pm25')
+                        add_the_banner(site.properties, 'no2')
                         list_in.push(l_id);
                        
                     }
@@ -504,7 +504,7 @@ function create_map(sites, param) {
                 `location_id: ${location_id}<br>Was there a location_name?: ${location_name}`
             ).on('open', e => {
 
-                openForecastsWindow (["Loading", "Please hold"], location_id, 'pm25', location_name, observation_value, observation_unit, observation_source, precomputed_forecasts[0].pm25.forecasts)
+                openForecastsWindow (["Loading", "Please hold"], location_id, 'no2', location_name, observation_value, observation_unit, observation_source, precomputed_forecasts[0].pm25.forecasts)
 
                 //openForecastsWindow (messages, st_id, param, location_name, observation_value, current_observation_unit, obs_src,precomputer_forecasts)
        
@@ -1915,7 +1915,7 @@ $.ajax({
     dataType: "json",
     success: function(sites) {
 
-        var param = "pm25";
+        var param = "no2";
         //get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param))
     },
     error: function(){
@@ -1923,7 +1923,7 @@ $.ajax({
     }
 });
 
-create_map('test','pm25')
+create_map('test','no2')
 //const sites = ["3995", "8645", "739", "5282"];
 
 //get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param));
