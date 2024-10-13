@@ -722,10 +722,15 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
             var filteredMasterData = filter_data_set_by_date(masterData, 2, -5);
             var historicalMasterData = filter_data_set_by_date(masterData, 365, 20);
 
-            // Drawing plots
-            draw_plot(historicalMasterData, param, unit, 'main_plot_for_api_baker_historical', 'Bias Corrected Forecasts', true, true, false);
-            //draw_plot(filteredMasterData, param, unit, forecastsDiv, '', false, false, false);
-
+            // Check if plot element exists before drawing
+            const plotElementId = 'main_plot_for_api_baker_historical';
+            const plotElement = document.getElementById(plotElementId);
+            
+            if (plotElement) {
+                draw_plot(historicalMasterData, param, unit, plotElementId, 'Bias Corrected Forecasts', true, true, false);
+            } else {
+                console.error(`No DOM element with id '${plotElementId}' exists on the page.`);
+            }
             $('.loader').hide(); // Hide loader after processing
         })
         .catch(error => {
