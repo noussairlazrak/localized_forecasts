@@ -1651,7 +1651,7 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                         yaxis: {
                             autorange: true,
                             type: 'linear',
-                            title: pollutant_details('param')+' ' +'[ '+ rewriteUnits(unit) +']',
+                            title: pollutant_details('no2')+' ' +'[ '+ rewriteUnits('ppbv') +']',
                             color: '#FFFFFF'
 
                         },
@@ -1693,7 +1693,7 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
                         yaxis: {
                             autorange: true,
                             type: 'linear',
-                            title: pollutant_details(param)+' ' +'[ '+ rewriteUnits(unit) +']',
+                            title: pollutant_details('no2')+' ' +'[ '+ rewriteUnits('ppbv') +']',
                             color: '#FFFFFF'
 
                         },
