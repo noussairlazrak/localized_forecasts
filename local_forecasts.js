@@ -480,25 +480,23 @@ function create_map(sites, param) {
       });
 
 
-      map.on('click', 'unclustered-point', (e) => {
+      $(document).on('click', 'unclustered-point', (e) => {
         const coordinates = e.features[0].geometry.coordinates.slice();
         const location_id = e.features[0].properties.location_id;
         const location_name = e.features[0].properties.location_name.replace(/[^a-z0-9\s]/gi, '_').replace(/[_\s]/g, '_');
-        const observation_source = e.features[0].properties.observation_source;
-        const observation_value = e.features[0].properties.forecasted_value;
-    
-        console.log("loading..");
         
+        // Construct the selector for the <a> element
         const anchorSelector = `.launch-local-forecasts[station_id="${location_id}"][parameter="no2"][location_name="${location_name}"]`;
     
-
+        // Check if the anchor exists
         if ($(anchorSelector).length) {
+            // Automatically trigger a click on the anchor
             $(anchorSelector).click();
         } else {
             console.error("Anchor element not found:", anchorSelector);
         }
     
-
+        // Adjust coordinates for Mapbox
         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
             coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
         }
