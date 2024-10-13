@@ -504,10 +504,8 @@ function create_map(sites, param) {
                 `location_id: ${location_id}<br>Was there a location_name?: ${location_name}`
             ).on('open', e => {
 
-                openForecastsWindow (["Loading", "Please hold"], location_id, 'no2', location_name, observation_value, observation_unit, observation_source, precomputed_forecasts[0].no2.forecasts)
-
-                //openForecastsWindow (messages, st_id, param, location_name, observation_value, current_observation_unit, obs_src,precomputer_forecasts)
-       
+                openForecastsWindow (["Loading", "Please hold"], location_id, 'no2', location_name, observation_value, current_observation_unit, observation_source, precomputed_forecasts[0].no2.forecasts)
+                       
             })
            
             .addTo(map);
