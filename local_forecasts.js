@@ -476,7 +476,6 @@ function create_map(sites, param) {
         console.log('Longitude: ' + longitude);
         console.log('Latitude: ' + latitude);
         
-        // Perform additional actions with the coordinates here
     
       });
 
@@ -484,17 +483,21 @@ function create_map(sites, param) {
       map.on('click', 'unclustered-point', (e) => {
         const coordinates = e.features[0].geometry.coordinates.slice();
         const location_id = e.features[0].properties.location_id;
-        const location_name = e.features[0].properties.location_name.replace(/[^a-z0-9\s]/gi, '_').replace(/[_\s]/g, '_');
+    
+
+        const location_name = e.features[0].properties.location_name;
+        console.log("Location Name:", location_name); 
+        const sanitizedLocationName = cleanText(location_name); 
+    
         const status = e.features[0].properties.status;
         const observation_source = e.features[0].properties.observation_source;
         const observation_value = e.features[0].properties.forecasted_value;
     
-
         const precomputed_forecasts = e.features[0].properties.precomputed_forecasts ? $.parseJSON(e.features[0].properties.precomputed_forecasts) : [];
         const obs_option = e.features[0].properties.obs_options ? $.parseJSON(e.features[0].properties.obs_options) : [];
-        const observation_unit = obs_option.length > 0 ? obs_option[0].no2.unit : 'N/A'; // Default value if not available
+        const observation_unit = obs_option.length > 0 ? obs_option[0].no2.unit : 'N/A'; 
     
- 
+
         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
             coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
         }
@@ -502,47 +505,18 @@ function create_map(sites, param) {
         new mapboxgl.Popup()
             .setLngLat(coordinates)
             .setHTML(
-                `location_id: ${location_id}<br>Was there a location_name?: ${location_name}`
+                `location_id: ${location_id}<br>Was there a location_name?: ${sanitizedLocationName}`
             )
             .on('open', () => {
-
-                const messages = [
-                    "Connecting to OpenAQ", 
-                    "Connecting to GMAO", 
-                    "Fetching data from OpenAQ", 
-                    "Fetching data from GMAO FTP", 
-                    "Fetching observations", 
-                    "Getting the forecasts", 
-                    "Please wait...", 
-                    "Connecting..."
-                ];
-            
-                const location_id = $(this).attr("station_id");
-                const param = $(this).attr('parameter');
-                const location_name = $(this).attr("location_name");
-                const observation_source = $(this).attr("observation_source");
-                const precomputed_forecasts = $(this).attr("precomputed_forecasts");
-                const observation_value = $(this).attr("observation_value");
-                const current_observation_unit = $(this).attr("current_observation_unit");
-                const obs_src = $(this).attr("obs_src");
-
-                console.log("Opening Popup with:");
-                console.log("Location ID:", location_id);
-                console.log("Location Name:", location_name);
-                console.log("Observation Value:", observation_value);
-                console.log("Observation Unit:", observation_unit);
-                console.log("Precomputed Forecasts:", precomputed_forecasts);
-    
-
                 openForecastsWindow(
                     ["Loading", "Please hold"], 
                     location_id, 
                     'no2', 
-                    location_name, 
+                    sanitizedLocationName, 
                     observation_value || 'N/A', 
                     observation_unit || 'N/A', 
                     observation_source || 'N/A', 
-                    precomputed_forecasts.length > 0 ? precomputed_forecasts[0].no2.forecasts : [] 
+                    precomputed_forecasts.length > 0 ? precomputed_forecasts[0].no2.forecasts : []
                 );
             })
             .addTo(map);
