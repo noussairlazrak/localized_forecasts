@@ -112,7 +112,7 @@ function rewritePercentage(percentage) {
   function rewriteUnits(text) {
     text = text.replace(/ugm-3/g, 'μg/m³');
     text = text.replace(/ppb/g, 'μg/m³');
-    text = text.replace(/ppm/g, 'mg/m³');
+    text = text.replace(/ppbv/g, 'PPBV');
     return text;
   }
 
