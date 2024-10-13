@@ -498,10 +498,30 @@ function create_map(sites, param) {
             // Automatically trigger a click on the anchor
             $(anchorSelector).click();
         } else {
-            console.error("Anchor element not found:", anchorSelector);
+            console.warn("Anchor element not found. Creating it dynamically.");
+    
+            // Create the <a> element dynamically
+            const newAnchor = $(`
+                <a class="launch-local-forecasts" 
+                   obs_src="${observation_source}" 
+                   parameter="no2" 
+                   station_id="${location_id}" 
+                   location_name="${location_name}" 
+                   observation_value="${observation_value}" 
+                   current_observation_unit="${observation_unit}" 
+                   precomputed_forecasts='${JSON.stringify(precomputed_forecasts)}'>
+                    <div class="item-inner">${location_name}</div>
+                </a>
+            `);
+    
+            // Append the new anchor to a suitable container in your DOM
+            $('.forecasts_container').append(newAnchor);
+    
+            // Trigger a click on the newly created anchor
+            newAnchor.click();
         }
     
-
+        // Adjust coordinates for Mapbox
         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
             coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
         }
