@@ -1762,12 +1762,10 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
         $loadingScreen.show();
         $(this).fadeOut(10).fadeIn(10);
 
-
         const intervalId = setInterval(() => {
             const message = messages[Math.floor(Math.random() * messages.length)];
             $(".messages").html(message);
         }, 100);
-
 
         const cleanLocationName = cleanText(location_name);
         $('.current_location_name').html(location_name.replace(/[_\W]+/g, " "));
@@ -1788,8 +1786,8 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
 
         try {
             // Uncomment if needed
-            // get_plot(location_name, param, current_observation_unit, 'plot_model_', 'plot_resample_', false, precomputed_forecasts, '');
-            // get_plot(location_name, param, current_observation_unit, 'plot_model_historical', 'plot_resample_historical', false, precomputed_forecasts, 'historical');
+            get_plot(location_name, param, current_observation_unit, 'plot_model_', 'plot_resample_', false, precomputed_forecasts, '');
+            get_plot(location_name, param, current_observation_unit, 'plot_model_historical', 'plot_resample_historical', false, precomputed_forecasts, 'historical');
             // side_by_side_plots(param, current_observation_unit, 'Historical Comparison', precomputed_forecasts, current_observation_unit);
         } catch (error) {
             console.error('An error occurred while running the get_plot function:', error);
