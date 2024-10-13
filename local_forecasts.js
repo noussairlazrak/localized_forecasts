@@ -373,10 +373,10 @@ function create_map(sites, param) {
                 'interpolate',
                 ['linear'],
                 ['get', 'forecasted_value'],
-                1, '#1da1f2',
-                40, '#ff0000'
+                1, '#008000',
+                40, '#008000'
             ],
-            'circle-radius': 13
+            'circle-radius': 20
             }
         });
         
@@ -504,7 +504,7 @@ function create_map(sites, param) {
                 `location_id: ${location_id}<br>Was there a location_name?: ${location_name}`
             ).on('open', e => {
 
-                openForecastsWindow (["Loading", "Please hold"], location_id, 'no2', location_name, observation_value, current_observation_unit, observation_source, precomputed_forecasts[0].no2.forecasts)
+                openForecastsWindow (["Loading", "Please hold"], location_id, 'no2', location_name, observation_value, observation_unit, observation_source, precomputed_forecasts[0].no2.forecasts)
                        
             })
            
