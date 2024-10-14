@@ -1132,7 +1132,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
             yaxis: {
               autorange: true,
               type: 'linear',
-              title: pollutant_details('no2') + ' ' + '[ ' + rewriteUnits('ppbv') + ']',
+              title: 'PPBV',
               color: '#FFFFFF'
             }
           };
