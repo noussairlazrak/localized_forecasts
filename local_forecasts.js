@@ -492,6 +492,7 @@ function create_map(sites, param) {
         
         
        alert("v1.1");
+       alert(location_name);
 
        const messages = [
             "Connecting to OpenAQ", 
