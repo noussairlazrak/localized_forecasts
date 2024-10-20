@@ -685,7 +685,6 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
             console.log(data);
             $('.model_data').html(` <div class="container my-5"> <h1>Bias Corrected Model Information</h1> <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Total Observations</h5> <p class="card-text fs-3 fw-bold">${data.metrics.total_observation}</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Last Model Update</h5> <p class="card-text fs-3 fw-bold">${data.metrics.latest_training.substring(0, 19)}</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Mean Square Error</h5> <p class="card-text">${data.metrics["rmse"]}<br></p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Mean Absolute Error</h5> <p class="card-text">${data.metrics["mae"]}</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">R2 Score</h5> <p class="card-text">${data.metrics["r2"]}</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Observation Dates</h5> <p class="card-text">${data.metrics.start_date.substring(0, 10)} to ${data.metrics.end_date.substring(0, 10)}</p> </div> </div> </div> </div> </div>`);
 
-            // Initialize arrays to hold processed data
             let masterData = {
                 master_datetime: [],
                 master_observation: [],
@@ -693,7 +692,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
                 master_uncorrected: []
             };
 
-            // Process forecasts from the loaded data
+
             data.forecasts.forEach(forecast => {
                 masterData.master_datetime.push(forecast.time);
                 masterData.master_observation.push(forecast.value);
@@ -701,7 +700,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
                 masterData.master_uncorrected.push(forecast.predicted);
             });
 
-            // Event listener for downloading forecasts data
+
             $(document).off("click", ".download_forecasts_data").on("click", ".download_forecasts_data", function() {
                 const csvFileName = location.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '_' + historical + '.csv';
                 let csvContent = "data:text/csv;charset=utf-8," + formatToCSV(masterData); // Ensure you format this correctly for CSV
@@ -713,18 +712,15 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
                 link.click();
             });
 
-            // Calculate current forecasts and differences
+
             const currentData = get_current_hour_forecasts(masterData);
             console.log(currentData);
 
-            // Update UI based on differences (implement this as needed)
-            
-            // Filtering data for plotting
+
             console.log(masterData);
             var filteredMasterData = filter_data_set_by_date(masterData, 2, -5);
             var historicalMasterData = filter_data_set_by_date(masterData, 365, 20);
 
-            // Check if plot element exists before drawing
             const plotElementId = 'main_plot_for_api_baker_historical';
             const plotElement = document.getElementById(plotElementId);
             
@@ -733,16 +729,16 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
             } else {
                 console.error(`No DOM element with id '${plotElementId}' exists on the page.`);
             }
-            $('.loader').hide(); // Hide loader after processing
+            $('.loader').hide(); 
         })
         .catch(error => {
             console.error("Error loading data:", error);
             $('.api_baker_plots').html('Sorry, we are not able to connect with OpenAQ API at this moment. Please check back later...');
-            $('.loader').hide(); // Hide loader on error
+            $('.loader').hide();
         });
 }
 
-// Helper function to format master data to CSV
+
 function formatToCSV(data) {
     let csvContent = '';
     const headers = ['Datetime', 'Observation', 'Localized', 'Uncorrected'];
@@ -1791,7 +1787,8 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
             "animation": "intro 2s cubic-bezier(0.03, 1.08, 0.56, 1)",
             "animation-delay": "2s"
         });
-
+        
+        readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
 
         try {
             // Uncomment if needed
@@ -1802,7 +1799,6 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
             console.error('An error occurred while running the get_plot function:', error);
         }
         
-        readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
         
         $loadingScreen.hide();
         clearInterval(intervalId); 
