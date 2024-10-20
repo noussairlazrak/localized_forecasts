@@ -373,10 +373,9 @@ function create_map(sites, param) {
                 'interpolate',
                 ['linear'],
                 ['get', 'forecasted_value'],
-                1, '#0b3d91',
-                40, '#0b3d91'
+                1, '#008000',
+                40, '#008000'
             ],
-            
             'circle-radius': 20
             }
         });
@@ -388,7 +387,7 @@ function create_map(sites, param) {
             source: 'locations_dst',
             filter: ['!', ['has', 'point_count']],
             layout: {
-            //'text-field': ['to-string', ['get', 'forecasted_value']],
+            'text-field': ['to-string', ['get', 'forecasted_value']],
             'text-font': ['Manrope Bold'],
             'text-size': 14,
             'text-offset': [0, 0.5],
@@ -450,6 +449,10 @@ function create_map(sites, param) {
     map.on("sourcedata", function(e) {
         if (map.getSource('locations_dst') && map.isSourceLoaded('locations_dst')) {
             var features = map.querySourceFeatures('locations_dst');
+
+
+            
+
               
             $.each(features, function(index, site) {
                 if(site.properties.location_id){
@@ -502,7 +505,7 @@ function create_map(sites, param) {
 
         openForecastsWindow(messages, location_id, 'no2', location_name, observation_value, observation_unit, 's3', precomputed_forecasts);
     
- 
+
     });
 
     map.on('mouseenter', 'clusters', () => {
