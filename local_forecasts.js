@@ -489,37 +489,9 @@ function create_map(sites, param) {
         const precomputed_forecasts = e.features[0].properties.precomputed_forecasts ? $.parseJSON(e.features[0].properties.precomputed_forecasts) : [];
         const obs_option = e.features[0].properties.obs_options ? $.parseJSON(e.features[0].properties.obs_options) : [];
         const observation_unit = obs_option.length > 0 ? obs_option[0].no2.unit : 'N/A'; // Default value if not available
-    
-        // Construct the selector for the <a> element
-        const anchorSelector = `.launch-local-forecasts[station_id="${location_id}"][parameter="no2"][location_name="${location_name}"]`;
-    
-        // Check if the anchor exists
-        if ($(anchorSelector).length) {
-            // Automatically trigger a click on the anchor
-            $(anchorSelector).click();
-        } else {
-            console.warn("Anchor element not found. Creating it dynamically.");
-    
-            // Create the <a> element dynamically
-            const newAnchor = $(`
-                <a class="launch-local-forecasts" 
-                   obs_src="${observation_source}" 
-                   parameter="no2" 
-                   station_id="${location_id}" 
-                   location_name="${location_name}" 
-                   observation_value="${observation_value}" 
-                   current_observation_unit="${observation_unit}" 
-                   precomputed_forecasts='${JSON.stringify(precomputed_forecasts)}'>
-                    <div class="item-inner">${location_name}</div>
-                </a>
-            `);
-    
-            // Append the new anchor to a suitable container in your DOM
-            $('.forecasts_container').append(newAnchor);
-    
-            // Trigger a click on the newly created anchor
-            newAnchor.click();
-        }
+        
+        
+       alert("test");
     
         // Adjust coordinates for Mapbox
         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
