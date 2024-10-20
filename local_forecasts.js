@@ -505,17 +505,7 @@ function create_map(sites, param) {
 
         openForecastsWindow(messages, location_id, 'no2', location_name, observation_value, observation_unit, 's3', precomputed_forecasts);
     
-        // Adjust coordinates for Mapbox
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-        }
-    
-        new mapboxgl.Popup()
-            .setLngLat(coordinates)
-            .setHTML(
-                `Location ID: ${location_id}<br>Location Name: ${location_name}`
-            )
-            .addTo(map);
+ 
     });
 
     map.on('mouseenter', 'clusters', () => {
