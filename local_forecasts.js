@@ -369,8 +369,8 @@ function create_map(sites, param) {
             source: 'locations_dst',
             filter: ['!', ['has', 'point_count']],
             paint: {
-                'circle-color': '#008000', // Set to solid green color
-                'circle-radius': 20
+                'circle-color': '#0b3d91', // Set to solid green color
+                'circle-radius': 10
             }
             
         });
