@@ -304,7 +304,7 @@ function create_map(sites, param) {
     var deltaDistance = 100;
     var center_point = [30.1272444, -1.9297706];
     var map = new mapboxgl.Map({
-        style: 'mapbox://styles/lazrakn/clhpicf8e01vz01p62hgucf1r',
+        style: 'mapbox://styles/lazrakn/clhoolpb603b701pah3tpcs3a',
         center: center_point,
         zoom: 2,
         pitch: 0,
