@@ -1766,6 +1766,7 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
     $loadingDiv.fadeIn(10);
     $forecastsContainer.load(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`, function() {
         $loadingScreen.show();
+        alert("loading");
         $(this).fadeOut(10).fadeIn(10);
 
         const intervalId = setInterval(() => {
@@ -1783,12 +1784,12 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
 
         $forecastsContainer.addClass("noussair_animations zoom_in");
         $loadingDiv.fadeOut(10);
-        
+        alert("loadout");
         $("button").css({
             "animation": "intro 2s cubic-bezier(0.03, 1.08, 0.56, 1)",
             "animation-delay": "2s"
         });
-        
+        alert("api_baker");
         readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker_historical', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
 
         try {
