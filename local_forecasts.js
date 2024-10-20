@@ -28,7 +28,6 @@ $(document).ready(function() {
 });
 
 
-
 mapboxgl.accessToken = 'pk.eyJ1IjoibGF6cmFrbiIsImEiOiJjanZodzV3OXUwNmEwNDRxdnVsZGhnaml4In0.-ES_Lt127Id6DEf8H9E3rg';
 
 var deltaDegrees = 25;
