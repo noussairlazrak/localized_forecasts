@@ -1789,7 +1789,7 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
             "animation-delay": "2s"
         });
         
-        readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
+        readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker_historical', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
 
         try {
             // Uncomment if needed
