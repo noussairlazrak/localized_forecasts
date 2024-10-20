@@ -369,10 +369,16 @@ function create_map(sites, param) {
             source: 'locations_dst',
             filter: ['!', ['has', 'point_count']],
             paint: {
-                'circle-color': '#0b3d91', // Set to solid green color
-                'circle-radius': 10
-            }
+            'circle-color': [
+                'interpolate',
+                ['linear'],
+                ['get', 'forecasted_value'],
+                1, '#0b3d91',
+                40, '#0b3d91'
+            ],
             
+            'circle-radius': 20
+            }
         });
         
         // Add label symbol layer
