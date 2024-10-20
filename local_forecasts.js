@@ -491,7 +491,20 @@ function create_map(sites, param) {
         const observation_unit = obs_option.length > 0 ? obs_option[0].no2.unit : 'N/A'; // Default value if not available
         
         
-       alert("test");
+       alert("v1.1");
+
+       const messages = [
+            "Connecting to OpenAQ", 
+            "Connecting to GMAO", 
+            "Fetching data from OpenAQ", 
+            "Fetching data from GMAO FTP", 
+            "Fetching observations", 
+            "Getting the forecasts", 
+            "Please wait...", 
+            "Connecting..."
+        ];
+
+        openForecastsWindow(messages, location_id, 'no2', location_name, observation_value, observation_unit, observation_source, precomputed_forecasts);
     
         // Adjust coordinates for Mapbox
         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
