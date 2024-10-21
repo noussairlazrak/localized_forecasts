@@ -709,7 +709,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
             var filteredMasterData = filter_data_set_by_date(masterData, 2, -5);
             var historicalMasterData = filter_data_set_by_date(masterData, 365, 20);
 
-            const plotElementId = 'main_plot_for_api_baker_historical';
+            const plotElementId = forecastsDiv;
             const plotElement = document.getElementById(plotElementId);
             
             if (plotElement) {
@@ -1780,6 +1780,7 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
         });
         
         readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker_historical', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
+        readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker_col', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
 
         try {
             // Uncomment if needed
