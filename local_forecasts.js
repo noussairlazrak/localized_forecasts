@@ -677,7 +677,8 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
                 master_datetime: [],
                 master_observation: [],
                 master_localized: [],
-                master_uncorrected: []
+                master_uncorrected: [],
+                master_pandora_no2_l1col: []
             };
 
 
@@ -686,6 +687,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
                 masterData.master_observation.push(forecast.value);
                 masterData.master_localized.push(forecast.predicted);
                 masterData.master_uncorrected.push(forecast.predicted);
+                masterData.master_pandora_no2_l1col.push(forecast.pandora_no2_l1col);
             });
 
 
@@ -975,6 +977,8 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
         var uncorrected_data = combined_dataset["master_uncorrected"];
         var observation_data = combined_dataset["master_observation"];
         var datetime_data = combined_dataset["master_datetime"];
+        var pandora_no2_l1col = combined_dataset["master_pandora_no2_l1col"];
+
 
         if (!historical){
             var currentDate = new Date();
@@ -1057,6 +1061,19 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
               width: 3
             },
             name: 'Observation'
+          };
+
+          var master_pandora_no2_l1col = {
+            type: "scatter",
+            mode: "lines",
+            connectgaps: false,
+            x: datetime_data,
+            y: pandora_no2_l1col ,
+            line: {
+              color: 'rgba(255, 0, 0, 0.8)',
+              width: 3
+            },
+            name: 'L1 Col'
           };
           
           var whoPm25Limit = 10; // WHO PM2.5 concentration limit
