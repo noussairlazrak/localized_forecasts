@@ -1158,7 +1158,7 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
     }
 
  
-        Plotly.newPlot(forecasts_div, [master_localized,master_uncorrected,master_observation, master_pandora_no2_l1col], layout);
+        Plotly.newPlot(forecasts_div, [master_localized,master_uncorrected,master_observation], layout);
         
         
 
