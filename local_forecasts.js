@@ -363,7 +363,7 @@ function create_map(sites, param) {
             });
           });
 
-       // Add background circle layer
+
         map.addLayer({
             id: 'background-circle',
             type: 'circle',
@@ -372,9 +372,9 @@ function create_map(sites, param) {
             paint: {
                 'circle-color': [
                     'case',
-                    ['==', ['get', 'status'], 'active','na'],
-                    '#4CAF50',  
-                    '#FF5722'  
+                    ['==', ['get', 'status'], 'active'], '#4CAF50', 
+                    ['==', ['get', 'status'], 'na'], '#FF5722',       
+                    '#d6d7d6'                                      
                 ],
                 'circle-radius': 20
             }
