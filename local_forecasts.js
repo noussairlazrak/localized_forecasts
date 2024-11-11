@@ -364,7 +364,7 @@ function create_map(sites, param) {
           });
 
 
-        map.addLayer({
+          map.addLayer({
             id: 'background-circle',
             type: 'circle',
             source: 'locations_dst',
@@ -373,12 +373,14 @@ function create_map(sites, param) {
                 'circle-color': [
                     'case',
                     ['==', ['get', 'status'], 'active'], '#4CAF50', 
-                    ['==', ['get', 'status'], 'na'], '#FF5722',       
-                    '#d6d7d6'                                      
+                    ['==', ['get', 'status'], 'na'], '#9E9E9E',     
+                    '#d6d7d6'                                        
                 ],
-                'circle-radius': 20
+                'circle-radius': 20,
+                'text-opacity': 0                           
             }
         });
+        
     
         
         // Add label symbol layer
