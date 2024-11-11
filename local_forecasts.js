@@ -373,9 +373,9 @@ function create_map(sites, param) {
             'circle-color': [
                 'interpolate',
                 ['linear'],
-                ['get', 'forecasted_value'],
-                1, '#008000',
-                40, '#008000'
+                ['get', 'status'],
+                1, '#009688',
+                40, '#d6d7d6'
             ],
             'circle-radius': 20
             }
@@ -388,7 +388,7 @@ function create_map(sites, param) {
             source: 'locations_dst',
             filter: ['!', ['has', 'point_count']],
             layout: {
-            'text-field': ['to-string', ['get', 'forecasted_value']],
+            'text-field': ['to-string', ['get', 'status']],
             'text-font': ['Manrope Bold'],
             'text-size': 14,
             'text-offset': [0, 0.5],
@@ -450,10 +450,6 @@ function create_map(sites, param) {
     map.on("sourcedata", function(e) {
         if (map.getSource('locations_dst') && map.isSourceLoaded('locations_dst')) {
             var features = map.querySourceFeatures('locations_dst');
-
-
-            
-
               
             $.each(features, function(index, site) {
                 if(site.properties.location_id){
