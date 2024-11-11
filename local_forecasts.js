@@ -370,16 +370,16 @@ function create_map(sites, param) {
             source: 'locations_dst',
             filter: ['!', ['has', 'point_count']],
             paint: {
-            'circle-color': [
-                'interpolate',
-                ['linear'],
-                ['get', 'status'],
-                1, '#009688',
-                40, '#d6d7d6'
-            ],
-            'circle-radius': 20
+                'circle-color': [
+                    'case',
+                    ['==', ['get', 'status'], 'active'],
+                    '#4CAF50',  // Green for active, not too bright
+                    '#FF5722'   // Red for "na", not too bright
+                ],
+                'circle-radius': 20
             }
         });
+    
         
         // Add label symbol layer
         map.addLayer({
