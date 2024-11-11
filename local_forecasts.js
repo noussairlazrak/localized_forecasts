@@ -281,7 +281,7 @@ function get_open_aq_observations(site_id, param) {
             openaq.site_data.location = data.results[0].location;
             openaq.site_data.latitude = data.results[0].coordinates.latitude;
             openaq.site_data.longitude = data.results[0].coordinates.longitude;
-            openaq.site_data.status = site_id.status;
+            openaq.site_data.status = 'active';
             openaq.meta_data = "data is now updated";
             openaq.latest_n02 = data.results[0].measurements.longitude;
             openaq.latest_03 = "";
@@ -363,25 +363,23 @@ function create_map(sites, param) {
             });
           });
 
-
-          map.addLayer({
+       // Add background circle layer
+        map.addLayer({
             id: 'background-circle',
             type: 'circle',
             source: 'locations_dst',
             filter: ['!', ['has', 'point_count']],
             paint: {
-                'circle-color': [
-                    'case',
-                    ['==', ['get', 'status'], 'active'], '#4CAF50', 
-                    ['==', ['get', 'status'], 'na'], '#9E9E9E',     
-                    '#d6d7d6'                                        
-                ],
-                'circle-radius': 20,
-                'text-opacity': 0                           
+            'circle-color': [
+                'interpolate',
+                ['linear'],
+                ['get', 'status'],
+                1, '#009688',
+                40, '#d6d7d6'
+            ],
+            'circle-radius': 20
             }
         });
-        
-    
         
         // Add label symbol layer
         map.addLayer({
