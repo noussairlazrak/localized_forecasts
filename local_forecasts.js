@@ -281,7 +281,7 @@ function get_open_aq_observations(site_id, param) {
             openaq.site_data.location = data.results[0].location;
             openaq.site_data.latitude = data.results[0].coordinates.latitude;
             openaq.site_data.longitude = data.results[0].coordinates.longitude;
-            openaq.site_data.status = 'active';
+            openaq.site_data.status = site_id.status;
             openaq.meta_data = "data is now updated";
             openaq.latest_n02 = data.results[0].measurements.longitude;
             openaq.latest_03 = "";
@@ -372,9 +372,9 @@ function create_map(sites, param) {
             paint: {
                 'circle-color': [
                     'case',
-                    ['==', ['get', 'status'], 'active'],
-                    '#4CAF50',  // Green for active, not too bright
-                    '#FF5722'   // Red for "na", not too bright
+                    ['==', ['get', 'status'], 'active','na'],
+                    '#4CAF50',  
+                    '#FF5722'  
                 ],
                 'circle-radius': 20
             }
