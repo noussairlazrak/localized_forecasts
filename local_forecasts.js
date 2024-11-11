@@ -716,7 +716,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
             
             if (plotElement) {
 
-                draw_plot(historicalMasterData, param, unit, plotElementId, forecastsDiv, false, true, false);
+                draw_plot(historicalMasterData, param, unit, plotElementId, "Bias Corrected NO2", false, true, false);
             } else {
                 console.error(`No DOM element with id '${plotElementId}' exists on the page.`);
             }
@@ -1798,7 +1798,7 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
         });
         
         readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker_historical', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
-        readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker_col', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
+        //readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker_col', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
 
         try {
             // Uncomment if needed
