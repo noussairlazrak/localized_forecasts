@@ -185,6 +185,7 @@ function add_marker(map, lat, long, open_aq_id, param, site) {
     var location_name = document.createAttribute("location_name");
     var observation_value = document.createAttribute("observation_value");
     var current_observation_unit = document.createAttribute("current_observation_unit");
+    var status = document.createAttribute("status");
 
     if(site.site_data.obs_source == 's3'){
         location_name.value = site.site_data.location.replace(/[_\W]+/g, "_");
@@ -196,6 +197,7 @@ function add_marker(map, lat, long, open_aq_id, param, site) {
             $.each(site.latest_measurments, function(key, value) {
                 if (value.parameter == param) {
                     location_name.value = site.site_data.location.replace(/[_\W]+/g, "_");
+                    location_name.status = site.site_data.location.status;
                     observation_value.value = value.value;
                     current_observation_unit.value = value.unit;
                 }
@@ -530,7 +532,7 @@ function add_the_banner(site, param) {
  
 
         animateValue(obj, 100, 0, 5000);
-        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "' + site.forecasted_value + '" current_observation_unit= "' + obs_options[0].no2.unit+ ' " latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+precomputed_forecasts[0].no2.forecasts+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last model update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value"></span> </h1> <span class="source">Observation source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';
+        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "' + site.forecasted_value + '" status= "' + site.status + '" current_observation_unit= "' + obs_options[0].no2.unit+ ' " latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+precomputed_forecasts[0].no2.forecasts+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last model update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value"></span> </h1> <span class="source">Observation source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';
         $(".pollutant-banner-o").prepend(html);
 
         
