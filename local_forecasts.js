@@ -779,9 +779,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
 
             // Get current hour forecasts
             const currentData = get_current_hour_forecasts(masterData);
-            console.log(currentData);
 
-            console.log(masterData);
 
             // Filter master data by date
             var filteredMasterData = filter_data_set_by_date(masterData, 2, -5);
@@ -1047,35 +1045,41 @@ function getDates(startDate, stopDate) {
     return dateArray;
 }
 
-function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges = false, button=false, historical = false){
-  
-        var now = new Date();
-        var dividerDate = now.toISOString().slice(0, 19).replace("T", " ");
+/**
+ * Plots data using Plotly.
+ * 
+ * @param {object} combined_dataset - Dataset containing master data.
+ * @param {string} param - Parameter for plotting.
+ * @param {string} unit - Unit of measurement.
+ * @param {string} forecasts_div - ID of the div where the plot is rendered.
+ * @param {string} title - Title of the plot.
+ * @param {array} [dates_ranges=false] - Array of date ranges.
+ * @param {boolean} [button=false] - Whether to add a button.
+ * @param {boolean} [historical=false] - Whether it's a historical plot.
+ */
+function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ranges = false, button = false, historical = false) {
+    // Extract data from combined dataset
+    const localized_data = combined_dataset["master_localized"];
+    const uncorrected_data = combined_dataset["master_uncorrected"];
+    const observation_data = combined_dataset["master_observation"];
+    const datetime_data = combined_dataset["master_datetime"];
+    const pandora_no2_l1col = combined_dataset["master_pandora_no2_l1col"];
 
-        var localized_data = combined_dataset["master_localized"];
-        var uncorrected_data = combined_dataset["master_uncorrected"];
-        var observation_data = combined_dataset["master_observation"];
-        var datetime_data = combined_dataset["master_datetime"];
-        var pandora_no2_l1col = combined_dataset["master_pandora_no2_l1col"];
+    // Calculate current date index if not historical
+    if (!historical) {
+        const currentDate = new Date();
+        const currentDateString = currentDate.toISOString().slice(0, 13) + ":00:00";
+        currentDateString = currentDateString.replace("T", " ");
+        const currentDateIndex = datetime_data.indexOf(currentDateString);
+        if (currentDateIndex === -1) {
+            console.error("Current date not found in dataset.");
+            return;
+        }
+        const localizedValue = localized_data[currentDateIndex];
 
-
-        if (!historical){
-            var currentDate = new Date();
-            var currentDateString = currentDate.toISOString().slice(0, 13) + ":00:00";
-            currentDateString = currentDateString.replace("T", " ")
-            console.log("currentDateString");
-            console.log(currentDateString);
-
-
-            var currentDateIndex = datetime_data.indexOf(currentDateString);
-            console.log("currentDateIndex");
-            console.log(currentDateIndex);
-
-            var localizedValue = localized_data[currentDateIndex];
-
-
-            
-            var shapes_layouts = { shapes: [
+        // Define shapes for non-historical plots
+        const shapes_layouts = {
+            shapes: [
                 {
                     type: 'line',
                     x0: datetime_data[currentDateIndex],
@@ -1088,137 +1092,122 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
                         dash: 'dot'
                     }
                 }
-            ],
-        }
+            ]
+        };
+    } else {
+        const shapes_layouts = {};
+    }
 
-        }else{
-            shapes_layouts = {};
-        }
+    // Define plot traces
+    const master_localized = {
+        type: "scatter",
+        mode: "lines",
+        connectgaps: false,
+        x: datetime_data,
+        y: localized_data,
+        line: {
+            color: 'green',
+            width: 3
+        },
+        name: 'ML + Model'
+    };
 
-        
+    const master_uncorrected = {
+        type: "scatter",
+        mode: "lines",
+        connectgaps: false,
+        x: datetime_data,
+        y: uncorrected_data,
+        line: {
+            color: 'rgba(142, 142, 142, 0.8)',
+            width: 3
+        },
+        name: 'Model'
+    };
 
+    const master_observation = {
+        type: "scatter",
+        mode: "lines",
+        connectgaps: false,
+        x: datetime_data,
+        y: observation_data,
+        line: {
+            color: 'rgba(255, 0, 0, 0.8)',
+            width: 3
+        },
+        name: 'Observation'
+    };
 
-        var master_localized = {
-            type: "scatter",
-            mode: "lines",
-            connectgaps: false,
-            x: datetime_data,
-            y: localized_data,
-            mode: 'lines',
-            marker: {
-              color: 'red',
-              size: 10
-            },
-            line: {
-              color: 'green',
-              width: 3
-            },
-            name: 'ML + Model '
-          };
-          
-          var master_uncorrected = {
-            type: "scatter",
-            mode: "lines",
-            connectgaps: false,
-            x: datetime_data,
-            y: uncorrected_data,
-            line: {
-              color: 'rgba(142, 142, 142, 0.8)',
-              width: 3
-            },
-            name: 'Model'
-          };
-          
-          var master_observation = {
-            type: "scatter",
-            mode: "lines",
-            connectgaps: false,
-            x: datetime_data,
-            y: observation_data,
-            line: {
-              color: 'rgba(255, 0, 0, 0.8)',
-              width: 3
-            },
-            name: 'Observation'
-          };
+    const master_pandora_no2_l1col = {
+        type: "scatter",
+        mode: "lines",
+        connectgaps: false,
+        x: datetime_data,
+        y: pandora_no2_l1col,
+        line: {
+            color: 'rgba(255, 0, 0, 0.8)',
+            width: 3
+        },
+        name: 'L1 Col'
+    };
 
-          var master_pandora_no2_l1col = {
-            type: "scatter",
-            mode: "lines",
-            connectgaps: false,
-            x: datetime_data,
-            y: pandora_no2_l1col ,
-            line: {
-              color: 'rgba(255, 0, 0, 0.8)',
-              width: 3
-            },
-            name: 'L1 Col'
-          };
-          
-          var whoPm25Limit = 10; // WHO PM2.5 concentration limit
-          
-          var layout = {
-            title: title,
-            plot_bgcolor: 'rgb(22 26 30)',
-            paper_bgcolor: 'rgb(22 26 30)',
-          
-            legend: {
-              orientation: 'v',
-              x: 1.1,
-              y: 0.5,
-            },
-          
-            font: {
-              family: 'Roboto, sans-serif',
-              color: '#FFFFFF',
-              size: 16
-            },
-          
-            xaxis: {
-                type: 'date',
-                color: '#FFFFFF',
-                rangeslider: {},
-                range: [datetime_data[0], datetime_data[datetime_data.length - 1]],
-            
-                shapes: [{
-                  type: 'line',
-                  x0: datetime_data[0],
-                  y0: whoPm25Limit,
-                  x1: datetime_data[datetime_data.length - 1],
-                  y1: 10,
-                  line: {
+    // Define plot layout
+    const whoPm25Limit = 10; // WHO PM2.5 concentration limit
+    const layout = {
+        title: title,
+        plot_bgcolor: 'rgb(22 26 30)',
+        paper_bgcolor: 'rgb(22 26 30)',
+        legend: {
+            orientation: 'v',
+            x: 1.1,
+            y: 0.5,
+        },
+        font: {
+            family: 'Roboto, sans-serif',
+            color: '#FFFFFF',
+            size: 16
+        },
+        xaxis: {
+            type: 'date',
+            color: '#FFFFFF',
+            rangeslider: {},
+            range: [datetime_data[0], datetime_data[datetime_data.length - 1]],
+            shapes: [{
+                type: 'line',
+                x0: datetime_data[0],
+                y0: whoPm25Limit,
+                x1: datetime_data[datetime_data.length - 1],
+                y1: whoPm25Limit,
+                line: {
                     color: 'red',
                     width: 2,
                     dash: 'dash',
-                  }
-                }]
-              },
-          
-          
-            yaxis: {
-              autorange: true,
-              type: 'linear',
-              title: 'PPBV',
-              color: '#FFFFFF'
-            }
-          };
-   
+                }
+            }]
+        },
+        yaxis: {
+            autorange: true,
+            type: 'linear',
+            title: 'PPBV',
+            color: '#FFFFFF'
+        }
+    };
 
-
-    if(dates_ranges){
+    // Add shapes for date ranges if specified
+    if (dates_ranges) {
         layout.shapes = [
             {
-            type: 'rect',
-            x0: dates_ranges[0],
-            y0: 0,
-            x1: dates_ranges[1],
-            y1: 1,
-            yref: 'paper',
-            fillcolor: '#00ffff2e',
-            line: {
-                color: 'rgb(55, 128, 191)',
-                width: 0.5
-            }
+                type: 'rect',
+                x0: dates_ranges[0],
+                y0: 0,
+                x1: dates_ranges[1],
+                y1: 1,
+                yref: 'paper',
+                fillcolor: '#00ffff2e',
+                line: {
+                    color: 'rgb(55, 128, 191)',
+                    width: 0.5
+                }
             },
             {
                 type: 'rect',
@@ -1229,18 +1218,18 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
                 yref: 'paper',
                 fillcolor: '#00ffa973',
                 line: {
-                color: 'green',
-                width: 0.5
+                    color: 'green',
+                    width: 0.5
                 }
             }
-        ]
+        ];
     }
 
- 
-        Plotly.newPlot(forecasts_div, [master_localized,master_uncorrected,master_observation], layout);
-        
-        
+    // Render plot
+    Plotly.newPlot(forecasts_div, [master_localized, master_uncorrected, master_observation], layout);
 
+    // Add current value marker if not historical
+    if (!historical) {
         Plotly.addTraces(forecasts_div, {
             x: [datetime_data[currentDateIndex]],
             y: [localizedValue],
@@ -1251,34 +1240,18 @@ function draw_plot(combined_dataset,param,unit,forecasts_div,title, dates_ranges
             },
             name: 'Current Value'
         });
+    }
 
-        
+    // Add button if specified
+    if (button) {
+        $('.plot_additional_features').append('<button type="button" change_to="' + forecasts_div + '" class="btn btn-outline-primary change_plot ' + forecasts_div + '"  href="#">' + title + '</button>');
+    }
 
-
-        if(button){
-            $('.plot_additional_features').append('<button type="button" change_to="'+forecasts_div+'" class="btn btn-outline-primary change_plot '+forecasts_div+'"  href="#">'+title+'</button>');
-        }
-        if(historical){
-            var label_text = "historical simulation";
-            var label_text_rolling_average = "historical simulation";
-            var downlaod_label_text = "download historical simulation data";
-
-        }else{
-            var label_text = "Forecasts";
-            var label_text_rolling_average = "Forecasts ";
-            var downlaod_label_text = "download forecast data";
-        }
-
-        
-        
-        //$('.plot_additional_features').prepend('<button type="button" class="btn btn-outline-primary change_plot" change_to="main_plot_'+historical+'" href="#"> '+label_text+'</button><button type="button" change_to="resample_main_plot_'+historical+'" change_to ="resample_main_plot_'+historical+'" class="btn btn-outline-primary change_plot change_plot resample'+'_'+historical+'" href="#">'+label_text_rolling_average+'</button>');
-
-        $('.lf-downloads').append('<a class="download_forecasts_data" href="#">| '+downlaod_label_text+' </button>');
-       
-        
-
-    
+    // Add download link
+    const downlaod_label_text = historical ? "download historical simulation data" : "download forecast data";
+    $('.lf-downloads').append('<a class="download_forecasts_data" href="#">| ' + downlaod_label_text + ' </a>');
 }
+
 
 function side_by_side_plots(param, unit, title, precomputer_forecasts, observation_unit){
     $(document).ready(function() {
