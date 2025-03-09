@@ -636,7 +636,21 @@ function csvToArray(str, delimiter = ",") {
 }
 
 
-function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
+/**
+ * Fetches data from API Baker and updates the UI with forecasts.
+ * 
+ * @param {string} location - Location for which data is fetched.
+ * @param {string} param - Parameter to fetch data for.
+ * @param {string} unit - Unit of measurement for the parameter.
+ * @param {string} forecastsDiv - ID of the div where forecasts are plotted.
+ * @param {boolean} [buttonOption=true] - Whether button option is enabled.
+ * @param {number} [historical=2] - Historical data range.
+ * @param {number} [reinforceTraining=2] - Reinforce training value.
+ * @param {number} [hpTunning=2] - Hyperparameter tuning value.
+ * @param {boolean} [resample=false] - Whether to resample data.
+ * @param {number} [update=2] - Update flag.
+ */
+function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
     const messages = [
         "Generating data", 
         "Connecting to SMCE", 
@@ -648,15 +662,20 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
         "Connecting..."
     ];
 
+    // Show loader
     $('.loader').show();
-    
+
+    // Get parameter code
     const paramCode = pollutant_details(param).id;
+
+    // Construct file URL based on update flag
     const fileUrl = update === 1 
-        ? "https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/"+location+".json"
-        : "https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/"+location+".json";
+        ? `https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/${location}.json`
+        : `https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/${location}.json`;
 
     console.log(fileUrl);
 
+    // Fetch data from API
     fetch(fileUrl)
         .then(response => {
             if (!response.ok) {
@@ -668,9 +687,68 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
             if (!data) {
                 throw new Error("No data received");
             }
-            console.log(data);
-            $('.model_data').html(` <div class="container my-5"> <h1>Bias Corrected Model Information</h1> <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Total Observations</h5> <p class="card-text fs-3 fw-bold">${data.metrics.total_observation}</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Last Model Update</h5> <p class="card-text fs-3 fw-bold">${data.metrics.latest_training.substring(0, 19)}</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Mean Square Error</h5> <p class="card-text">${data.metrics["rmse"]}<br></p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Mean Absolute Error</h5> <p class="card-text">${data.metrics["mae"]}</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">R2 Score</h5> <p class="card-text">${data.metrics["r2"]}</p> </div> </div> </div> <div class="col"> <div class="card shadow-sm"> <div class="card-body"> <h5 class="card-title">Observation Dates</h5> <p class="card-text">${data.metrics.start_date.substring(0, 10)} to ${data.metrics.end_date.substring(0, 10)}</p> </div> </div> </div> </div> </div>`);
 
+            console.log(data);
+
+            // Update UI with model data
+            const modelHtml = `
+                <div class="container my-5">
+                    <h1>Bias Corrected Model Information</h1>
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Observations</h5>
+                                    <p class="card-text fs-3 fw-bold">${data.metrics.total_observation}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Last Model Update</h5>
+                                    <p class="card-text fs-3 fw-bold">${data.metrics.latest_training.substring(0, 19)}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Mean Square Error</h5>
+                                    <p class="card-text">${data.metrics["rmse"]}<br></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Mean Absolute Error</h5>
+                                    <p class="card-text">${data.metrics["mae"]}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">R2 Score</h5>
+                                    <p class="card-text">${data.metrics["r2"]}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Observation Dates</h5>
+                                    <p class="card-text">${data.metrics.start_date.substring(0, 10)} to ${data.metrics.end_date.substring(0, 10)}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            $('.model_data').html(modelHtml);
+
+            // Prepare master data
             let masterData = {
                 master_datetime: [],
                 master_observation: [],
@@ -679,16 +757,15 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
                 master_pandora_no2_l1col: []
             };
 
-
             data.forecasts.forEach(forecast => {
                 masterData.master_datetime.push(forecast.time);
                 masterData.master_observation.push(forecast.value);
                 masterData.master_localized.push(forecast.predicted);
-                masterData.master_uncorrected.push(forecast.predicted);
+                masterData.master_uncorrected.push(forecast.no2);
                 masterData.master_pandora_no2_l1col.push(forecast.pandora_no2_l1col);
             });
 
-
+            // Add event listener for downloading forecasts data
             $(document).off("click", ".download_forecasts_data").on("click", ".download_forecasts_data", function() {
                 const csvFileName = location.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '_' + historical + '.csv';
                 let csvContent = "data:text/csv;charset=utf-8," + formatToCSV(masterData); // Ensure you format this correctly for CSV
@@ -700,25 +777,28 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
                 link.click();
             });
 
-
+            // Get current hour forecasts
             const currentData = get_current_hour_forecasts(masterData);
             console.log(currentData);
 
-
             console.log(masterData);
+
+            // Filter master data by date
             var filteredMasterData = filter_data_set_by_date(masterData, 2, -5);
             var historicalMasterData = filter_data_set_by_date(masterData, 365, 20);
 
+            // Plot historical data
             const plotElementId = forecastsDiv;
             const plotElement = document.getElementById(plotElementId);
             
             if (plotElement) {
-
                 draw_plot(historicalMasterData, param, unit, plotElementId, "Bias Corrected NO2", false, true, false);
             } else {
                 console.error(`No DOM element with id '${plotElementId}' exists on the page.`);
             }
-            $('.loader').hide(); 
+
+            // Hide loader
+            $('.loader').hide();
         })
         .catch(error => {
             console.error("Error loading data:", error);
@@ -726,6 +806,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = True, 
             $('.loader').hide();
         });
 }
+
 
 
 function formatToCSV(data) {
