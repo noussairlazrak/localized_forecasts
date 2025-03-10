@@ -128,35 +128,41 @@ function rewritePercentage(percentage) {
     }
   }
 
-function filter_data_set_by_date(master_data,start,end){
+/**
+ * Filters the master data by date range.
+ * 
+ * @param {object} master_data - The master data object.
+ * @param {number} start - Number of days to subtract from the current date for the start of the range.
+ * @param {number} end - Number of days to subtract from the current date for the end of the range.
+ * @param {boolean} [enableFilter=true] - Whether to apply the date filter.
+ * @returns {object} The filtered data.
+ */
+function filter_data_set_by_date(master_data, start, end, enableFilter = false) {
+    if (!enableFilter) {
+        return master_data;
+    }
 
-    var filteredmaster_data = [];
+    var filteredMasterData = {};
     var currentDate = new Date();
 
-    // Get the date 5 days ago
-    var fiveDaysAgo = new Date();
-    fiveDaysAgo.setDate(currentDate.getDate() - start);
 
-    // Get the date 5 days from now
-    var fiveDaysFromNow = new Date();
-    fiveDaysFromNow.setDate(currentDate.getDate() - end);
+    var startDate = new Date();
+    startDate.setDate(currentDate.getDate() - start);
 
-    // Filter datetime_data based on date range
+    var endDate = new Date();
+    endDate.setDate(currentDate.getDate() + end);
+
+
     var filteredDatetimeData = master_data.master_datetime.filter(function(dateString) {
         var date = new Date(dateString);
-        return date >= fiveDaysAgo && date <= fiveDaysFromNow;
+        return date >= startDate && date <= endDate;
     });
 
-    // Get the indices of the filtered dates in datetime_data
+
     var filteredDatetimeIndices = filteredDatetimeData.map(function(dateString) {
         return master_data.master_datetime.indexOf(dateString);
     });
 
-    var filteredDatetime = filteredDatetimeIndices.map(function(index) {
-        return master_data.master_datetime[index];
-    });
-
-    // Filter the other data columns based on the indices of the filtered dates
     var filteredLocalizedData = filteredDatetimeIndices.map(function(index) {
         return master_data.master_localized[index];
     });
@@ -169,15 +175,19 @@ function filter_data_set_by_date(master_data,start,end){
         return master_data.master_observation[index];
     });
 
-    
-    filteredmaster_data.master_datetime = filteredDatetime;
-    filteredmaster_data.master_observation = filteredObservationData;
-    filteredmaster_data.master_localized = filteredLocalizedData;
-    filteredmaster_data.master_uncorrected = filteredUncorrectedData;
+    var filteredPandoraNo2L1ColData = filteredDatetimeIndices.map(function(index) {
+        return master_data.master_pandora_no2_l1col[index];
+    });
 
-    return filteredmaster_data;
+    filteredMasterData.master_datetime = filteredDatetimeData;
+    filteredMasterData.master_observation = filteredObservationData;
+    filteredMasterData.master_localized = filteredLocalizedData;
+    filteredMasterData.master_uncorrected = filteredUncorrectedData;
+    filteredMasterData.master_pandora_no2_l1col = filteredPandoraNo2L1ColData;
 
-    }
+    return filteredMasterData;
+}
+
 function add_marker(map, lat, long, open_aq_id, param, site) {
 
     var station_id = document.createAttribute("station_id");
