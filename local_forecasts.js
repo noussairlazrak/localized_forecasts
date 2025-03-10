@@ -1045,18 +1045,7 @@ function getDates(startDate, stopDate) {
     return dateArray;
 }
 
-/**
- * Plots data using Plotly.
- * 
- * @param {object} combined_dataset - Dataset containing master data.
- * @param {string} param - Parameter for plotting.
- * @param {string} unit - Unit of measurement.
- * @param {string} forecasts_div - ID of the div where the plot is rendered.
- * @param {string} title - Title of the plot.
- * @param {array} [dates_ranges=false] - Array of date ranges.
- * @param {boolean} [button=false] - Whether to add a button.
- * @param {boolean} [historical=false] - Whether it's a historical plot.
- */
+
 function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ranges = false, button = false, historical = false) {
     // Extract data from combined dataset
     const localized_data = combined_dataset["master_localized"];
@@ -1065,11 +1054,13 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ra
     const datetime_data = combined_dataset["master_datetime"];
     const pandora_no2_l1col = combined_dataset["master_pandora_no2_l1col"];
 
-    // Calculate current date index if not historical
+    console.log(combined_dataset);
+
     if (!historical) {
         const currentDate = new Date();
         const currentDateString = currentDate.toISOString().slice(0, 13) + ":00:00";
         currentDateString = currentDateString.replace("T", " ");
+
         const currentDateIndex = datetime_data.indexOf(currentDateString);
         if (currentDateIndex === -1) {
             console.error("Current date not found in dataset.");
