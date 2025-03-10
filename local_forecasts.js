@@ -128,15 +128,7 @@ function rewritePercentage(percentage) {
     }
   }
 
-/**
- * Filters the master data by date range.
- * 
- * @param {object} master_data - The master data object.
- * @param {number} start - Number of days to subtract from the current date for the start of the range.
- * @param {number} end - Number of days to subtract from the current date for the end of the range.
- * @param {boolean} [enableFilter=true] - Whether to apply the date filter.
- * @returns {object} The filtered data.
- */
+
 function filter_data_set_by_date(master_data, start, end, enableFilter = false) {
     if (!enableFilter) {
         return master_data;
@@ -1056,7 +1048,7 @@ function getDates(startDate, stopDate) {
 }
 
 
-function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ranges = false, button = false, historical = false) {
+function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ranges = false, button = false, historical = true) {
     // Extract data from combined dataset
     const localized_data = combined_dataset["master_localized"];
     const uncorrected_data = combined_dataset["master_uncorrected"];
@@ -1243,12 +1235,12 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ra
         });
     }
 
-    // Add button if specified
+
     if (button) {
         $('.plot_additional_features').append('<button type="button" change_to="' + forecasts_div + '" class="btn btn-outline-primary change_plot ' + forecasts_div + '"  href="#">' + title + '</button>');
     }
 
-    // Add download link
+
     const downlaod_label_text = historical ? "download historical simulation data" : "download forecast data";
     $('.lf-downloads').append('<a class="download_forecasts_data" href="#">| ' + downlaod_label_text + ' </a>');
 }
