@@ -792,7 +792,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             const plotElement = document.getElementById(plotElementId);
             
             if (plotElement) {
-                draw_plot(historicalMasterData, param, unit, plotElementId, "Bias Corrected NO2", false, true, false);
+                draw_plot(historicalMasterData, param, unit, plotElementId, "Bias Corrected NO2", false, true, true);
             } else {
                 console.error(`No DOM element with id '${plotElementId}' exists on the page.`);
             }
