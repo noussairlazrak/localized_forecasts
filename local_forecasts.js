@@ -502,7 +502,7 @@ function create_map(sites, param) {
             "Connecting..."
         ];
 
-        openForecastsWindow(messages, location_id, 'no2', location_name, observation_value, observation_unit, 's3', precomputed_forecasts);
+        openForecastsWindow(messages, location_id, 'o3', location_name, observation_value, observation_unit, 's3', precomputed_forecasts);
     
 
     });
@@ -791,7 +791,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             const plotElement = document.getElementById(plotElementId);
             
             if (plotElement) {
-                draw_plot(historicalMasterData, param, unit, plotElementId, "Bias Corrected NO2", false, true, true);
+                draw_plot(historicalMasterData, param, unit, plotElementId, "Bias Corrected Ozone", false, true, false);
             } else {
                 console.error(`No DOM element with id '${plotElementId}' exists on the page.`);
             }
@@ -1047,8 +1047,8 @@ function getDates(startDate, stopDate) {
 }
 
 
-function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ranges = false, button = false, historical = true) {
-    // Extract data from combined dataset
+function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ranges = false, button = false) {
+
     const localized_data = combined_dataset["master_localized"];
     const uncorrected_data = combined_dataset["master_uncorrected"];
     const observation_data = combined_dataset["master_observation"];
@@ -1057,40 +1057,7 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ra
 
     console.log(combined_dataset);
 
-    if (!historical) {
-        const currentDate = new Date();
-        const currentDateString = currentDate.toISOString().slice(0, 13) + ":00:00";
-        currentDateString = currentDateString.replace("T", " ");
 
-        const currentDateIndex = datetime_data.indexOf(currentDateString);
-        if (currentDateIndex === -1) {
-            console.error("Current date not found in dataset.");
-            return;
-        }
-        const localizedValue = localized_data[currentDateIndex];
-
-        // Define shapes for non-historical plots
-        const shapes_layouts = {
-            shapes: [
-                {
-                    type: 'line',
-                    x0: datetime_data[currentDateIndex],
-                    y0: localizedValue,
-                    x1: datetime_data[currentDateIndex],
-                    y1: 0,
-                    line: {
-                        color: 'green',
-                        width: 5,
-                        dash: 'dot'
-                    }
-                }
-            ]
-        };
-    } else {
-        const shapes_layouts = {};
-    }
-
-    // Define plot traces
     const master_localized = {
         type: "scatter",
         mode: "lines",
@@ -1143,8 +1110,8 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ra
         name: 'L1 Col'
     };
 
-    // Define plot layout
-    const whoPm25Limit = 10; // WHO PM2.5 concentration limit
+
+    const whoPm25Limit = 10; 
     const layout = {
         title: title,
         plot_bgcolor: 'rgb(22 26 30)',
@@ -1163,31 +1130,32 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ra
             type: 'date',
             color: '#FFFFFF',
             rangeslider: {},
-            range: [datetime_data[0], datetime_data[datetime_data.length - 1]],
-            shapes: [{
-                type: 'line',
-                x0: datetime_data[0],
-                y0: whoPm25Limit,
-                x1: datetime_data[datetime_data.length - 1],
-                y1: whoPm25Limit,
-                line: {
-                    color: 'red',
-                    width: 2,
-                    dash: 'dash',
-                }
-            }]
+            range: [datetime_data[0], datetime_data[datetime_data.length - 1]]
         },
         yaxis: {
             autorange: true,
             type: 'linear',
             title: 'PPBV',
             color: '#FFFFFF'
-        }
+        },
+        shapes: [{
+            type: 'line',
+            x0: datetime_data[0],
+            y0: whoPm25Limit,
+            x1: datetime_data[datetime_data.length - 1],
+            y1: whoPm25Limit,
+            line: {
+                color: 'red',
+                width: 2,
+                dash: 'dash',
+            }
+        }]
     };
 
-    // Add shapes for date ranges if specified
+
     if (dates_ranges) {
-        layout.shapes = [
+        layout.shapes = layout.shapes || [];
+        layout.shapes.push(
             {
                 type: 'rect',
                 x0: dates_ranges[0],
@@ -1214,34 +1182,17 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ra
                     width: 0.5
                 }
             }
-        ];
+        );
     }
 
-    // Render plot
+
     Plotly.newPlot(forecasts_div, [master_localized, master_uncorrected, master_observation], layout);
-
-    // Add current value marker if not historical
-    if (!historical) {
-        Plotly.addTraces(forecasts_div, {
-            x: [datetime_data[currentDateIndex]],
-            y: [localizedValue],
-            mode: 'markers',
-            marker: {
-                color: 'green',
-                size: 20
-            },
-            name: 'Current Value'
-        });
-    }
-
 
     if (button) {
         $('.plot_additional_features').append('<button type="button" change_to="' + forecasts_div + '" class="btn btn-outline-primary change_plot ' + forecasts_div + '"  href="#">' + title + '</button>');
     }
 
-
-    const downlaod_label_text = historical ? "download historical simulation data" : "download forecast data";
-    $('.lf-downloads').append('<a class="download_forecasts_data" href="#">| ' + downlaod_label_text + ' </a>');
+    $('.lf-downloads').append('<a class="download_forecasts_data" href="#">| download data </a>');
 }
 
 
