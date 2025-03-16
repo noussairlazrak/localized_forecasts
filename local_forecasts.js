@@ -724,7 +724,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                             <div class="card shadow-sm">
                                 <div class="card-body">
                                     <h5 class="card-title">Mean Absolute Error</h5>
-                                    <p class="card-text">${data.metrics["mae"]}</p>
+                                    <p class="card-text">${data.metrics.preformance.metrics["Test MAE"]}</p>
                                 </div>
                             </div>
                         </div>
@@ -732,7 +732,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                             <div class="card shadow-sm">
                                 <div class="card-body">
                                     <h5 class="card-title">R2 Score</h5>
-                                    <p class="card-text">${data.metrics["r2"]}</p>
+                                    <p class="card-text">${data.metrics.preformance.metrics["Test R2"]}</p>
                                 </div>
                             </div>
                         </div>
