@@ -676,7 +676,6 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
         : `https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/ArlingtonTX_o3_output.json`;
 
     console.log(fileUrl);
-
     // Fetch data from API
     fetch(fileUrl)
         .then(response => {
