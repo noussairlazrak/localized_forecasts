@@ -651,123 +651,57 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
         "Connecting..."
     ];
 
-    // Show loader
     $('.loader').show();
 
-    // Get parameter code
     const paramCode = pollutant_details(param).id;
-
-    // Construct file URL based on update flag
-    const fileUrl = update === 1 
-        ? `https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/ArlingtonTX_o3_output.json`
-        : `https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/ArlingtonTX_o3_output.json`;
-
+    const fileUrl = `https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/ArlingtonTX_o3_output.json`;
+    
     console.log(fileUrl);
-    // Fetch data from API
+    
     fetch(fileUrl)
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
+            if (!response.ok) throw new Error('Network response was not ok');
             return response.json();
         })
         .then(data => {
-            if (!data) {
-                throw new Error("No data received");
-            }
+            if (!data) throw new Error("No data received");
 
             console.log(data);
 
-            // Update UI with model data
             const modelHtml = `
                 <div class="container my-5">
                     <h1>Bias Corrected Model Information</h1>
                     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Total Observations</h5>
-                                    <p class="card-text fs-3 fw-bold">${data.metrics.total_observation}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Last Model Update</h5>
-                                    <p class="card-text fs-3 fw-bold">${data.metrics.latest_training.substring(0, 19)}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Mean Square Error</h5>
-                                    <p class="card-text">${data.metrics["rmse"]}<br></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Mean Absolute Error</h5>
-                                    <p class="card-text">${data.metrics.preformance.metrics["Test MAE"]}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">R2 Score</h5>
-                                    <p class="card-text">${data.metrics.preformance.metrics["Test R2"]}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Observation Dates</h5>
-                                    <p class="card-text">${data.metrics.start_date.substring(0, 10)} to ${data.metrics.end_date.substring(0, 10)}</p>
-                                </div>
-                            </div>
-                        </div>
+                        ${generateModelCards(data.metrics)}
                     </div>
                 </div>
             `;
             $('.model_data').html(modelHtml);
 
+            let masterData = {};
+            let merra2cnn = {};
 
-            let masterData = {
-                master_datetime: [],
-                master_value: [],
-                master_pm25: []
-            };
-
-            let merra2cnn = {
-                master_datetime: [],
-                master_observation: [],
-                master_localized: [],
-                master_uncorrected: [],
-                master_pandora_no2_l1col: []
-            };
+            ["master_datetime", "master_observation", "master_localized", "master_uncorrected", "master_pandora_no2_l1col"].forEach(key => masterData[key] = []);
+            ["master_datetime", "master_value", "master_pm25"].forEach(key => merra2cnn[key] = []);
 
             data.forecasts.forEach(forecast => {
-                masterData.master_datetime.push(forecast.time);
-                masterData.master_observation.push(forecast.value);
-                masterData.master_localized.push(forecast.predicted);
-                masterData.master_uncorrected.push(forecast.no2);
-                masterData.master_pandora_no2_l1col.push(forecast.pandora_no2_l1col);
+                Object.keys(masterData).forEach(key => {
+                    if (forecast[key.replace('master_', '')] !== undefined) {
+                        masterData[key].push(forecast[key.replace('master_', '')]);
+                    }
+                });
             });
 
-
             data.merra2cnn.merra2cnn.forEach(merra2 => {
-                merra2cnn.master_datetime.push(merra2.time);
-                merra2cnn.master_value.push(merra2.value);
-                merra2cnn.master_pm25.push(merra2.pm25);
+                Object.keys(merra2cnn).forEach(key => {
+                    if (merra2[key.replace('master_', '')] !== undefined) {
+                        merra2cnn[key].push(merra2[key.replace('master_', '')]);
+                    }
+                });
             });
 
             $(document).off("click", ".download_forecasts_data").on("click", ".download_forecasts_data", function() {
-                const csvFileName = location.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '_' + historical + '.csv';
+                const csvFileName = `${location.replace(/\_/g, '').replace(/\./g, '')}_${param}_${historical}.csv`;
                 let csvContent = "data:text/csv;charset=utf-8," + formatToCSV(masterData);
                 const encodedUri = encodeURI(csvContent);
                 const link = document.createElement("a");
@@ -777,37 +711,25 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                 link.click();
             });
 
-
-            const currentData = get_current_hour_forecasts(masterData);
-
-
-
-            var filteredMasterData = filter_data_set_by_date(masterData, 2, -5);
-            var historicalMasterData = filter_data_set_by_date(masterData, 365, 20);
-
-
-            const plotElementId = forecastsDiv;
-            const plotElement = document.getElementById(plotElementId);
-            
+            const plotElement = document.getElementById(forecastsDiv);
             if (plotElement) {
+                if (masterData.master_datetime.length > 0) {
+                    draw_plot(masterData, param, unit, forecastsDiv, "Ozone Levels", [
+                        { column: "master_localized", name: "ML + Model", color: "green", width: 3 },
+                        { column: "master_uncorrected", name: "Model", color: "rgba(142, 142, 142, 0.8)", width: 3 },
+                        { column: "master_observation", name: "Observation", color: "rgba(255, 0, 0, 0.8)", width: 3 }
+                    ]);
+                }
 
-                draw_plot(masterData, "Ozone", "ppbv", forecastDiv, "Ozone Levels", [
-                    { column: "master_localized", name: "ML + Model", color: "green", width: 3 },
-                    { column: "master_uncorrected", name: "Model", color: "rgba(142, 142, 142, 0.8)", width: 3 },
-                    { column: "master_observation", name: "Observation", color: "rgba(255, 0, 0, 0.8)", width: 3 }
-                ]);
-
-
-                draw_plot(merra2cnn, "PM 2.5", "UM3", "main_plot_for_cnn", "PM2.5 Levels", [
-                    { column: "master_value", name: "3HR_PM_CONC_CNN(130)", color: "green", width: 3 },
-                    { column: "master_pm25", name: "GEOS CF", color: "rgba(142, 142, 142, 0.8)", width: 3 },
-                ]);
-                
-
+                if (merra2cnn.master_datetime.length > 0) {
+                    draw_plot(merra2cnn, "PM 2.5", "UM3", "main_plot_for_cnn", "PM2.5 Levels", [
+                        { column: "master_value", name: "3HR_PM_CONC_CNN(130)", color: "green", width: 3 },
+                        { column: "master_pm25", name: "GEOS CF", color: "rgba(142, 142, 142, 0.8)", width: 3 }
+                    ]);
+                }
             } else {
-                console.error(`No DOM element with id '${plotElementId}' exists on the page.`);
+                console.error(`No DOM element with id '${forecastsDiv}' exists on the page.`);
             }
-
 
             $('.loader').hide();
         })
@@ -816,6 +738,17 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             $('.api_baker_plots').html('Sorry, we are not able to connect with OpenAQ API at this moment. Please check back later...');
             $('.loader').hide();
         });
+}
+
+function generateModelCards(metrics) {
+    return `
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Total Observations</h5><p class="card-text fs-3 fw-bold">${metrics.total_observation}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Last Model Update</h5><p class="card-text fs-3 fw-bold">${metrics.latest_training.substring(0, 19)}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Mean Square Error</h5><p class="card-text">${metrics.rmse}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Mean Absolute Error</h5><p class="card-text">${metrics.preformance.metrics["Test MAE"]}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">R2 Score</h5><p class="card-text">${metrics.preformance.metrics["Test R2"]}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Observation Dates</h5><p class="card-text">${metrics.start_date.substring(0, 10)} to ${metrics.end_date.substring(0, 10)}</p></div></div></div>
+    `;
 }
 
 
