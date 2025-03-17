@@ -750,6 +750,8 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                     { column: "master_uncorrected", name: "Model", color: "rgba(142, 142, 142, 0.8)", width: 3 },
                     { column: "master_observation", name: "Observation", color: "rgba(255, 0, 0, 0.8)", width: 3 }
                 ]);
+
+                window.dispatchEvent(new Event('resize'));
             });
 
             $('.loader').hide();
