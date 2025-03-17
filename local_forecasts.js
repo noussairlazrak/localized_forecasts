@@ -703,7 +703,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             }
 
             if (data.merra2cnn && Array.isArray(data.merra2cnn.merra2cnn) && data.merra2cnn.merra2cnn.length > 0) {
-                data.merra2cnn.forEach(merra2 => {
+                data.merra2cnn.merra2cnn.forEach(merra2 => {
                     merra2cnn.master_datetime.push(merra2.time || null);
                     merra2cnn.master_value.push(merra2.value || null);
                     merra2cnn.master_pm25.push(merra2.pm25 || null);
@@ -727,7 +727,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
 
             console.log(masterData);
             console.log(merra2cnn);
-            
+
             const plots = [
                 { id: "main_plot_for_api_baker_historical", title: "API Baker Historical", data: masterData },
                 { id: "main_plot_for_cnn", title: "CNN Forecasts", data: merra2cnn }
@@ -749,14 +749,27 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
 
             // Draw plots
             plots.forEach(plot => {
-                draw_plot(plot.data, param, unit, plot.id, plot.title, [
-                    { column: "master_localized", name: "ML + Model", color: "green", width: 3 },
-                    { column: "master_uncorrected", name: "Model", color: "rgba(142, 142, 142, 0.8)", width: 3 },
-                    { column: "master_observation", name: "Observation", color: "rgba(255, 0, 0, 0.8)", width: 3 }
-                ]);
-
+                let plotColumns;
+            
+                if (plot.id === "main_plot_for_api_baker_historical") {
+                    plotColumns = [
+                        { column: "master_localized", name: "ML + Model", color: "green", width: 3 },
+                        { column: "master_uncorrected", name: "Model", color: "rgba(142, 142, 142, 0.8)", width: 3 },
+                        { column: "master_observation", name: "Observation", color: "rgba(255, 0, 0, 0.8)", width: 3 }
+                    ];
+                } else if (plot.id === "main_plot_for_cnn") {
+                    plotColumns = [
+                        { column: "master_value", name: "CNN Value", color: "blue", width: 3 },
+                        { column: "master_pm25", name: "CNN PM2.5", color: "purple", width: 3 }
+                    ];
+                } else {
+                    plotColumns = [];
+                }
+            
+                draw_plot(plot.data, param, unit, plot.id, plot.title, plotColumns);
+            
                 window.dispatchEvent(new Event('resize'));
-            });
+            });            
 
             $('.loader').hide();
         })
