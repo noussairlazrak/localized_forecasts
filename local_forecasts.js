@@ -722,35 +722,51 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             });
 
 
-            const tabsContainer = $(".tab-content");
             const tabsNav = $("#pills-tabContent").prev();
+            const tabsContainer = $(".tab-content");
 
-            console.log(masterData);
-            console.log(merra2cnn);
+            tabsNav.empty();
+            tabsContainer.empty();
+
+
+            const tabsList = $('<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist"></ul>');
+            tabsNav.append(tabsList);
 
             const plots = [
                 { id: "main_plot_for_api_baker_historical", title: "API Baker Historical", data: masterData },
                 { id: "main_plot_for_cnn", title: "CNN Forecasts", data: merra2cnn }
             ];
 
-            tabsNav.empty();
-            tabsContainer.empty();
 
             plots.forEach((plot, index) => {
-                const isActive = index === 0 ? "active show" : "";
-                tabsNav.append(`<li class="nav-item"><a class="nav-link ${isActive}" id="tab-${plot.id}" data-bs-toggle="pill" href="#${plot.id}">${plot.title}</a></li>`);
-                tabsContainer.append(`<div class="tab-pane fade ${isActive}" id="${plot.id}" role="tabpanel"></div>`);
+                const isActive = index === 0 ? "active" : "";
+
+
+                tabsList.append(`
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link ${isActive}" id="tab-${plot.id}" data-bs-toggle="pill" href="#${plot.id}" role="tab" aria-controls="${plot.id}" aria-selected="${isActive === 'active'}">
+                            ${plot.title}
+                        </a>
+                    </li>
+                `);
+
+                tabsContainer.append(`
+                    <div class="tab-pane fade ${isActive} show" id="${plot.id}" role="tabpanel" aria-labelledby="tab-${plot.id}">
+                    </div>
+                `);
             });
+
 
             $(".nav-link").on("click", function() {
                 $(".tab-pane").removeClass("active show");
                 $($(this).attr("href")).addClass("active show");
             });
 
-            // Draw plots
+
             plots.forEach(plot => {
                 let plotColumns;
-            
+
+
                 if (plot.id === "main_plot_for_api_baker_historical") {
                     plotColumns = [
                         { column: "master_localized", name: "ML + Model", color: "green", width: 3 },
@@ -762,14 +778,15 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                         { column: "master_value", name: "CNN Value", color: "blue", width: 3 },
                         { column: "master_pm25", name: "CNN PM2.5", color: "purple", width: 3 }
                     ];
-                } else {
-                    plotColumns = [];
                 }
-            
+
+
                 draw_plot(plot.data, param, unit, plot.id, plot.title, plotColumns);
-            
+
+
                 window.dispatchEvent(new Event('resize'));
-            });            
+            });
+                    
 
             $('.loader').hide();
         })
