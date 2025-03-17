@@ -1096,11 +1096,44 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, title, plot_col
             type: 'linear',
             title: unit,
             color: '#FFFFFF'
-        }
+        },
+        shapes: []
     };
-    
 
-  
+    
+    
+    // Add date range highlights if provided
+    if (dates_ranges) {
+        layout.shapes = layout.shapes || [];
+        layout.shapes.push(
+            {
+                type: 'rect',
+                x0: dates_ranges[0],
+                y0: 0,
+                x1: dates_ranges[1],
+                y1: 1,
+                yref: 'paper',
+                fillcolor: '#00ffff2e',
+                line: {
+                    color: 'rgb(55, 128, 191)',
+                    width: 0.5
+                }
+            },
+            {
+                type: 'rect',
+                x0: dates_ranges[2],
+                y0: 0,
+                x1: dates_ranges[3],
+                y1: 1,
+                yref: 'paper',
+                fillcolor: '#00ffa973',
+                line: {
+                    color: 'green',
+                    width: 0.5
+                }
+            }
+        );
+    }
     
     const nowUTC = new Date().toISOString().slice(0, 13) + ":00:00Z";
     layout.shapes.push({
