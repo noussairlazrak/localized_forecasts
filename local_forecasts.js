@@ -776,12 +776,12 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                 } else if (plot.id === "main_plot_for_cnn") {
                     plotColumns = [
                         { column: "master_value", name: "CNN Value", color: "blue", width: 3 },
-                        { column: "master_pm25", name: "CNN PM2.5", color: "purple", width: 3 }
+                        { column: "master_pm25", name: "GEOS CF", color: "purple", width: 3 }
                     ];
                 }
 
 
-                draw_plot(plot.data, param, unit, plot.id, plot.title, plotColumns);
+                draw_plot(plot.data, param, unit, plot.id, plot.title, plotColumns, dates_ranges = false);
 
 
                 window.dispatchEvent(new Event('resize'));
@@ -1066,7 +1066,6 @@ function draw_plot(combined_dataset, param  , unit, forecasts_div, title, plot_c
         };
     });
     
-    const whoPm25Limit = 10;
     const layout = {
         title: title,
         plot_bgcolor: 'rgb(22 26 30)',
@@ -1092,19 +1091,7 @@ function draw_plot(combined_dataset, param  , unit, forecasts_div, title, plot_c
             type: 'linear',
             title: unit,
             color: '#FFFFFF'
-        },
-        shapes: [{
-            type: 'line',
-            x0: datetime_data[0],
-            y0: whoPm25Limit,
-            x1: datetime_data[datetime_data.length - 1],
-            y1: whoPm25Limit,
-            line: {
-                color: 'red',
-                width: 2,
-                dash: 'dash',
-            }
-        }]
+        }
     };
     
     if (dates_ranges) {
