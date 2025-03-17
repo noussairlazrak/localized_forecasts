@@ -703,7 +703,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             }
 
             if (data.merra2cnn && Array.isArray(data.merra2cnn.merra2cnn) && data.merra2cnn.merra2cnn.length > 0) {
-                data.merra2cnn.merra2cnn.forEach(merra2 => {
+                data.merra2cnn.forEach(merra2 => {
                     merra2cnn.master_datetime.push(merra2.time || null);
                     merra2cnn.master_value.push(merra2.value || null);
                     merra2cnn.master_pm25.push(merra2.pm25 || null);
