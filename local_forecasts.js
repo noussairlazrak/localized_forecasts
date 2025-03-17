@@ -733,8 +733,8 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             tabsNav.append(tabsList);
 
             const plots = [
-                { id: "main_plot_for_api_baker_historical", title: "API Baker Historical", data: masterData },
-                { id: "main_plot_for_cnn", title: "CNN Forecasts", data: merra2cnn }
+                { id: "main_plot_for_api_baker_historical", title: "Pandora Ozone", data: masterData },
+                { id: "main_plot_for_cnn", title: "MERRA 2 PM2.5 Forecasts", data: merra2cnn }
             ];
 
 
@@ -775,7 +775,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                     ];
                 } else if (plot.id === "main_plot_for_cnn") {
                     plotColumns = [
-                        { column: "master_value", name: "CNN Value", color: "blue", width: 3 },
+                        { column: "master_value", name: "MERRA 2 CNN", color: "blue", width: 3 },
                         { column: "master_pm25", name: "GEOS CF", color: "purple", width: 3 }
                     ];
                 }
