@@ -638,20 +638,7 @@ function csvToArray(str, delimiter = ",") {
 }
 
 
-/**
- * Fetches data from API Baker and updates the UI with forecasts.
- * 
- * @param {string} location - Location for which data is fetched.
- * @param {string} param - Parameter to fetch data for.
- * @param {string} unit - Unit of measurement for the parameter.
- * @param {string} forecastsDiv - ID of the div where forecasts are plotted.
- * @param {boolean} [buttonOption=true] - Whether button option is enabled.
- * @param {number} [historical=2] - Historical data range.
- * @param {number} [reinforceTraining=2] - Reinforce training value.
- * @param {number} [hpTunning=2] - Hyperparameter tuning value.
- * @param {boolean} [resample=false] - Whether to resample data.
- * @param {number} [update=2] - Update flag.
- */
+
 function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
     const messages = [
         "Generating data", 
@@ -749,8 +736,14 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             `;
             $('.model_data').html(modelHtml);
 
-            // Prepare master data
+
             let masterData = {
+                master_datetime: [],
+                master_value: [],
+                master_pm25: []
+            };
+
+            let merra2cnn = {
                 master_datetime: [],
                 master_observation: [],
                 master_localized: [],
@@ -766,10 +759,16 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                 masterData.master_pandora_no2_l1col.push(forecast.pandora_no2_l1col);
             });
 
-            // Add event listener for downloading forecasts data
+
+            data.merra2cnn.merra2cnn.forEach(merra2 => {
+                merra2cnn.master_datetime.push(merra2.time);
+                merra2cnn.master_value.push(merra2.value);
+                merra2cnn.master_pm25.push(merra2.pm25);
+            });
+
             $(document).off("click", ".download_forecasts_data").on("click", ".download_forecasts_data", function() {
                 const csvFileName = location.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '_' + historical + '.csv';
-                let csvContent = "data:text/csv;charset=utf-8," + formatToCSV(masterData); // Ensure you format this correctly for CSV
+                let csvContent = "data:text/csv;charset=utf-8," + formatToCSV(masterData);
                 const encodedUri = encodeURI(csvContent);
                 const link = document.createElement("a");
                 link.setAttribute("href", encodedUri);
@@ -778,25 +777,38 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                 link.click();
             });
 
-            // Get current hour forecasts
+
             const currentData = get_current_hour_forecasts(masterData);
 
 
-            // Filter master data by date
+
             var filteredMasterData = filter_data_set_by_date(masterData, 2, -5);
             var historicalMasterData = filter_data_set_by_date(masterData, 365, 20);
 
-            // Plot historical data
+
             const plotElementId = forecastsDiv;
             const plotElement = document.getElementById(plotElementId);
             
             if (plotElement) {
-                draw_plot(historicalMasterData, param, unit, plotElementId, "Bias Corrected Ozone", false, true, false);
+
+                draw_plot(masterData, "Ozone", "ppbv", forecastDiv, "Ozone Levels", [
+                    { column: "master_localized", name: "ML + Model", color: "green", width: 3 },
+                    { column: "master_uncorrected", name: "Model", color: "rgba(142, 142, 142, 0.8)", width: 3 },
+                    { column: "master_observation", name: "Observation", color: "rgba(255, 0, 0, 0.8)", width: 3 }
+                ]);
+
+
+                draw_plot(merra2cnn, "PM 2.5", "UM3", "main_plot_for_cnn", "PM2.5 Levels", [
+                    { column: "master_value", name: "3HR_PM_CONC_CNN(130)", color: "green", width: 3 },
+                    { column: "master_pm25", name: "GEOS CF", color: "rgba(142, 142, 142, 0.8)", width: 3 },
+                ]);
+                
+
             } else {
                 console.error(`No DOM element with id '${plotElementId}' exists on the page.`);
             }
 
-            // Hide loader
+
             $('.loader').hide();
         })
         .catch(error => {
@@ -1047,71 +1059,25 @@ function getDates(startDate, stopDate) {
 }
 
 
-function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ranges = false, button = false) {
-
-    const localized_data = combined_dataset["master_localized"];
-    const uncorrected_data = combined_dataset["master_uncorrected"];
-    const observation_data = combined_dataset["master_observation"];
+function draw_plot(combined_dataset, param, unit, forecasts_div, title, plot_columns, dates_ranges = false, button = false) {
     const datetime_data = combined_dataset["master_datetime"];
-    const pandora_no2_l1col = combined_dataset["master_pandora_no2_l1col"];
-
-    console.log(combined_dataset);
-
-
-    const master_localized = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: localized_data,
-        line: {
-            color: 'green',
-            width: 3
-        },
-        name: 'ML + Model'
-    };
-
-    const master_uncorrected = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: uncorrected_data,
-        line: {
-            color: 'rgba(142, 142, 142, 0.8)',
-            width: 3
-        },
-        name: 'Model'
-    };
-
-    const master_observation = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: observation_data,
-        line: {
-            color: 'rgba(255, 0, 0, 0.8)',
-            width: 3
-        },
-        name: 'Observation'
-    };
-
-    const master_pandora_no2_l1col = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: pandora_no2_l1col,
-        line: {
-            color: 'rgba(255, 0, 0, 0.8)',
-            width: 3
-        },
-        name: 'L1 Col'
-    };
-
-
-    const whoPm25Limit = 10; 
+    
+    const traces = plot_columns.map(({ column, name, color, width }) => {
+        return {
+            type: "scatter",
+            mode: "lines",
+            connectgaps: false,
+            x: datetime_data,
+            y: combined_dataset[column],
+            line: {
+                color: color || 'rgba(142, 142, 142, 0.8)',
+                width: width || 3
+            },
+            name: name
+        };
+    });
+    
+    const whoPm25Limit = 10;
     const layout = {
         title: title,
         plot_bgcolor: 'rgb(22 26 30)',
@@ -1135,7 +1101,7 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ra
         yaxis: {
             autorange: true,
             type: 'linear',
-            title: 'PPBV',
+            title: unit,
             color: '#FFFFFF'
         },
         shapes: [{
@@ -1151,8 +1117,7 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ra
             }
         }]
     };
-
-
+    
     if (dates_ranges) {
         layout.shapes = layout.shapes || [];
         layout.shapes.push(
@@ -1184,14 +1149,29 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ra
             }
         );
     }
+    
 
-
-    Plotly.newPlot(forecasts_div, [master_localized, master_uncorrected, master_observation], layout);
-
+    const nowUTC = new Date().toISOString().slice(0, 13) + ":00:00Z";
+    layout.shapes.push({
+        type: 'line',
+        x0: nowUTC,
+        x1: nowUTC,
+        y0: 0,
+        y1: 1,
+        yref: 'paper',
+        line: {
+            color: 'yellow',
+            width: 2,
+            dash: 'dot',
+        }
+    });
+    
+    Plotly.newPlot(forecasts_div, traces, layout);
+    
     if (button) {
         $('.plot_additional_features').append('<button type="button" change_to="' + forecasts_div + '" class="btn btn-outline-primary change_plot ' + forecasts_div + '"  href="#">' + title + '</button>');
     }
-
+    
     $('.lf-downloads').append('<a class="download_forecasts_data" href="#">| download data </a>');
 }
 
