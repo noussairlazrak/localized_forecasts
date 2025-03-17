@@ -502,7 +502,7 @@ function create_map(sites, param) {
             "Connecting..."
         ];
 
-        openForecastsWindow(messages, location_id, 'no2', location_name, observation_value, observation_unit, 's3', precomputed_forecasts);
+        openForecastsWindow(messages, location_id, 'o3', location_name, observation_value, observation_unit, 's3', precomputed_forecasts);
     
 
     });
@@ -638,20 +638,7 @@ function csvToArray(str, delimiter = ",") {
 }
 
 
-/**
- * Fetches data from API Baker and updates the UI with forecasts.
- * 
- * @param {string} location - Location for which data is fetched.
- * @param {string} param - Parameter to fetch data for.
- * @param {string} unit - Unit of measurement for the parameter.
- * @param {string} forecastsDiv - ID of the div where forecasts are plotted.
- * @param {boolean} [buttonOption=true] - Whether button option is enabled.
- * @param {number} [historical=2] - Historical data range.
- * @param {number} [reinforceTraining=2] - Reinforce training value.
- * @param {number} [hpTunning=2] - Hyperparameter tuning value.
- * @param {boolean} [resample=false] - Whether to resample data.
- * @param {number} [update=2] - Update flag.
- */
+
 function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
     const messages = [
         "Generating data", 
@@ -664,93 +651,33 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
         "Connecting..."
     ];
 
-    // Show loader
     $('.loader').show();
 
-    // Get parameter code
     const paramCode = pollutant_details(param).id;
-
-    // Construct file URL based on update flag
-    const fileUrl = update === 1 
-        ? `https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/ArlingtonTX_o3_output.json`
-        : `https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/ArlingtonTX_o3_output.json`;
-
+    const fileUrl = `https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/ArlingtonTX_o3_output.json`;
+    
     console.log(fileUrl);
-
-    // Fetch data from API
+    
     fetch(fileUrl)
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
+            if (!response.ok) throw new Error('Network response was not ok');
             return response.json();
         })
         .then(data => {
-            if (!data) {
-                throw new Error("No data received");
-            }
+            if (!data) throw new Error("No data received");
 
             console.log(data);
 
-            // Update UI with model data
             const modelHtml = `
                 <div class="container my-5">
                     <h1>Bias Corrected Model Information</h1>
                     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Total Observations</h5>
-                                    <p class="card-text fs-3 fw-bold">${data.metrics.total_observation}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Last Model Update</h5>
-                                    <p class="card-text fs-3 fw-bold">${data.metrics.latest_training.substring(0, 19)}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Mean Square Error</h5>
-                                    <p class="card-text">${data.metrics["rmse"]}<br></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Mean Absolute Error</h5>
-                                    <p class="card-text">${data.metrics["mae"]}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">R2 Score</h5>
-                                    <p class="card-text">${data.metrics["r2"]}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Observation Dates</h5>
-                                    <p class="card-text">${data.metrics.start_date.substring(0, 10)} to ${data.metrics.end_date.substring(0, 10)}</p>
-                                </div>
-                            </div>
-                        </div>
+                        ${generateModelCards(data.metrics)}
                     </div>
                 </div>
             `;
             $('.model_data').html(modelHtml);
 
-            // Prepare master data
             let masterData = {
                 master_datetime: [],
                 master_observation: [],
@@ -759,18 +686,33 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                 master_pandora_no2_l1col: []
             };
 
-            data.forecasts.forEach(forecast => {
-                masterData.master_datetime.push(forecast.time);
-                masterData.master_observation.push(forecast.value);
-                masterData.master_localized.push(forecast.predicted);
-                masterData.master_uncorrected.push(forecast.no2);
-                masterData.master_pandora_no2_l1col.push(forecast.pandora_no2_l1col);
-            });
+            let merra2cnn = {
+                master_datetime: [],
+                master_value: [],
+                master_pm25: []
+            };
 
-            // Add event listener for downloading forecasts data
+            if (Array.isArray(data.forecasts) && data.forecasts.length > 0) {
+                data.forecasts.forEach(forecast => {
+                    masterData.master_datetime.push(forecast.time || null);
+                    masterData.master_observation.push(forecast.value || null);
+                    masterData.master_localized.push(forecast.predicted || null);
+                    masterData.master_uncorrected.push(forecast.no2 || null);
+                    masterData.master_pandora_no2_l1col.push(forecast.pandora_no2_l1col || null);
+                });
+            }
+
+            if (data.merra2cnn && Array.isArray(data.merra2cnn.merra2cnn) && data.merra2cnn.merra2cnn.length > 0) {
+                data.merra2cnn.merra2cnn.forEach(merra2 => {
+                    merra2cnn.master_datetime.push(merra2.time || null);
+                    merra2cnn.master_value.push(merra2.value || null);
+                    merra2cnn.master_pm25.push(merra2.pm25 || null);
+                });
+            }
+
             $(document).off("click", ".download_forecasts_data").on("click", ".download_forecasts_data", function() {
-                const csvFileName = location.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '_' + historical + '.csv';
-                let csvContent = "data:text/csv;charset=utf-8," + formatToCSV(masterData); // Ensure you format this correctly for CSV
+                const csvFileName = `${location.replace(/\_/g, '').replace(/\./g, '')}_${param}_${historical}.csv`;
+                let csvContent = "data:text/csv;charset=utf-8," + formatToCSV(masterData);
                 const encodedUri = encodeURI(csvContent);
                 const link = document.createElement("a");
                 link.setAttribute("href", encodedUri);
@@ -779,25 +721,73 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                 link.click();
             });
 
-            // Get current hour forecasts
-            const currentData = get_current_hour_forecasts(masterData);
+
+            const tabsNav = $("#pills-tabContent").prev();
+            const tabsContainer = $(".tab-content");
+
+            tabsNav.empty();
+            tabsContainer.empty();
 
 
-            // Filter master data by date
-            var filteredMasterData = filter_data_set_by_date(masterData, 2, -5);
-            var historicalMasterData = filter_data_set_by_date(masterData, 365, 20);
+            const tabsList = $('<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist"></ul>');
+            tabsNav.append(tabsList);
 
-            // Plot historical data
-            const plotElementId = forecastsDiv;
-            const plotElement = document.getElementById(plotElementId);
-            
-            if (plotElement) {
-                draw_plot(historicalMasterData, param, unit, plotElementId, "Bias Corrected NO2", false, true, true);
-            } else {
-                console.error(`No DOM element with id '${plotElementId}' exists on the page.`);
-            }
+            const plots = [
+                { id: "main_plot_for_api_baker_historical", title: "Ozone Forecasts (Pandora / GEOS CF)", data: masterData },
+                { id: "main_plot_for_cnn", title: "PM2.5 Forecasts (MERRA 2)", data: merra2cnn }
+            ];
 
-            // Hide loader
+
+            plots.forEach((plot, index) => {
+                const isActive = index === 0 ? "active" : "";
+
+
+                tabsList.append(`
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link ${isActive}" id="tab-${plot.id}" data-bs-toggle="pill" href="#${plot.id}" role="tab" aria-controls="${plot.id}" aria-selected="${isActive === 'active'}">
+                            ${plot.title}
+                        </a>
+                    </li>
+                `);
+
+                tabsContainer.append(`
+                    <div class="tab-pane fade ${isActive} show" id="${plot.id}" role="tabpanel" aria-labelledby="tab-${plot.id}">
+                    </div>
+                `);
+            });
+
+
+            $(".nav-link").on("click", function() {
+                $(".tab-pane").removeClass("active show");
+                $($(this).attr("href")).addClass("active show");
+            });
+
+
+            plots.forEach(plot => {
+                let plotColumns;
+
+
+                if (plot.id === "main_plot_for_api_baker_historical") {
+                    plotColumns = [
+                        { column: "master_localized", name: "ML + Model", color: "green", width: 3 },
+                        { column: "master_uncorrected", name: "Model", color: "rgba(142, 142, 142, 0.8)", width: 3 },
+                        { column: "master_observation", name: "Observation", color: "rgba(255, 0, 0, 0.8)", width: 3 }
+                    ];
+                } else if (plot.id === "main_plot_for_cnn") {
+                    plotColumns = [
+                        { column: "master_value", name: "CNN Value", color: "blue", width: 3 },
+                        { column: "master_pm25", name: "GEOS CF", color: "purple", width: 3 }
+                    ];
+                }
+
+
+                draw_plot(plot.data, param, unit, plot.id, plot.title, plotColumns);
+
+
+                window.dispatchEvent(new Event('resize'));
+            });
+                    
+
             $('.loader').hide();
         })
         .catch(error => {
@@ -806,6 +796,16 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             $('.loader').hide();
         });
 }
+
+function generateModelCards(metrics) {
+    return `
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Total Observations</h5><p class="card-text fs-3 fw-bold">${metrics.total_observation}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Last Model Update</h5><p class="card-text fs-3 fw-bold">${metrics.latest_training.substring(0, 19)}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Mean Square Error</h5><p class="card-text">${metrics.rmse}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Mean Absolute Error</h5><p class="card-text">${metrics.preformance.metrics["Test MAE"]}</p></div></div></div>
+    `;
+}
+
 
 
 
@@ -1048,106 +1048,31 @@ function getDates(startDate, stopDate) {
 }
 
 
-function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ranges = false, button = false, historical = true) {
-    // Extract data from combined dataset
-    const localized_data = combined_dataset["master_localized"];
-    const uncorrected_data = combined_dataset["master_uncorrected"];
-    const observation_data = combined_dataset["master_observation"];
+function draw_plot(combined_dataset, param, unit, forecasts_div, title, plot_columns, dates_ranges = false, button = false) {
     const datetime_data = combined_dataset["master_datetime"];
-    const pandora_no2_l1col = combined_dataset["master_pandora_no2_l1col"];
-
-    console.log(combined_dataset);
-
-    if (!historical) {
-        const currentDate = new Date();
-        const currentDateString = currentDate.toISOString().slice(0, 13) + ":00:00";
-        currentDateString = currentDateString.replace("T", " ");
-
-        const currentDateIndex = datetime_data.indexOf(currentDateString);
-        if (currentDateIndex === -1) {
-            console.error("Current date not found in dataset.");
-            return;
-        }
-        const localizedValue = localized_data[currentDateIndex];
-
-        // Define shapes for non-historical plots
-        const shapes_layouts = {
-            shapes: [
-                {
-                    type: 'line',
-                    x0: datetime_data[currentDateIndex],
-                    y0: localizedValue,
-                    x1: datetime_data[currentDateIndex],
-                    y1: 0,
-                    line: {
-                        color: 'green',
-                        width: 5,
-                        dash: 'dot'
-                    }
-                }
-            ]
+    
+    // Define traces for the plot
+    const traces = plot_columns.map(({ column, name, color, width }) => {
+        return {
+            type: "scatter",
+            mode: "lines",
+            connectgaps: false,
+            x: datetime_data,
+            y: combined_dataset[column],
+            line: {
+                color: color || 'rgba(142, 142, 142, 0.8)',
+                width: width || 3
+            },
+            name: name
         };
-    } else {
-        const shapes_layouts = {};
-    }
-
-    // Define plot traces
-    const master_localized = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: localized_data,
-        line: {
-            color: 'green',
-            width: 3
-        },
-        name: 'ML + Model'
-    };
-
-    const master_uncorrected = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: uncorrected_data,
-        line: {
-            color: 'rgba(142, 142, 142, 0.8)',
-            width: 3
-        },
-        name: 'Model'
-    };
-
-    const master_observation = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: observation_data,
-        line: {
-            color: 'rgba(255, 0, 0, 0.8)',
-            width: 3
-        },
-        name: 'Observation'
-    };
-
-    const master_pandora_no2_l1col = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: pandora_no2_l1col,
-        line: {
-            color: 'rgba(255, 0, 0, 0.8)',
-            width: 3
-        },
-        name: 'L1 Col'
-    };
-
-    // Define plot layout
-    const whoPm25Limit = 10; // WHO PM2.5 concentration limit
+    });
+    
+    // Define layout with fixed width and height
     const layout = {
         title: title,
+        autosize: false, // Disable autosizing to use fixed dimensions
+        width: 1190, // Set fixed width to 1190px
+        height: 500, // Set fixed height (adjust as needed)
         plot_bgcolor: 'rgb(22 26 30)',
         paper_bgcolor: 'rgb(22 26 30)',
         legend: {
@@ -1164,31 +1089,23 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ra
             type: 'date',
             color: '#FFFFFF',
             rangeslider: {},
-            range: [datetime_data[0], datetime_data[datetime_data.length - 1]],
-            shapes: [{
-                type: 'line',
-                x0: datetime_data[0],
-                y0: whoPm25Limit,
-                x1: datetime_data[datetime_data.length - 1],
-                y1: whoPm25Limit,
-                line: {
-                    color: 'red',
-                    width: 2,
-                    dash: 'dash',
-                }
-            }]
+            range: [datetime_data[0], datetime_data[datetime_data.length - 1]]
         },
         yaxis: {
             autorange: true,
             type: 'linear',
-            title: 'PPBV',
+            title: unit,
             color: '#FFFFFF'
-        }
+        },
+        shapes: []
     };
 
-    // Add shapes for date ranges if specified
+    
+    
+    // Add date range highlights if provided
     if (dates_ranges) {
-        layout.shapes = [
+        layout.shapes = layout.shapes || [];
+        layout.shapes.push(
             {
                 type: 'rect',
                 x0: dates_ranges[0],
@@ -1215,278 +1132,35 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ra
                     width: 0.5
                 }
             }
-        ];
+        );
     }
-
-    // Render plot
-    Plotly.newPlot(forecasts_div, [master_localized, master_uncorrected, master_observation], layout);
-
-    // Add current value marker if not historical
-    if (!historical) {
-        Plotly.addTraces(forecasts_div, {
-            x: [datetime_data[currentDateIndex]],
-            y: [localizedValue],
-            mode: 'markers',
-            marker: {
-                color: 'green',
-                size: 20
-            },
-            name: 'Current Value'
-        });
-    }
-
-
+    
+    const nowUTC = new Date().toISOString().slice(0, 13) + ":00:00Z";
+    layout.shapes.push({
+        type: 'line',
+        x0: nowUTC,
+        x1: nowUTC,
+        y0: 0,
+        y1: 1,
+        yref: 'paper',
+        line: {
+            color: 'yellow',
+            width: 2,
+            dash: 'dot'
+        }
+    });
+    
+    Plotly.newPlot(forecasts_div, traces, layout);
+    console.log("Plot rendered at " + forecasts_div);
+    
     if (button) {
-        $('.plot_additional_features').append('<button type="button" change_to="' + forecasts_div + '" class="btn btn-outline-primary change_plot ' + forecasts_div + '"  href="#">' + title + '</button>');
+        $('.plot_additional_features').append('<button type="button" change_to="' + forecasts_div + '" class="btn btn-outline-primary change_plot ' + forecasts_div + '" href="#">' + title + '</button>');
     }
-
-
-    const downlaod_label_text = historical ? "download historical simulation data" : "download forecast data";
-    $('.lf-downloads').append('<a class="download_forecasts_data" href="#">| ' + downlaod_label_text + ' </a>');
+    
+    $('.lf-downloads').append('<a class="download_forecasts_data" href="#">| download data </a>');
 }
 
 
-function side_by_side_plots(param, unit, title, precomputer_forecasts, observation_unit){
-    $(document).ready(function() {
-
-        var year1_file = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/" + precomputer_forecasts;
-        var year2_file = year1_file.replace('.json', '_historical.json');
-        try {
-            
-        $.getJSON(year1_file, function(dataset1) {
-            var dataArray =  csvToArray(dataset1.latest_forecast.data);
-            var renamedArray_year1 = dataArray.map(function(forecast) {
-                var date = new Date(forecast.forecast_datetime);
-                var formattedDate = date.toLocaleString('en-US', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-                return {
-                  datetime: formattedDate.replace(/\d{4}/, '').trim(),
-                  uncorrected_pm25_2022: forecast.uncorrected_pm25,
-                  localized_pm25_2022: forecast.localized_pm25,
-                  observation_2022: forecast.observation,
-                  uncorrected_pm25_24H_2022: forecast.uncorrected_pm25_24H,
-                  observation_24H_2022: forecast.observation_24H,
-                  localized_pm25_24H_2022: forecast.localized_pm25_24H,
-                };
-              });
-
-            $.getJSON(year2_file, function(dataset2) {
-                
-                var dataArray_year2 =  csvToArray(dataset2.latest_forecast.data);
-                var renamedArray_year2 = dataArray_year2.map(function(forecast) {
-                    var date = new Date(forecast.forecast_datetime);
-                    var formattedDate = date.toLocaleString('en-US', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-                    return {
-                        datetime: formattedDate.replace(/\d{4}/, '').trim(),
-                        uncorrected_pm25_2023: forecast.uncorrected_pm25,
-                        localized_pm25_2023: forecast.localized_pm25,
-                        observation_2023: forecast.observation,
-                        uncorrected_pm25_24H_2023: forecast.uncorrected_pm25_24H,
-                        observation_24H_2023: forecast.observation_24H,
-                        localized_pm25_24H_2023: forecast.localized_pm25_24H,
-                    };
-                });
-
-              var mergedArray = [];
-
-
-            renamedArray_year1.forEach(function(item1) {
-
-
-            var item2 = renamedArray_year2.find(function(item) {
-                return item.datetime === item1.datetime;
-            });
-
-            
-
-            if (item2) {
-                mergedArray.push({
-                datetime: item1.datetime,
-                uncorrected_pm25_2022: item1.uncorrected_pm25_2022,
-                localized_pm25_2022: item1.localized_pm25_2022,
-                observation_2022: item1.observation_2022,
-                uncorrected_pm25_24H_2022: item1.uncorrected_pm25_24H_2022,
-                localized_pm25_24H_2022: item1.localized_pm25_24H_2022,
-                observation_24H_2022: item1.observation_24H_2022,
-                
-                
-                uncorrected_pm25_2023: item2.uncorrected_pm25_2023,
-                localized_pm25_2023: item2.localized_pm25_2023,
-                observation_2023: item2.observation_2023,
-                uncorrected_pm25_24H_2023: item2.uncorrected_pm25_24H_2023,
-                localized_pm25_24H_2023: item2.localized_pm25_24H_2023,
-                observation_24H_2023: item2.observation_24H_2023,
-
-
-                });
-            }
-            });
-
-
-            function formatDate(datetime) {
-                var date = new Date(datetime);
-                var day = date.getDate();
-                var month = date.getMonth() + 1;
-                var hour = date.getHours();
-                var minute = date.getMinutes();
-            
-                return day + '/' + month + ' ' + hour + ':' + minute;
-            }
-            
-            mergedArray.forEach(function(item, index) {
-                item.datetime = formatDate(item.datetime);
-                var changePercentage = ((item.localized_pm25_2023 - item.localized_pm25_2022) / item.localized_pm25_2022) * 100;
-                item.change_percentage = changePercentage;
-                if (index > 0) {
-                    var prevItem = mergedArray[index - 1];
-                    var changePercentage2022 = ((item.localized_pm25_2022 - prevItem.localized_pm25_2022) / prevItem.localized_pm25_2022) * 100;
-                    var change_prev_hour = prevItem.localized_pm25_2023
-                    item.change_percentage_prev_hour = changePercentage2022;
-                    item.change_prev_hour = change_prev_hour;
-                  } else {
-                    item.change_percentage_prev_hour = null;
-                  }
-            });
-
-            function findRowByDateTime(data, month, day, hour) {
-                for (var i = 0; i < data.length; i++) {
-                  var datetime = data[i].datetime;
-                  var datetimeParts = datetime.split(' ');
-                  var dateParts = datetimeParts[0].split('/');
-                  var rowMonth = parseInt(dateParts[1]);
-                  var rowDay = parseInt(dateParts[0]);
-                  var rowHour = parseInt(datetimeParts[1].split(':')[0]);
-                  
-                  if (rowMonth === month && rowDay === day && rowHour === hour) {
-                    return data[i];
-                  }
-                }
-                
-                return null;
-              }
-            var currentDate = new Date();
-            var currentDay = currentDate.getDate();
-            var currentMonth = currentDate.getMonth() + 1; 
-            var currentHour = currentDate.getHours();
-
-              var row = findRowByDateTime(mergedArray, currentMonth, currentDay, currentHour);
-              if (row !== null) {
-               
-                var localized_pm25_2022 = row.localized_pm25_2022;
-                var localized_pm25_2023 = row.localized_pm25_2023;
-                var observation_2022 = row.observation_2022;
-                var observation_2023 = row.observation_2023;
-                var uncorrected_pm25_2022 = row.uncorrected_pm25_2022;
-                var uncorrected_pm25_2023 = row.uncorrected_pm25_2023;
-               
-                var localized_pm25_24H_2022 = row.localized_pm25_24H_2022;
-                var localized_pm25_24H_2023 = row.localized_pm25_24H_2023;
-                var uncorrected_pm25_24H_2022 = row.uncorrected_pm25_24H_2022;
-                var uncorrected_pm25_24H_2023 = row.uncorrected_pm25_24H_2023;
-                var observation_24H_2022 = row.observation_24H_2022;
-                var observation_24H_2023 = row.observation_24H_2023;
-                
-                
-                var change_percentage = row.change_percentage;
-                var change_percentage_prev_hour = row.change_percentage_prev_hour;
-                var change_prev_hour = row.change_prev_hour;
-
-                var diffrence_last_year = calculateDifferenceAndPercentage(localized_pm25_2022,localized_pm25_2023)
-                var diffrence_last_hour = calculateDifferenceAndPercentage(change_prev_hour,localized_pm25_2023)
-               
-
-
-                $('.local_forecats_window').html('<div class="col-md-4"> <div class="lf-fcst-info"> <div class="lf-fcst-name">CURRENT</div> <div class="lf-fcst-value">'+localized_pm25_2023+'<span>'+rewriteUnits(observation_unit)+'</span></div> <div class="lf-fcst-change current_observation_unit_span"><i class="fas fa-arrow-up"></i> </div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info years_difference"> <div class="lf-fcst-name">SAME DAY/ LAST YEAR </div> <div class="lf-fcst-value">'+localized_pm25_2022+'<span>'+rewriteUnits(observation_unit)+'</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_year"></span> '+rewritePercentage(diffrence_last_year[1])+'</div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info days_difference"> <div class="lf-fcst-name">PREVIOUS HOUR</div> <div class="lf-fcst-value">'+change_prev_hour+'<span>'+rewriteUnits(observation_unit)+'</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_day"></span> '+rewritePercentage(diffrence_last_hour[1])+'</div> </div> </div>')
-                
-               
-            
-
-              } else {
-                console.log('Row not found');
-              }
-
-            var dates = mergedArray.map(function(item) { return item.datetime; });
-            var uncorrected_pm25_2022 = mergedArray.map(function(item) { return item.uncorrected_pm25_2022; });
-            var uncorrected_pm25_24H_2022 = mergedArray.map(function(item) { return item.uncorrected_pm25_24H_2022; });
-            var observation_2022 = mergedArray.map(function(item) { return item.observation_2022; });
-            var observation_24H_2022 = mergedArray.map(function(item) { return item.observation_24H_2022; });
-            var localized_pm25_2022 = mergedArray.map(function(item) { return item.localized_pm25_2022; });
-            var localized_pm25_24H_2022 = mergedArray.map(function(item) { return item.localized_pm25_24H_2022; });
-           
-
-            var uncorrected_pm25_2023 = mergedArray.map(function(item) { return item.uncorrected_pm25_2023; });
-            var uncorrected_pm25_24H_2023 = mergedArray.map(function(item) { return item.uncorrected_pm25_24H_2023; });
-            var observation_2023 = mergedArray.map(function(item) { return item.observation_2023; });
-            var observation_24H_2023 = mergedArray.map(function(item) { return item.observation_24H_2023; });
-            var localized_pm25_2023 = mergedArray.map(function(item) { return item.localized_pm25_2023; });
-            var localized_pm25_24H_2023 = mergedArray.map(function(item) { return item.localized_pm25_24H_2023; });
-
-
-            var trace_uncorrected_pm25_2022 = {
-            x: dates,
-            y: uncorrected_pm25_2022,
-            mode: 'lines',
-            name: 'uncorrected_pm25_2022'
-            };
-            
-            var trace_localized_pm25_2022 = {
-                x: dates,
-                y: localized_pm25_2022,
-                mode: 'lines',
-                name: 'localized_pm25_2022'
-                };
-
-            var trace_uncorrected_pm25_2023 = {
-            x: dates,
-            y: uncorrected_pm25_2023,
-            mode: 'lines',
-            name: 'uncorrected_pm25_2023'
-            };
-
-            var trace_localized_pm25_2023 = {
-                x: dates,
-                y: localized_pm25_2023,
-                mode: 'lines',
-                name: 'localized_pm25_2023'
-                };
-
-
-            var layout = {
-            title: 'PM2.5 Data for 2022 and 2023',
-            plot_bgcolor: 'rgb(22 26 30)',
-            paper_bgcolor: 'rgb(22 26 30)',
-
-            font: {
-                family: 'Roboto, sans-serif',
-                color: '#FFFFFF'
-            },
-                        
-            xaxis: {
-                title: 'Date',
-                color: '#FFFFFF'
-            },
-            yaxis: {
-                title: 'PM2.5',
-                color: '#FFFFFF'
-            },
-            };
-
-            if (mergedArray.length>0){
-                Plotly.newPlot('comparaison_plot_js', [trace_uncorrected_pm25_2022, trace_uncorrected_pm25_2023, trace_localized_pm25_2022,trace_localized_pm25_2023], layout);
-                $('.plot_additional_features').append('<button type="button" change_to="comparaison_plot_js" class="btn btn-outline-primary change_plot comparaison_plot_js"  href="#">'+title+'</button>');
-            }
-           
-        
-            });
-          });
-
-        
-
-        }catch (error) {
-            console.error('An error occurred while running the side_by_side_plots function:', error);
-          }
-      });
-      
-}
 
 function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_div,merge,precomputer_forecasts,historical){
 
