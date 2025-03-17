@@ -678,29 +678,65 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             `;
             $('.model_data').html(modelHtml);
 
-            let masterData = {};
-            let merra2cnn = {};
+            let masterData = {
+                master_datetime: [],
+                master_observation: [],
+                master_localized: [],
+                master_uncorrected: [],
+                master_pandora_no2_l1col: []
+            };
+            
+            let merra2cnn = {
+                master_datetime: [],
+                master_value: [],
+                master_pm25: []
+            };
+            
+            // Debugging API response
+            console.log("API Response:", data);
+            
+            // Check if forecasts exist
+            if (Array.isArray(data.forecasts) && data.forecasts.length > 0) {
+                data.forecasts.forEach(forecast => {
+                    masterData.master_datetime.push(forecast.time || null);
+                    masterData.master_observation.push(forecast.value || null);
+                    masterData.master_localized.push(forecast.predicted || null);
+                    masterData.master_uncorrected.push(forecast.no2 || null);
+                    masterData.master_pandora_no2_l1col.push(forecast.pandora_no2_l1col || null);
+                });
+            } else {
+                console.warn("No forecasts data available");
+            }
+            
 
-            ["time", "value", "predicted", "o3"].forEach(key => masterData[key] = []);
-            ["time", "value", "predicted","pm25"].forEach(key => merra2cnn[key] = []);
+            if (data.merra2cnn && Array.isArray(data.merra2cnn.merra2cnn) && data.merra2cnn.merra2cnn.length > 0) {
+                data.merra2cnn.merra2cnn.forEach(merra2 => {
+                    merra2cnn.master_datetime.push(merra2.time || null);
+                    merra2cnn.master_value.push(merra2.value || null);
+                    merra2cnn.master_pm25.push(merra2.pm25 || null);
+                });
+            } else {
+                console.warn("No MERRA-2 CNN data available");
+            }
+            
 
-            console.log("masterData");
-            console.log(masterData);
-
-            console.log("merra2cnn");
-            console.log(merra2cnn);
+            console.log("Processed masterData:", masterData);
+            console.log("Processed merra2cnn:", merra2cnn);
+            
 
             data.forecasts.forEach(forecast => {
                 Object.keys(masterData).forEach(key => {
-
-                        masterData[key].push(forecast[key]);
-                    
+                    if (forecast[key.replace('master_', '')] !== undefined) {
+                        masterData[key].push(forecast[key.replace('master_', '')]);
+                    }
                 });
             });
 
             data.merra2cnn.merra2cnn.forEach(merra2 => {
                 Object.keys(merra2cnn).forEach(key => {
-                        merra2cnn[key].push(merra2[key]);
+                    if (merra2[key.replace('master_', '')] !== undefined) {
+                        merra2cnn[key].push(merra2[key.replace('master_', '')]);
+                    }
                 });
             });
 
@@ -717,18 +753,18 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
 
             const plotElement = document.getElementById(forecastsDiv);
             if (plotElement) {
-                if (masterData.time.length > 0) {
+                if (masterData.master_datetime.length > 0) {
                     draw_plot(masterData, 'Ozone', "ppbv", "main_plot_for_api_baker_historical", "Ozone Levels", [
-                        { column: "time", name: "ML + Model", color: "green", width: 3 },
-                        { column: "predicted", name: "Model", color: "rgba(142, 142, 142, 0.8)", width: 3 },
-                        { column: "value", name: "Observation", color: "rgba(255, 0, 0, 0.8)", width: 3 }
+                        { column: "master_localized", name: "ML + Model", color: "green", width: 3 },
+                        { column: "master_uncorrected", name: "Model", color: "rgba(142, 142, 142, 0.8)", width: 3 },
+                        { column: "master_observation", name: "Observation", color: "rgba(255, 0, 0, 0.8)", width: 3 }
                     ]);
                 }
 
-                if (merra2cnn.time.length > 0) {
+                if (merra2cnn.master_datetime.length > 0) {
                     draw_plot(merra2cnn, "PM 2.5", "UM3", "main_plot_for_cnn", "PM2.5 Levels", [
-                        { column: "value", name: "3HR_PM_CONC_CNN(130)", color: "green", width: 3 },
-                        { column: "pm25", name: "GEOS CF", color: "rgba(142, 142, 142, 0.8)", width: 3 }
+                        { column: "master_value", name: "3HR_PM_CONC_CNN(130)", color: "green", width: 3 },
+                        { column: "master_pm25", name: "GEOS CF", color: "rgba(142, 142, 142, 0.8)", width: 3 }
                     ]);
                 }
             } else {
