@@ -681,8 +681,8 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             let masterData = {};
             let merra2cnn = {};
 
-            ["master_datetime", "master_observation", "master_localized", "master_uncorrected", "master_pandora_no2_l1col"].forEach(key => masterData[key] = []);
-            ["master_datetime", "master_value", "master_pm25"].forEach(key => merra2cnn[key] = []);
+            ["time", "value", "predicted", "o3"].forEach(key => masterData[key] = []);
+            ["time", "value", "predicted","pm25"].forEach(key => merra2cnn[key] = []);
 
             console.log("masterData");
             console.log(masterData);
@@ -692,17 +692,15 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
 
             data.forecasts.forEach(forecast => {
                 Object.keys(masterData).forEach(key => {
-                    if (forecast[key.replace('master_', '')] !== undefined) {
-                        masterData[key].push(forecast[key.replace('master_', '')]);
-                    }
+
+                        masterData[key].push(forecast[key]);
+                    
                 });
             });
 
             data.merra2cnn.merra2cnn.forEach(merra2 => {
                 Object.keys(merra2cnn).forEach(key => {
-                    if (merra2[key.replace('master_', '')] !== undefined) {
-                        merra2cnn[key].push(merra2[key.replace('master_', '')]);
-                    }
+                        merra2cnn[key].push(merra2[key]);
                 });
             });
 
@@ -719,18 +717,18 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
 
             const plotElement = document.getElementById(forecastsDiv);
             if (plotElement) {
-                if (masterData.master_datetime.length > 0) {
+                if (masterData.time.length > 0) {
                     draw_plot(masterData, 'Ozone', "ppbv", "main_plot_for_api_baker_historical", "Ozone Levels", [
-                        { column: "master_localized", name: "ML + Model", color: "green", width: 3 },
-                        { column: "master_uncorrected", name: "Model", color: "rgba(142, 142, 142, 0.8)", width: 3 },
-                        { column: "master_observation", name: "Observation", color: "rgba(255, 0, 0, 0.8)", width: 3 }
+                        { column: "time", name: "ML + Model", color: "green", width: 3 },
+                        { column: "predicted", name: "Model", color: "rgba(142, 142, 142, 0.8)", width: 3 },
+                        { column: "value", name: "Observation", color: "rgba(255, 0, 0, 0.8)", width: 3 }
                     ]);
                 }
 
-                if (merra2cnn.master_datetime.length > 0) {
+                if (merra2cnn.time.length > 0) {
                     draw_plot(merra2cnn, "PM 2.5", "UM3", "main_plot_for_cnn", "PM2.5 Levels", [
-                        { column: "master_value", name: "3HR_PM_CONC_CNN(130)", color: "green", width: 3 },
-                        { column: "master_pm25", name: "GEOS CF", color: "rgba(142, 142, 142, 0.8)", width: 3 }
+                        { column: "value", name: "3HR_PM_CONC_CNN(130)", color: "green", width: 3 },
+                        { column: "pm25", name: "GEOS CF", color: "rgba(142, 142, 142, 0.8)", width: 3 }
                     ]);
                 }
             } else {
