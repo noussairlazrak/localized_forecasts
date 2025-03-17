@@ -637,8 +637,6 @@ function csvToArray(str, delimiter = ",") {
     return arr;
 }
 
-
-
 function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
     const messages = [
         "Generating data", 
@@ -721,21 +719,40 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                 link.click();
             });
 
-
             const tabsContainer = $(".tab-content");
-            const tabsNav = $("#pills-tabContent").prev();
+            const tabsWrapper = $("#pills-tabContent").parent();
+            
+            // Remove existing tab structure and re-add dynamically
+            tabsWrapper.empty();
+
+            // Create the nav-pills container
+            const navPills = $("<ul>", { class: "nav nav-pills", id: "pills-tab", role: "tablist" });
+            const tabContent = $("<div>", { class: "tab-content", id: "pills-tabContent" });
+
+            tabsWrapper.append(navPills);
+            tabsWrapper.append(tabContent);
+
             const plots = [
                 { id: "main_plot_for_api_baker_historical", title: "API Baker Historical", data: masterData },
                 { id: "main_plot_for_cnn", title: "CNN Forecasts", data: merra2cnn }
             ];
 
-            tabsNav.empty();
-            tabsContainer.empty();
-
             plots.forEach((plot, index) => {
                 const isActive = index === 0 ? "active show" : "";
-                $(".nav-pills").append(`<li class="nav-item"><a class="nav-link ${isActive}" id="tab-${plot.id}" data-bs-toggle="pill" href="#${plot.id}">${plot.title}</a></li>`);
-                tabsContainer.append(`<div class="tab-pane fade ${isActive}" id="${plot.id}" role="tabpanel"></div>`);
+
+                // Add tab links
+                const tabLink = `
+                    <li class="nav-item">
+                        <a class="nav-link ${isActive}" id="tab-${plot.id}" data-bs-toggle="pill" href="#${plot.id}" role="tab">${plot.title}</a>
+                    </li>
+                `;
+                navPills.append(tabLink);
+
+                // Add tab content
+                const tabPane = `
+                    <div class="tab-pane fade ${isActive}" id="${plot.id}" role="tabpanel"></div>
+                `;
+                tabContent.append(tabPane);
             });
 
             $(".nav-link").on("click", function() {
