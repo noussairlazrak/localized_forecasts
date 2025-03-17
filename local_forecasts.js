@@ -1048,9 +1048,10 @@ function getDates(startDate, stopDate) {
 }
 
 
-function draw_plot(combined_dataset, param  , unit, forecasts_div, title, plot_columns, dates_ranges = false, button = false) {
+function draw_plot(combined_dataset, param, unit, forecasts_div, title, plot_columns, dates_ranges = false, button = false) {
     const datetime_data = combined_dataset["master_datetime"];
     
+    // Define traces for the plot
     const traces = plot_columns.map(({ column, name, color, width }) => {
         return {
             type: "scatter",
@@ -1066,9 +1067,12 @@ function draw_plot(combined_dataset, param  , unit, forecasts_div, title, plot_c
         };
     });
     
-
+    // Define layout with fixed width and height
     const layout = {
         title: title,
+        autosize: false, // Disable autosizing to use fixed dimensions
+        width: 1190, // Set fixed width to 1190px
+        height: 500, // Set fixed height (adjust as needed)
         plot_bgcolor: 'rgb(22 26 30)',
         paper_bgcolor: 'rgb(22 26 30)',
         legend: {
@@ -1092,12 +1096,12 @@ function draw_plot(combined_dataset, param  , unit, forecasts_div, title, plot_c
             type: 'linear',
             title: unit,
             color: '#FFFFFF'
-        },
-        shapes: []
+        }
     };
     
 
-
+  
+    
     const nowUTC = new Date().toISOString().slice(0, 13) + ":00:00Z";
     layout.shapes.push({
         type: 'line',
@@ -1109,15 +1113,15 @@ function draw_plot(combined_dataset, param  , unit, forecasts_div, title, plot_c
         line: {
             color: 'yellow',
             width: 2,
-            dash: 'dot',
+            dash: 'dot'
         }
     });
     
     Plotly.newPlot(forecasts_div, traces, layout);
-    console.log("plot casted at" + forecasts_div);
+    console.log("Plot rendered at " + forecasts_div);
     
     if (button) {
-        $('.plot_additional_features').append('<button type="button" change_to="' + forecasts_div + '" class="btn btn-outline-primary change_plot ' + forecasts_div + '"  href="#">' + title + '</button>');
+        $('.plot_additional_features').append('<button type="button" change_to="' + forecasts_div + '" class="btn btn-outline-primary change_plot ' + forecasts_div + '" href="#">' + title + '</button>');
     }
     
     $('.lf-downloads').append('<a class="download_forecasts_data" href="#">| download data </a>');
