@@ -733,8 +733,8 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             tabsNav.append(tabsList);
 
             const plots = [
-                { id: "main_plot_for_api_baker_historical", title: "Pandora Ozone", data: masterData },
-                { id: "main_plot_for_cnn", title: "MERRA 2 PM2.5 Forecasts", data: merra2cnn }
+                { id: "main_plot_for_api_baker_historical", title: "API Baker Historical", data: masterData },
+                { id: "main_plot_for_cnn", title: "CNN Forecasts", data: merra2cnn }
             ];
 
 
@@ -775,13 +775,13 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                     ];
                 } else if (plot.id === "main_plot_for_cnn") {
                     plotColumns = [
-                        { column: "master_value", name: "MERRA 2 CNN", color: "blue", width: 3 },
+                        { column: "master_value", name: "CNN Value", color: "blue", width: 3 },
                         { column: "master_pm25", name: "GEOS CF", color: "purple", width: 3 }
                     ];
                 }
 
 
-                draw_plot(plot.data, param, unit, plot.id, plot.title, plotColumns, dates_ranges = false);
+                draw_plot(plot.data, param, unit, plot.id, plot.title, plotColumns);
 
 
                 window.dispatchEvent(new Event('resize'));
@@ -1066,6 +1066,7 @@ function draw_plot(combined_dataset, param  , unit, forecasts_div, title, plot_c
         };
     });
     
+
     const layout = {
         title: title,
         plot_bgcolor: 'rgb(22 26 30)',
@@ -1091,41 +1092,11 @@ function draw_plot(combined_dataset, param  , unit, forecasts_div, title, plot_c
             type: 'linear',
             title: unit,
             color: '#FFFFFF'
-        }
+        },
+        shapes: []
     };
     
-    if (dates_ranges) {
-        layout.shapes = layout.shapes || [];
-        layout.shapes.push(
-            {
-                type: 'rect',
-                x0: dates_ranges[0],
-                y0: 0,
-                x1: dates_ranges[1],
-                y1: 1,
-                yref: 'paper',
-                fillcolor: '#00ffff2e',
-                line: {
-                    color: 'rgb(55, 128, 191)',
-                    width: 0.5
-                }
-            },
-            {
-                type: 'rect',
-                x0: dates_ranges[2],
-                y0: 0,
-                x1: dates_ranges[3],
-                y1: 1,
-                yref: 'paper',
-                fillcolor: '#00ffa973',
-                line: {
-                    color: 'green',
-                    width: 0.5
-                }
-            }
-        );
-    }
-    
+
 
     const nowUTC = new Date().toISOString().slice(0, 13) + ":00:00Z";
     layout.shapes.push({
