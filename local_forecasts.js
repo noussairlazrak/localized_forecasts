@@ -684,6 +684,12 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             ["master_datetime", "master_observation", "master_localized", "master_uncorrected", "master_pandora_no2_l1col"].forEach(key => masterData[key] = []);
             ["master_datetime", "master_value", "master_pm25"].forEach(key => merra2cnn[key] = []);
 
+            console.log("masterData");
+            console.log(masterData);
+
+            console.log("merra2cnn");
+            console.log(merra2cnn);
+
             data.forecasts.forEach(forecast => {
                 Object.keys(masterData).forEach(key => {
                     if (forecast[key.replace('master_', '')] !== undefined) {
