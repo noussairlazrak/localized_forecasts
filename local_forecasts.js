@@ -724,6 +724,10 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
 
             const tabsContainer = $(".tab-content");
             const tabsNav = $("#pills-tabContent").prev();
+
+            console.log(masterData);
+            console.log(merra2cnn);
+            
             const plots = [
                 { id: "main_plot_for_api_baker_historical", title: "API Baker Historical", data: masterData },
                 { id: "main_plot_for_cnn", title: "CNN Forecasts", data: merra2cnn }
