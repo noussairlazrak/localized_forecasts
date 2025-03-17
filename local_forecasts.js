@@ -733,8 +733,8 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             tabsNav.append(tabsList);
 
             const plots = [
-                { id: "main_plot_for_api_baker_historical", title: "API Baker Historical", data: masterData },
-                { id: "main_plot_for_cnn", title: "CNN Forecasts", data: merra2cnn }
+                { id: "main_plot_for_api_baker_historical", title: "Ozone Forecasts (Pandora / GEOS CF)", data: masterData },
+                { id: "main_plot_for_cnn", title: "PM2.5 Forecasts (MERRA 2)", data: merra2cnn }
             ];
 
 
