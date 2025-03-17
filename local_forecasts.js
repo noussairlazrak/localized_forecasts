@@ -714,7 +714,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             const plotElement = document.getElementById(forecastsDiv);
             if (plotElement) {
                 if (masterData.master_datetime.length > 0) {
-                    draw_plot(masterData, param, unit, forecastsDiv, "Ozone Levels", [
+                    draw_plot(masterData, 'Ozone', "ppbv", "main_plot_for_api_baker_historical", "Ozone Levels", [
                         { column: "master_localized", name: "ML + Model", color: "green", width: 3 },
                         { column: "master_uncorrected", name: "Model", color: "rgba(142, 142, 142, 0.8)", width: 3 },
                         { column: "master_observation", name: "Observation", color: "rgba(255, 0, 0, 0.8)", width: 3 }
@@ -992,7 +992,7 @@ function getDates(startDate, stopDate) {
 }
 
 
-function draw_plot(combined_dataset, param, unit, forecasts_div, title, plot_columns, dates_ranges = false, button = false) {
+function draw_plot(combined_dataset, param  , unit, forecasts_div, title, plot_columns, dates_ranges = false, button = false) {
     const datetime_data = combined_dataset["master_datetime"];
     
     const traces = plot_columns.map(({ column, name, color, width }) => {
@@ -1100,6 +1100,7 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, title, plot_col
     });
     
     Plotly.newPlot(forecasts_div, traces, layout);
+    console.log("plot casted at" + forecasts_div);
     
     if (button) {
         $('.plot_additional_features').append('<button type="button" change_to="' + forecasts_div + '" class="btn btn-outline-primary change_plot ' + forecasts_div + '"  href="#">' + title + '</button>');
