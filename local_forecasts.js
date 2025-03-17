@@ -685,17 +685,13 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                 master_uncorrected: [],
                 master_pandora_no2_l1col: []
             };
-            
+
             let merra2cnn = {
                 master_datetime: [],
                 master_value: [],
                 master_pm25: []
             };
-            
-            // Debugging API response
-            console.log("API Response:", data);
-            
-            // Check if forecasts exist
+
             if (Array.isArray(data.forecasts) && data.forecasts.length > 0) {
                 data.forecasts.forEach(forecast => {
                     masterData.master_datetime.push(forecast.time || null);
@@ -704,10 +700,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                     masterData.master_uncorrected.push(forecast.no2 || null);
                     masterData.master_pandora_no2_l1col.push(forecast.pandora_no2_l1col || null);
                 });
-            } else {
-                console.warn("No forecasts data available");
             }
-            
 
             if (data.merra2cnn && Array.isArray(data.merra2cnn.merra2cnn) && data.merra2cnn.merra2cnn.length > 0) {
                 data.merra2cnn.merra2cnn.forEach(merra2 => {
@@ -715,30 +708,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                     merra2cnn.master_value.push(merra2.value || null);
                     merra2cnn.master_pm25.push(merra2.pm25 || null);
                 });
-            } else {
-                console.warn("No MERRA-2 CNN data available");
             }
-            
-
-            console.log("Processed masterData:", masterData);
-            console.log("Processed merra2cnn:", merra2cnn);
-            
-
-            data.forecasts.forEach(forecast => {
-                Object.keys(masterData).forEach(key => {
-                    if (forecast[key.replace('master_', '')] !== undefined) {
-                        masterData[key].push(forecast[key.replace('master_', '')]);
-                    }
-                });
-            });
-
-            data.merra2cnn.merra2cnn.forEach(merra2 => {
-                Object.keys(merra2cnn).forEach(key => {
-                    if (merra2[key.replace('master_', '')] !== undefined) {
-                        merra2cnn[key].push(merra2[key.replace('master_', '')]);
-                    }
-                });
-            });
 
             $(document).off("click", ".download_forecasts_data").on("click", ".download_forecasts_data", function() {
                 const csvFileName = `${location.replace(/\_/g, '').replace(/\./g, '')}_${param}_${historical}.csv`;
@@ -751,25 +721,36 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                 link.click();
             });
 
-            const plotElement = document.getElementById(forecastsDiv);
-            if (plotElement) {
-                if (masterData.master_datetime.length > 0) {
-                    draw_plot(masterData, 'Ozone', "ppbv", "main_plot_for_api_baker_historical", "Ozone Levels", [
-                        { column: "master_localized", name: "ML + Model", color: "green", width: 3 },
-                        { column: "master_uncorrected", name: "Model", color: "rgba(142, 142, 142, 0.8)", width: 3 },
-                        { column: "master_observation", name: "Observation", color: "rgba(255, 0, 0, 0.8)", width: 3 }
-                    ]);
-                }
 
-                if (merra2cnn.master_datetime.length > 0) {
-                    draw_plot(merra2cnn, "PM 2.5", "UM3", "main_plot_for_cnn", "PM2.5 Levels", [
-                        { column: "master_value", name: "3HR_PM_CONC_CNN(130)", color: "green", width: 3 },
-                        { column: "master_pm25", name: "GEOS CF", color: "rgba(142, 142, 142, 0.8)", width: 3 }
-                    ]);
-                }
-            } else {
-                console.error(`No DOM element with id '${forecastsDiv}' exists on the page.`);
-            }
+            const tabsContainer = $(".tab-content");
+            const tabsNav = $("#pills-tabContent").prev();
+            const plots = [
+                { id: "main_plot_for_api_baker_historical", title: "API Baker Historical", data: masterData },
+                { id: "main_plot_for_cnn", title: "CNN Forecasts", data: merra2cnn }
+            ];
+
+            tabsNav.empty();
+            tabsContainer.empty();
+
+            plots.forEach((plot, index) => {
+                const isActive = index === 0 ? "active show" : "";
+                tabsNav.append(`<li class="nav-item"><a class="nav-link ${isActive}" id="tab-${plot.id}" data-bs-toggle="pill" href="#${plot.id}">${plot.title}</a></li>`);
+                tabsContainer.append(`<div class="tab-pane fade ${isActive}" id="${plot.id}" role="tabpanel"></div>`);
+            });
+
+            $(".nav-link").on("click", function() {
+                $(".tab-pane").removeClass("active show");
+                $($(this).attr("href")).addClass("active show");
+            });
+
+            // Draw plots
+            plots.forEach(plot => {
+                draw_plot(plot.data, param, unit, plot.id, plot.title, [
+                    { column: "master_localized", name: "ML + Model", color: "green", width: 3 },
+                    { column: "master_uncorrected", name: "Model", color: "rgba(142, 142, 142, 0.8)", width: 3 },
+                    { column: "master_observation", name: "Observation", color: "rgba(255, 0, 0, 0.8)", width: 3 }
+                ]);
+            });
 
             $('.loader').hide();
         })
@@ -778,6 +759,15 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             $('.api_baker_plots').html('Sorry, we are not able to connect with OpenAQ API at this moment. Please check back later...');
             $('.loader').hide();
         });
+}
+
+function generateModelCards(metrics) {
+    return `
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Total Observations</h5><p class="card-text fs-3 fw-bold">${metrics.total_observation}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Last Model Update</h5><p class="card-text fs-3 fw-bold">${metrics.latest_training.substring(0, 19)}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Mean Square Error</h5><p class="card-text">${metrics.rmse}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Mean Absolute Error</h5><p class="card-text">${metrics.preformance.metrics["Test MAE"]}</p></div></div></div>
+    `;
 }
 
 function generateModelCards(metrics) {

@@ -925,128 +925,22 @@ a.btn.retrain_model {
     padding: 0;
 }
 
-
-
-
 </style>
 <div class="container forecasts-box">
-    <div class="modal-dialog modal-dialog-centered modal-md">
-        <div class="modal-content text-center">
-            <div class="modal-body">
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-                <div class="forecasts-view row text-center">
-                    <h3 class="module_title location_parameter_name">
-                    </h3>
-                    
-                    <h1 class="sub-title site-name11"><span class="current_location_name"></span>
-                    </h1>
-                    <h5 class="current_param_1"></h5>
-                    <div class="row local_forecats_window">
-                      
-                    </div>
-
-                    <div class="tab-content" id="pills-tabContent">
-                        <div class="tab-pane fade" id="pills-home" role="tabpanel"
-                            aria-labelledby="pills-home-tab">
-                            
-                            <div class="col-md-12">
-                                <div class="row align-items-center counter-wrapper gy-4 gy-md-0">
-                                    <div class="col-md-4">
-                                        
-                                        <h5 class="current_param_1_11"></h5>
-                                            <div class="">
-                                                
-                                                <div class="obs_value_container">
-                                                    <h1 class="observation_value current_observation_value">
-                                                    </h1>
-                                                    <span class="observation_unit  current_observation_unit_span"></span>
-                                                </div>
-                                                
-                                            </div>
-                                    </div>
-
-                                    <div id="observations_only"></div>
-                                   
-                                </div>
-                            </div>
-                            
-
-                        </div>
-                        <div class="tab-pane fade show active" id="pills-profile" role="tabpanel"
-                            aria-labelledby="pills-profile-tab">
-                            <div class="row">
-                              
-                                
-                                <div class="btn-group plot_additional_features" role="group">
-
-                                </div>
-                                
-                               
-                                <div class="lf-container">
-                                  <div class="plots_container">
-                                    
-                                     <div class="api_baker_field">
-                                      <div class="loader"><div id="call_messages"></div> <div class="loader__dot"></div> <div class="loader__dot"></div> <div class="loader__dot"></div> </div>
-                                       <div class="api_baker_plots">
-                                        <div id='main_plot_for_api_baker_col' class='model_plots main_plot_for_api_baker' ></div>
-                                        <div id='main_plot_for_api_baker_historical' class='model_plots main_plot_for_api_baker_historical' ></div> 
-                                       </div>
-                                      
-
-                                      <!--
-                                      <div class="plot_options" >
-                                        <div class="form-check form-switch">
-                                          <input class="form-check-input retrain_model" name="auto_ref" type="checkbox" role="switch" site="" param="" unit="" id="auto_refresh">
-                                          <label class="form-check-label">Auto Refresh</label>
-                                        </div>
-                                        <div class="form-check form-switch">
-                                          <input class="form-check-input retrain_model" name="model_update"  type="checkbox" role="switch"  site="" param="" unit="" id="model_update" >
-                                          <label class="form-check-label" >Retraining</label>
-                                        </div>
-                                        <div class="form-check form-switch">
-                                          <input class="form-check-input retrain_model" name="model_update_hpt" type="checkbox" role="switch"  site="" param="" unit="" id="model_update_hp">
-                                          <label class="form-check-label" >Fine-tuning</label>
-                                        </div>
-                                        <div class="form-check form-switch">
-                                          <input class="form-check-input retrain_model" name="display_historical"  type="checkbox" role="switch" site="" param="" unit="" id="display_historical">
-                                          <label class="form-check-label" >Historical Data</label>
-                                        </div>
-                                      </div>
-                                      -->
-                                      
-
-                                     </div>
-
-                                     
-                                      <div id='main_plot_for_cnn' class='model_plots main_plot_for_cnn'></div>
-                                      
-                                    </div>
-
-                                  </div>
-                                </div>
-                                
-                                <p class="caption">
-                                  Source: <a href="https://gmao.gsfc.nasa.gov/weather_prediction/GEOS-CF//">NASA GEOS Composition Forecasts (GEOS-CF)</a> <span class="lf-downloads"></span>
-                              </p>
-
-                              <div class="model_data">
-
-                              </div>
-                              
-                        </div>
-                        <div class="tab-pane fade" id="pills-contact" role="tabpanel"
-                            aria-labelledby="pills-contact-tab">
-                            <div class="col-lg-12">
-                                <h3 class="sub-title">Confidence intervals</h3>
-                                <div id='intervals' class='lf_full_plot'></div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
+  <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content text-center">
+          <div class="modal-body">
+              <button class="btn-close" data-bs-dismiss="modal"></button>
+              <div class="forecasts-view row text-center">
+                  <h3 class="module_title location_parameter_name"></h3>
+                  <h1 class="sub-title site-name11"><span class="current_location_name"></span></h1>
+                  <h5 class="current_param_1"></h5>
+                  <div class="row local_forecats_window"></div>
+                  <div class="tab-content" id="pills-tabContent"></div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
     
-    <script src='parametres/plotly-2.12.1.min.js'></script>
+<script src='parametres/plotly-2.12.1.min.js'></script>
