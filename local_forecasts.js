@@ -208,8 +208,6 @@ function add_marker(map, lat, long, open_aq_id, param, site) {
         }
     }
    
-    
-
     station_id.value = open_aq_id;
     parameter.value = param;
 
@@ -224,6 +222,7 @@ function add_marker(map, lat, long, open_aq_id, param, site) {
     el_open_aq_id.setAttributeNode(location_name);
     el_open_aq_id.setAttributeNode(observation_value);
     el_open_aq_id.setAttributeNode(current_observation_unit);
+    el_open_aq_id.setAttributeNode(source);
     new mapboxgl.Marker(el_open_aq_id)
         .setLngLat(site)
         .addTo(map);
@@ -365,41 +364,26 @@ function create_map(sites, param) {
             });
           });
 
-       // Add background circle layer
-        map.addLayer({
-            id: 'background-circle',
-            type: 'circle',
-            source: 'locations_dst',
-            filter: ['!', ['has', 'point_count']],
-            paint: {
-            'circle-color': [
-                'interpolate',
-                ['linear'],
-                ['get', 'status'],
-                1, '#009688',
-                40, '#d6d7d6'
-            ],
-            'circle-radius': 20
-            }
-        });
+
         
-        // Add label symbol layer
+
         map.addLayer({
             id: 'unclustered-point',
-            type: 'symbol',
+            type: 'circle', 
             source: 'locations_dst',
             filter: ['!', ['has', 'point_count']],
-            layout: {
-            'text-field': ['to-string', ['get', 'status']],
-            'text-font': ['Manrope Bold'],
-            'text-size': 14,
-            'text-offset': [0, 0.5],
-            'text-anchor': 'bottom'
-            },
             paint: {
-            'text-color': '#152c1c',
-            'text-halo-color': '#ffffff',
-            'text-halo-width': 1
+                'circle-color': [
+                    'match',
+                    ['get', 'observation_source'],
+                    'OpenAQ', '#1da1f2', 
+                    'AirNow', '#f44336',  
+                    'NASA Pandora', '#4caf50',
+                    '#9e9e9e'         
+                ],
+                'circle-radius': 5,
+                'circle-stroke-width': 0.4,
+                'circle-stroke-color': '#ffffff'
             }
         });
   
@@ -457,7 +441,8 @@ function create_map(sites, param) {
                 if(site.properties.location_id){
                     var l_id =site.properties.location_id;
                     if (!~$.inArray(l_id,list_in))  {
-                        add_the_banner(site.properties, 'no2')
+                        console.log(site)
+                        add_the_banner(site.properties, site.properties.parameter);
                         list_in.push(l_id);
                        
                     }
@@ -487,7 +472,7 @@ function create_map(sites, param) {
         const observation_value = e.features[0].properties.forecasted_value;
         const precomputed_forecasts = e.features[0].properties.precomputed_forecasts ? $.parseJSON(e.features[0].properties.precomputed_forecasts) : [];
         const obs_option = e.features[0].properties.obs_options ? $.parseJSON(e.features[0].properties.obs_options) : [];
-        const observation_unit = obs_option.length > 0 ? obs_option[0].no2.unit : 'N/A'; // Default value if not available
+        const observation_unit = obs_option?.[0]?.no2?.unit || 'N/A'; 
         
         
 
@@ -502,7 +487,7 @@ function create_map(sites, param) {
             "Connecting..."
         ];
 
-        openForecastsWindow(messages, location_id, 'o3', location_name, observation_value, observation_unit, 's3', precomputed_forecasts);
+        openForecastsWindow(messages, location_id, 'o3', location_name, observation_value, observation_unit, observation_source, precomputed_forecasts);
     
 
     });
@@ -530,7 +515,8 @@ function add_the_banner(site, param) {
  
 
         animateValue(obj, 100, 0, 5000);
-        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "' + site.forecasted_value + '" status= "' + site.status + '" current_observation_unit= "' + obs_options[0].no2.unit+ ' " latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+precomputed_forecasts[0].no2.forecasts+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last model update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value"></span> </h1> <span class="source">Observation source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';
+        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "' + site.forecasted_value + '" status= "' + site.status + '" current_observation_unit= "' + (obs_options?.[0]?.no2?.unit || 'N/A') + '" latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+(precomputed_forecasts?.[0]?.no2?.forecasts || '[]')+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <span class="last_update_widget"> Last model update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value"></span> </h1> <span class="source">Observation source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';       
+        
         $(".pollutant-banner-o").prepend(html);
 
         
@@ -637,14 +623,11 @@ function csvToArray(str, delimiter = ",") {
     return arr;
 }
 
-
-
 function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
     const messages = [
         "Generating data", 
-        "Connecting to SMCE", 
+        "Connecting to API Baker", 
         "Fetching the data from API Baker", 
-        "Fetching data from GMAO FTP", 
         "Fetching observations", 
         "Getting the forecasts", 
         "Please wait...", 
@@ -654,25 +637,61 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
     $('.loader').show();
 
     const paramCode = pollutant_details(param).id;
-    const fileUrl = `https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/ArlingtonTX_o3_output.json`;
-    
+    const fileUrl = `https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/ArlingtonTX_o3_output.json`;
+
     console.log(fileUrl);
-    
+
     fetch(fileUrl)
         .then(response => {
             if (!response.ok) throw new Error('Network response was not ok');
-            return response.json();
+            return response.text(); // Get the response as text
+        })
+        .then(text => {
+            // Replace NaN with null in the JSON string
+            const sanitizedText = text.replace(/NaN/g, "null");
+            return JSON.parse(sanitizedText); // Parse the sanitized JSON
         })
         .then(data => {
-            if (!data) throw new Error("No data received");
+            if (!data || data.status !== "200") throw new Error("No valid data received");
 
             console.log(data);
 
             const modelHtml = `
                 <div class="container my-5">
-                    <h1>Bias Corrected Model Information</h1>
+                    <h1>API Baker Model Information</h1>
                     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                        ${generateModelCards(data.metrics)}
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Observations</h5>
+                                    <p class="card-text fs-3 fw-bold">${data.metrics.total_observation}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Last Model Update</h5>
+                                    <p class="card-text fs-3 fw-bold">${data.metrics.latest_training}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Start Date</h5>
+                                    <p class="card-text">${data.metrics.start_date}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">End Date</h5>
+                                    <p class="card-text">${data.metrics.end_date}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
@@ -681,32 +700,16 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             let masterData = {
                 master_datetime: [],
                 master_observation: [],
-                master_localized: [],
-                master_uncorrected: [],
-                master_pandora_no2_l1col: []
-            };
-
-            let merra2cnn = {
-                master_datetime: [],
-                master_value: [],
-                master_pm25: []
+                master_predicted: [],
+                master_o3: []
             };
 
             if (Array.isArray(data.forecasts) && data.forecasts.length > 0) {
                 data.forecasts.forEach(forecast => {
                     masterData.master_datetime.push(forecast.time || null);
                     masterData.master_observation.push(forecast.value || null);
-                    masterData.master_localized.push(forecast.predicted || null);
-                    masterData.master_uncorrected.push(forecast.no2 || null);
-                    masterData.master_pandora_no2_l1col.push(forecast.pandora_no2_l1col || null);
-                });
-            }
-
-            if (data.merra2cnn && Array.isArray(data.merra2cnn.merra2cnn) && data.merra2cnn.merra2cnn.length > 0) {
-                data.merra2cnn.merra2cnn.forEach(merra2 => {
-                    merra2cnn.master_datetime.push(merra2.time || null);
-                    merra2cnn.master_value.push(merra2.value || null);
-                    merra2cnn.master_pm25.push(merra2.pm25 || null);
+                    masterData.master_predicted.push(forecast.predicted || null);
+                    masterData.master_o3.push(forecast.o3 || null);
                 });
             }
 
@@ -721,26 +724,21 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                 link.click();
             });
 
-
             const tabsNav = $("#pills-tabContent").prev();
             const tabsContainer = $(".tab-content");
 
             tabsNav.empty();
             tabsContainer.empty();
 
-
             const tabsList = $('<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist"></ul>');
             tabsNav.append(tabsList);
 
             const plots = [
-                { id: "main_plot_for_api_baker_historical", title: "Ozone Forecasts (Pandora / GEOS CF)", data: masterData },
-                { id: "main_plot_for_cnn", title: "PM2.5 Forecasts (MERRA 2)", data: merra2cnn }
+                { id: "main_plot_for_api_baker", title: "Ozone Forecasts", data: masterData }
             ];
-
 
             plots.forEach((plot, index) => {
                 const isActive = index === 0 ? "active" : "";
-
 
                 tabsList.append(`
                     <li class="nav-item" role="presentation">
@@ -756,43 +754,174 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                 `);
             });
 
+            $(".nav-link").on("click", function() {
+                $(".tab-pane").removeClass("active show");
+                $($(this).attr("href")).addClass("active show");
+            });
+
+            plots.forEach(plot => {
+                const plotColumns = [
+                    { column: "master_predicted", name: "Predicted", color: "green", width: 3 },
+                    { column: "master_observation", name: "AirNow", color: "blue", width: 3 },
+                    { column: "master_o3", name: "GEOS CF", color: "green", width: 3 },
+                ];
+
+                draw_plot(plot.data, param, unit, plot.id, plot.title, plotColumns);
+
+                window.dispatchEvent(new Event('resize'));
+            });
+
+            $('.loader').hide();
+        })
+        .catch(error => {
+            console.error("Error loading data:", error);
+            $('.api_baker_plots').html('Sorry, we are not able to connect with API Baker at this moment. Please check back later...');
+            $('.loader').hide();
+        });
+}
+
+function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
+    const messages = [
+        "Generating data",
+        "Connecting to AirNow",
+        "Fetching the data from AirNow API",
+        "Fetching observations",
+        "Getting the forecasts",
+        "Please wait...",
+        "Connecting..."
+    ];
+
+    $('.loader').show();
+
+    const paramCode = pollutant_details(param).id;
+    const fileUrl = `https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Guatemala_City.json`;
+
+    console.log(fileUrl);
+
+    fetch(fileUrl)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            if (!data || data.status !== "200") throw new Error("No valid data received");
+
+            console.log(data);
+
+            const modelHtml = `
+                <div class="container my-5">
+                    <h1>AirNow Model Information</h1>
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Observations</h5>
+                                    <p class="card-text fs-3 fw-bold">${data.metrics.total_observation}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Last Model Update</h5>
+                                    <p class="card-text fs-3 fw-bold">${data.metrics.latest_training}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Start Date</h5>
+                                    <p class="card-text">${data.metrics.start_date}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">End Date</h5>
+                                    <p class="card-text">${data.metrics.end_date}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            $('.model_data').html(modelHtml);
+
+            let masterData = {
+                master_datetime: [],
+                master_observation: []
+            };
+
+            if (Array.isArray(data.forecasts) && data.forecasts.length > 0) {
+                data.forecasts.forEach(forecast => {
+                    masterData.master_datetime.push(forecast.time || null);
+                    masterData.master_observation.push(forecast.value || null);
+                });
+            }
+
+            $(document).off("click", ".download_forecasts_data").on("click", ".download_forecasts_data", function() {
+                const csvFileName = `${location.replace(/\_/g, '').replace(/\./g, '')}_${param}_${historical}.csv`;
+                let csvContent = "data:text/csv;charset=utf-8," + formatToCSV(masterData);
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", csvFileName);
+                document.body.appendChild(link);
+                link.click();
+            });
+
+            const tabsNav = $("#pills-tabContent").prev();
+            const tabsContainer = $(".tab-content");
+
+            tabsNav.empty();
+            tabsContainer.empty();
+
+            const tabsList = $('<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist"></ul>');
+            tabsNav.append(tabsList);
+
+            const plots = [
+                { id: "main_plot_for_airnow", title: "PM 2.5 Forecasts", data: masterData }
+            ];
+
+            plots.forEach((plot, index) => {
+                const isActive = index === 0 ? "active" : "";
+
+                tabsList.append(`
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link ${isActive}" id="tab-${plot.id}" data-bs-toggle="pill" href="#${plot.id}" role="tab" aria-controls="${plot.id}" aria-selected="${isActive === 'active'}">
+                            ${plot.title}
+                        </a>
+                    </li>
+                `);
+
+                tabsContainer.append(`
+                    <div class="tab-pane fade ${isActive} show" id="${plot.id}" role="tabpanel" aria-labelledby="tab-${plot.id}">
+                    </div>
+                `);
+            });
 
             $(".nav-link").on("click", function() {
                 $(".tab-pane").removeClass("active show");
                 $($(this).attr("href")).addClass("active show");
             });
 
-
             plots.forEach(plot => {
-                let plotColumns;
-
-
-                if (plot.id === "main_plot_for_api_baker_historical") {
-                    plotColumns = [
-                        { column: "master_localized", name: "ML + Model", color: "green", width: 3 },
-                        { column: "master_uncorrected", name: "Model", color: "rgba(142, 142, 142, 0.8)", width: 3 },
-                        { column: "master_observation", name: "Observation", color: "rgba(255, 0, 0, 0.8)", width: 3 }
-                    ];
-                } else if (plot.id === "main_plot_for_cnn") {
-                    plotColumns = [
-                        { column: "master_value", name: "CNN Value", color: "blue", width: 3 },
-                        { column: "master_pm25", name: "GEOS CF", color: "purple", width: 3 }
-                    ];
-                }
-
+                const plotColumns = [
+                    { column: "master_observation", name: "Forecasted Value", color: "blue", width: 3 }
+                ];
 
                 draw_plot(plot.data, param, unit, plot.id, plot.title, plotColumns);
 
-
                 window.dispatchEvent(new Event('resize'));
             });
-                    
 
             $('.loader').hide();
         })
         .catch(error => {
             console.error("Error loading data:", error);
-            $('.api_baker_plots').html('Sorry, we are not able to connect with OpenAQ API at this moment. Please check back later...');
+            $('.api_baker_plots').html('Sorry, we are not able to connect with AirNow API at this moment. Please check back later...');
             $('.loader').hide();
         });
 }
@@ -1048,119 +1177,165 @@ function getDates(startDate, stopDate) {
 }
 
 
-function draw_plot(combined_dataset, param, unit, forecasts_div, title, plot_columns, dates_ranges = false, button = false) {
+function cleanAndSortData(datetime_data, combined_dataset) {
+    // Create an array of objects to pair datetime with other data
+    const pairedData = datetime_data.map((datetime, index) => {
+        const dataPoint = { datetime };
+        for (const key in combined_dataset) {
+            if (Array.isArray(combined_dataset[key])) {
+                dataPoint[key] = combined_dataset[key][index];
+            }
+        }
+        return dataPoint;
+    });
+
+    // Remove duplicates and sort by datetime
+    const uniqueData = Array.from(new Map(pairedData.map(item => [item.datetime, item])).values());
+    uniqueData.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+
+    // Reconstruct cleaned and sorted data
+    const cleanedData = {};
+    for (const key in combined_dataset) {
+        if (Array.isArray(combined_dataset[key])) {
+            cleanedData[key] = uniqueData.map(item => item[key]);
+        }
+    }
+
+    return cleanedData;
+}
+
+function draw_plot(combined_dataset, param, unit, forecasts_div, location_name, plot_columns, dates_ranges = false) {
+    // Extract datetime data
     const datetime_data = combined_dataset["master_datetime"];
-    
-    // Define traces for the plot
+
+    // Clean and sort the data
+    const cleanedData = cleanAndSortData(datetime_data, combined_dataset);
+
+    // Generate traces for the plot
     const traces = plot_columns.map(({ column, name, color, width }) => {
         return {
             type: "scatter",
             mode: "lines",
             connectgaps: false,
-            x: datetime_data,
-            y: combined_dataset[column],
+            x: cleanedData.master_datetime,
+            y: cleanedData[column],
             line: {
                 color: color || 'rgba(142, 142, 142, 0.8)',
                 width: width || 3
             },
+            hoverinfo: 'x+y',
             name: name
         };
     });
-    
-    // Define layout with fixed width and height
+
+    // Define the layout for the plot
     const layout = {
-        title: title,
-        autosize: false, // Disable autosizing to use fixed dimensions
-        width: 1190, // Set fixed width to 1190px
-        height: 500, // Set fixed height (adjust as needed)
-        plot_bgcolor: 'rgb(22 26 30)',
-        paper_bgcolor: 'rgb(22 26 30)',
+        title: {
+            text: `<b>${location_name}</b>`,
+            font: {
+                family: 'Roboto, sans-serif',
+                size: 24,
+                color: '#FFFFFF'
+            },
+            x: 0.05,
+            xanchor: 'left'
+        },
+        autosize: true,
+        width: 1000,
+        height: 500,
+        plot_bgcolor: 'rgb(22, 26, 30)',
+        paper_bgcolor: 'rgb(22, 26, 30)',
         legend: {
-            orientation: 'v',
-            x: 1.1,
-            y: 0.5,
+            orientation: 'h',
+            x: 0.5,
+            y: -0.2,
+            xanchor: 'center',
+            font: {
+                color: '#FFFFFF'
+            }
         },
         font: {
             family: 'Roboto, sans-serif',
             color: '#FFFFFF',
-            size: 16
+            size: 14
         },
         xaxis: {
             type: 'date',
             color: '#FFFFFF',
-            rangeslider: {},
-            range: [datetime_data[0], datetime_data[datetime_data.length - 1]]
+            rangeslider: { visible: false },
+            range: [cleanedData.master_datetime[0], cleanedData.master_datetime[cleanedData.master_datetime.length - 1]],
+            showgrid: false,
+            title: {
+                text: 'Time',
+                font: {
+                    size: 16,
+                    color: '#FFFFFF'
+                }
+            }
         },
         yaxis: {
             autorange: true,
             type: 'linear',
-            title: unit,
-            color: '#FFFFFF'
-        },
-        shapes: []
-    };
-
-    
-    
-    // Add date range highlights if provided
-    if (dates_ranges) {
-        layout.shapes = layout.shapes || [];
-        layout.shapes.push(
-            {
-                type: 'rect',
-                x0: dates_ranges[0],
-                y0: 0,
-                x1: dates_ranges[1],
-                y1: 1,
-                yref: 'paper',
-                fillcolor: '#00ffff2e',
-                line: {
-                    color: 'rgb(55, 128, 191)',
-                    width: 0.5
+            title: {
+                text: unit,
+                font: {
+                    size: 16,
+                    color: '#FFFFFF'
                 }
             },
+            color: '#FFFFFF',
+            showgrid: true,
+            gridcolor: 'rgba(255, 255, 255, 0.2)'
+        },
+        hovermode: 'x unified', // Unified hover mode for better interaction
+        shapes: [
             {
-                type: 'rect',
-                x0: dates_ranges[2],
+                type: 'line',
+                x0: new Date().toISOString().slice(0, 13) + ":00:00Z",
+                x1: new Date().toISOString().slice(0, 13) + ":00:00Z",
                 y0: 0,
-                x1: dates_ranges[3],
                 y1: 1,
                 yref: 'paper',
-                fillcolor: '#00ffa973',
                 line: {
-                    color: 'green',
-                    width: 0.5
+                    color: 'yellow',
+                    width: 2,
+                    dash: 'dot'
                 }
             }
-        );
-    }
-    
-    const nowUTC = new Date().toISOString().slice(0, 13) + ":00:00Z";
-    layout.shapes.push({
-        type: 'line',
-        x0: nowUTC,
-        x1: nowUTC,
-        y0: 0,
-        y1: 1,
-        yref: 'paper',
-        line: {
-            color: 'yellow',
-            width: 2,
-            dash: 'dot'
-        }
-    });
-    
+        ]
+    };
+
+    // Render the plot
     Plotly.newPlot(forecasts_div, traces, layout);
+
+    // Add filter button
+    const filterButton = `
+        <div class="filter-button" style="display: flex; justify-content: center; margin-bottom: 10px;">
+            <button class="btn btn-outline-light filter-btn" data-filter="5D" style="margin: 0 5px;">5D</button>
+        </div>
+    `;
+    $(`#${forecasts_div}`).before(filterButton);
+
+    // Add filter functionality
+    $('.filter-btn').on('click', function () {
+        const filter = $(this).data('filter');
+        let filteredRange;
+
+        switch (filter) {
+            case '5D':
+                filteredRange = [cleanedData.master_datetime[cleanedData.master_datetime.length - 5], cleanedData.master_datetime[cleanedData.master_datetime.length - 1]];
+                break;
+            default:
+                filteredRange = [cleanedData.master_datetime[0], cleanedData.master_datetime[cleanedData.master_datetime.length - 1]];
+        }
+
+        Plotly.relayout(forecasts_div, {
+            'xaxis.range': filteredRange
+        });
+    });
+
     console.log("Plot rendered at " + forecasts_div);
-    
-    if (button) {
-        $('.plot_additional_features').append('<button type="button" change_to="' + forecasts_div + '" class="btn btn-outline-primary change_plot ' + forecasts_div + '" href="#">' + title + '</button>');
-    }
-    
-    $('.lf-downloads').append('<a class="download_forecasts_data" href="#">| download data </a>');
 }
-
-
 
 function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_div,merge,precomputer_forecasts,historical){
 
@@ -1485,12 +1660,11 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
     const $loadingDiv = $(".loading_div");
     const $forecastsContainer = $(".forecasts_container");
     const $loadingScreen = $('#loading-screen');
-    //alert("version 1.4")
 
     $loadingDiv.fadeIn(10);
     $forecastsContainer.load(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`, function() {
         
-        console.log(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`)
+        console.log(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`);
         $loadingScreen.show();
         
         $(this).fadeOut(10).fadeIn(10);
@@ -1507,7 +1681,6 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
         $('.current_observation_value').html(observation_value);
         $('.current_observation_unit_span').html(current_observation_unit);
         
-
         $forecastsContainer.addClass("noussair_animations zoom_in");
         $loadingDiv.fadeOut(10);
         
@@ -1515,19 +1688,13 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
             "animation": "intro 2s cubic-bezier(0.03, 1.08, 0.56, 1)",
             "animation-delay": "2s"
         });
-        
-        readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker_historical', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
-        //readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker_col', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
 
-        try {
-            // Uncomment if needed
-            //get_plot(location_name, param, current_observation_unit, 'plot_model_', 'plot_resample_', false, precomputed_forecasts, '');
-            //get_plot(location_name, param, current_observation_unit, 'plot_model_historical', 'plot_resample_historical', false, precomputed_forecasts, 'historical');
-            // side_by_side_plots(param, current_observation_unit, 'Historical Comparison', precomputed_forecasts, current_observation_unit);
-        } catch (error) {
-            console.error('An error occurred while running the get_plot function:', error);
+
+        if (obs_src === 'AirNow') {
+            readAirNow(location_name, param, current_observation_unit, 'main_plot_for_airnow', true, 2, 2, 2, false, 2);
+        } else {
+            readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker', true, 2, 2, 2, false, 2);
         }
-        
         
         $loadingScreen.hide();
         clearInterval(intervalId); 
@@ -1555,7 +1722,7 @@ $(document).on("click", ".launch-local-forecasts", function() {
     const current_observation_unit = $(this).attr("current_observation_unit");
     const obs_src = $(this).attr("obs_src");
 
-    openForecastsWindow(["Loading", "Please hold"], location_id, param || 'no2', location_name, observation_value, current_observation_unit, observation_source, precomputed_forecasts);
+    openForecastsWindow(["Loading", "Please hold"], location_id, param || 'no2', location_name, observation_value, current_observation_unit, obs_src, precomputed_forecasts);
 });
 
 $(document).on("click", ".upload-your-data", function() {
