@@ -1,0 +1,6438 @@
+{
+    "location": "Washington DC",
+    "species": "no2",
+    "message": "200",
+    "status": "200",
+    "metrics": {
+        "validation_score": "N/A",
+        "total_observation": 63468,
+        "performance": {
+            "metrics": [
+                {
+                    "name": "r2",
+                    "value": "9.05"
+                },
+                {
+                    "name": "rmse",
+                    "value": "0.71"
+                },
+                {
+                    "name": "mae",
+                    "value": "6.09"
+                }
+            ]
+        },
+        "start_date": "2018-01-01 00:00:00",
+        "end_date": "2025-03-29 11:00:00"
+    },
+    "forecasts": [
+        {
+            "time": "2025-02-24 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 57.882,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 65.50966666666666,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 57.701800000000006,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 33.4305,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 22.57325,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 9.104266666666666,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.315975,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.011366666666666,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.819625,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 12.072000000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-24 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 34.288,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 36.82299999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 37.083,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 37.839,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 40.63575,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 22.79925,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 22.414,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 26.647,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 28.428,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 15.847,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-25 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 51.153,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 56.448,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 42.80275,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 21.98725,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 16.21625,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 14.260250000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.361550000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.386500000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 9.462466666666666,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-26 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 57.2295,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 49.14175,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 53.29,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 36.95683333333333,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 55.45700000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 37.04075,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 30.172666666666668,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 47.78016666666667,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 61.1942,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 55.167500000000004,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-27 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 13.744,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 14.154333333333334,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 12.84802,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.292549999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.219566666666666,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.46995,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.0736,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.365375,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 10.444,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-02-28 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 21.7015,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 15.691,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 15.681999999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 11.76,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 5.23525,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.708833333333334,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.1849,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.44115,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.110933333333333,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.516025,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 11.922899999999998,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-01 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 11.96025,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.9481,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.989099999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.66152,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.012675,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.6258799999999995,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.2577799999999995,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.2509500000000005,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.168199999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 10.061475,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 13.364,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-02 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 29.901999999999997,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 36.01533333333334,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 29.653399999999998,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 21.1978,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 13.729800000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 12.60475,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 14.962,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 16.254,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 18.659000000000002,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 21.11475,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 21.3965,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-03 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 25.743000000000002,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 18.336750000000002,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 19.755000000000003,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 15.4886,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 14.0362,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 9.704699999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.270333333333333,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.670959999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.304925,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.75415,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 9.982933333333333,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-04 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.6972,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.032300000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 9.067466666666666,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 11.5297,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 10.5173,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 14.1878,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 20.8644,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 18.936833333333333,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 16.07275,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 11.9224,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 10.1719,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-05 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 10.441,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 15.158000000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 11.8805,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 5.1897,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.6931,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.3872,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.434571428571429,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.636357142857142,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 10.131350000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 9.68915,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-06 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 24.488,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 29.634999999999998,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 28.230666666666668,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 23.160800000000002,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 17.039,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 12.321,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.91174,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.18874,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.8231399999999995,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.3529,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 13.030999999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 12.105500000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-07 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 21.843,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 16.151,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 20.34425,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 9.161525000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.698228571428571,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 5.807833333333334,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 5.016933333333333,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.024500000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.87354,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 5.67115,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.386075,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 10.155666666666667,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-08 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 30.955000000000002,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 35.33025,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 24.676666666666666,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 18.8656,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 11.06356,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.330325,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 3.8738,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 2.86296,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.543175,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.50076,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.32435,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 9.456299999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-09 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 43.897999999999996,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 41.95775,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 34.52633333333333,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 37.041399999999996,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 35.19075,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 40.344,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 29.3756,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 17.5814,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.072025,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 10.302859999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 10.933,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-10 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 45.558,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 60.26,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 64.521,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 56.1592,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 40.012,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 12.5778,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 9.530999999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.106425,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.312666666666666,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.8862000000000005,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-11 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 29.4416,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 21.0984,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 12.880199999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 11.07,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 10.962250000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 11.325999999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 10.352075,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 11.36505,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 13.169333333333334,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-12 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 25.743,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 29.404,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 21.491500000000002,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 22.399333333333335,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 21.912000000000003,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 18.7495,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 18.211000000000002,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 15.214500000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 21.35325,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 24.903333333333336,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-13 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 29.564999999999998,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 32.85733333333334,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 26.515,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 32.193000000000005,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 20.781,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 13.694999999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 13.258,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 13.520333333333333,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-14 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 17.505,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 17.044249999999998,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 15.0906,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 15.682499999999997,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 17.074,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.0282,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.205066666666666,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 12.62734,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.603400000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 10.492,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-15 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.5996999999999995,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.22692,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.50168,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.930499999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.810566666666666,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.6754999999999995,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 3.47558,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 3.9211200000000006,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 3.0369666666666664,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 2.7367833333333333,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 2.40102,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 2.7751,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-16 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 10.677999999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 16.734166666666667,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 11.31675,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 9.22442,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.68314,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.3662,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 5.34762,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 5.3862,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 5.77692,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 5.49912,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 9.14482,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 14.229999999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-17 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 27.127999999999997,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 26.8722,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 20.61825,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 12.991249999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 13.687000000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 12.933600000000002,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 10.489675,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 12.5228,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 13.3148,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 15.974499999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 21.7885,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 25.276,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-18 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 32.101,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 43.232600000000005,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 45.17875,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 39.7248,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 32.14375,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 10.677859999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.728899999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.44268,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.337979999999999,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 12.27425,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 11.14675,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 11.622,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-19 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 54.128,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 37.844500000000004,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 25.676,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 20.880666666666666,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 16.1068,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 16.656000000000002,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.7614,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.312125,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.515000000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.88214,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.789,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 20.9465,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-20 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 11.227,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 11.115825,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.448475,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.4995,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.5381,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.12506,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.0056,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.02204,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.73704,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.957525,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 9.1609,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 13.58,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-21 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 23.652500000000003,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 21.71775,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 21.440142857142856,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 24.443166666666666,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 15.88092,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.39804,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.044266666666666,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.54358,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.39215,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.52288,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 4.935975,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.0564,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-22 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 16.116,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 12:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 16.216250000000002,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 13:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 13.093250000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 14:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 10.62486,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 15:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.541500000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 16:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 8.93786,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 17:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 9.182080000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 18:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.4613,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 19:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.1690249999999995,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 20:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 5.5367750000000004,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 21:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 7.270200000000001,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 22:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 6.9878,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-23 23:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-24 00:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-24 01:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-24 02:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-24 03:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-24 04:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-24 05:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-24 06:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-24 07:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-24 08:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-24 09:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-24 10:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": NaN,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-24 11:00:00",
+            "no2": NaN,
+            "corrected": NaN,
+            "pandora": 30.992,
+            "o3": NaN,
+            "pm25": NaN
+        },
+        {
+            "time": "2025-03-24 12:00:00",
+            "no2": 13.1694877225641,
+            "corrected": 17.586585998535156,
+            "pandora": 32.36116666666667,
+            "o3": 31.723175197839737,
+            "pm25": 25.22612953186035
+        },
+        {
+            "time": "2025-03-24 13:00:00",
+            "no2": 15.774279660263346,
+            "corrected": 19.109899520874023,
+            "pandora": 28.288999999999998,
+            "o3": 28.638169169425964,
+            "pm25": 30.75827407836914
+        },
+        {
+            "time": "2025-03-24 14:00:00",
+            "no2": 14.493711120167063,
+            "corrected": 39.21049499511719,
+            "pandora": 31.075200000000002,
+            "o3": 29.86053004860878,
+            "pm25": 35.412540435791016
+        },
+        {
+            "time": "2025-03-24 15:00:00",
+            "no2": 10.419174856224345,
+            "corrected": 34.87434387207031,
+            "pandora": 31.042666666666666,
+            "o3": 35.797711461782455,
+            "pm25": 37.911277770996094
+        },
+        {
+            "time": "2025-03-24 16:00:00",
+            "no2": 6.446502442969404,
+            "corrected": 22.15690040588379,
+            "pandora": 27.198999999999998,
+            "o3": 44.17961463332176,
+            "pm25": 37.035423278808594
+        },
+        {
+            "time": "2025-03-24 17:00:00",
+            "no2": 4.401958353383861,
+            "corrected": 14.486126899719238,
+            "pandora": 27.5192,
+            "o3": 48.836227506399155,
+            "pm25": 33.034637451171875
+        },
+        {
+            "time": "2025-03-24 18:00:00",
+            "no2": 3.0668203532258076,
+            "corrected": 12.589162826538086,
+            "pandora": 28.729142857142854,
+            "o3": 51.979441195726395,
+            "pm25": 26.467369079589844
+        },
+        {
+            "time": "2025-03-24 19:00:00",
+            "no2": 2.8485418468449097,
+            "corrected": 8.122010231018066,
+            "pandora": 22.746499999999997,
+            "o3": 53.60925570130348,
+            "pm25": 20.243579864501953
+        },
+        {
+            "time": "2025-03-24 20:00:00",
+            "no2": 3.2341678224412362,
+            "corrected": 8.853141784667969,
+            "pandora": NaN,
+            "o3": 53.20180207490921,
+            "pm25": 15.350616455078125
+        },
+        {
+            "time": "2025-03-24 21:00:00",
+            "no2": 6.868508872770462,
+            "corrected": 11.728487014770508,
+            "pandora": 29.53375,
+            "o3": 48.71981218457222,
+            "pm25": 11.739631652832031
+        },
+        {
+            "time": "2025-03-24 22:00:00",
+            "no2": 17.78244573813481,
+            "corrected": 15.575777053833008,
+            "pandora": 42.56825,
+            "o3": 36.903657019138336,
+            "pm25": 11.490622520446777
+        },
+        {
+            "time": "2025-03-24 23:00:00",
+            "no2": 25.669582015552805,
+            "corrected": 17.61083221435547,
+            "pandora": NaN,
+            "o3": 27.561327442526817,
+            "pm25": 11.915578842163086
+        },
+        {
+            "time": "2025-03-25 00:00:00",
+            "no2": 22.32264328938527,
+            "corrected": 12.690204620361328,
+            "pandora": NaN,
+            "o3": 29.62769940495491,
+            "pm25": 13.321435928344727
+        },
+        {
+            "time": "2025-03-25 01:00:00",
+            "no2": 18.16079553407235,
+            "corrected": 14.225313186645508,
+            "pandora": NaN,
+            "o3": 32.94553607702255,
+            "pm25": 16.371416091918945
+        },
+        {
+            "time": "2025-03-25 02:00:00",
+            "no2": 15.599658453879783,
+            "corrected": 14.250476837158203,
+            "pandora": NaN,
+            "o3": 35.332050174474716,
+            "pm25": 16.87179946899414
+        },
+        {
+            "time": "2025-03-25 03:00:00",
+            "no2": 15.599658453879783,
+            "corrected": 18.251018524169922,
+            "pandora": NaN,
+            "o3": 35.27384606627493,
+            "pm25": 18.09022331237793
+        },
+        {
+            "time": "2025-03-25 04:00:00",
+            "no2": 17.69513424676461,
+            "corrected": 24.15314483642578,
+            "pandora": NaN,
+            "o3": 33.06195139884949,
+            "pm25": 19.934757232666016
+        },
+        {
+            "time": "2025-03-25 05:00:00",
+            "no2": 19.208533430514763,
+            "corrected": 25.05759048461914,
+            "pandora": NaN,
+            "o3": 31.082890927791595,
+            "pm25": 21.275531768798828
+        },
+        {
+            "time": "2025-03-25 06:00:00",
+            "no2": 18.684664482293556,
+            "corrected": 25.843717575073242,
+            "pandora": NaN,
+            "o3": 30.442606657743454,
+            "pm25": 21.928407669067383
+        },
+        {
+            "time": "2025-03-25 07:00:00",
+            "no2": 17.404095942197273,
+            "corrected": 30.156696319580078,
+            "pandora": NaN,
+            "o3": 30.09336069226265,
+            "pm25": 22.304489135742188
+        },
+        {
+            "time": "2025-03-25 08:00:00",
+            "no2": 15.628762284336517,
+            "corrected": 33.29104232788086,
+            "pandora": NaN,
+            "o3": 30.151568353176117,
+            "pm25": 22.111858367919922
+        },
+        {
+            "time": "2025-03-25 09:00:00",
+            "no2": 13.76611713510556,
+            "corrected": 30.291837692260742,
+            "pandora": NaN,
+            "o3": 31.141098588705063,
+            "pm25": 21.452787399291992
+        },
+        {
+            "time": "2025-03-25 10:00:00",
+            "no2": 13.111280949829052,
+            "corrected": 30.33051109313965,
+            "pandora": NaN,
+            "o3": 31.723175197839737,
+            "pm25": 20.45977020263672
+        },
+        {
+            "time": "2025-03-25 11:00:00",
+            "no2": 13.780669050333927,
+            "corrected": 30.0054874420166,
+            "pandora": NaN,
+            "o3": 31.66496753692627,
+            "pm25": 20.239341735839844
+        },
+        {
+            "time": "2025-03-25 12:00:00",
+            "no2": 14.741095455406139,
+            "corrected": 34.00065231323242,
+            "pandora": NaN,
+            "o3": 30.55902197957039,
+            "pm25": 21.67273712158203
+        },
+        {
+            "time": "2025-03-25 13:00:00",
+            "no2": 5.718907569729481,
+            "corrected": 15.804014205932617,
+            "pandora": NaN,
+            "o3": 40.33790901303291,
+            "pm25": 13.09814167022705
+        },
+        {
+            "time": "2025-03-25 14:00:00",
+            "no2": 3.6525349411675734,
+            "corrected": 12.438087463378906,
+            "pandora": NaN,
+            "o3": 43.015461415052414,
+            "pm25": 10.492056846618652
+        },
+        {
+            "time": "2025-03-25 15:00:00",
+            "no2": 3.015887983792709,
+            "corrected": 9.900351524353027,
+            "pandora": NaN,
+            "o3": 44.41244527697563,
+            "pm25": 9.632036209106445
+        },
+        {
+            "time": "2025-03-25 16:00:00",
+            "no2": 2.6921074258723365,
+            "corrected": 10.662660598754883,
+            "pandora": NaN,
+            "o3": 45.925844460725784,
+            "pm25": 8.07245922088623
+        },
+        {
+            "time": "2025-03-25 17:00:00",
+            "no2": 2.5393118718852747,
+            "corrected": 9.696685791015625,
+            "pandora": NaN,
+            "o3": 47.38103598356247,
+            "pm25": 6.349064350128174
+        },
+        {
+            "time": "2025-03-25 18:00:00",
+            "no2": 2.4956559041555693,
+            "corrected": 7.035506725311279,
+            "pandora": NaN,
+            "o3": 48.89443516731262,
+            "pm25": 5.767043113708496
+        },
+        {
+            "time": "2025-03-25 19:00:00",
+            "no2": 2.9394893186207582,
+            "corrected": 7.792267322540283,
+            "pandora": NaN,
+            "o3": 49.24368113279343,
+            "pm25": 6.117674350738525
+        },
+        {
+            "time": "2025-03-25 20:00:00",
+            "no2": 3.856259755963265,
+            "corrected": 10.180063247680664,
+            "pandora": NaN,
+            "o3": 48.07952791452408,
+            "pm25": 6.786799430847168
+        },
+        {
+            "time": "2025-03-25 21:00:00",
+            "no2": 5.84259618463534,
+            "corrected": 15.044676780700684,
+            "pandora": NaN,
+            "o3": 45.227352529764175,
+            "pm25": 9.58337688446045
+        },
+        {
+            "time": "2025-03-25 22:00:00",
+            "no2": 11.175872671742582,
+            "corrected": 17.30304718017578,
+            "pandora": NaN,
+            "o3": 38.76630216836929,
+            "pm25": 14.327033996582031
+        },
+        {
+            "time": "2025-03-25 23:00:00",
+            "no2": 25.6113725782825,
+            "corrected": 19.981609344482422,
+            "pandora": NaN,
+            "o3": 23.079337552189827,
+            "pm25": 19.298566818237305
+        },
+        {
+            "time": "2025-03-26 00:00:00",
+            "no2": 37.42752952007322,
+            "corrected": 18.72641944885254,
+            "pandora": NaN,
+            "o3": 11.568772606551647,
+            "pm25": 24.966691970825195
+        },
+        {
+            "time": "2025-03-26 01:00:00",
+            "no2": 36.205168640890406,
+            "corrected": 25.04185676574707,
+            "pandora": NaN,
+            "o3": 12.965756468474865,
+            "pm25": 26.40471076965332
+        },
+        {
+            "time": "2025-03-26 02:00:00",
+            "no2": 28.434445908942507,
+            "corrected": 24.175344467163086,
+            "pandora": NaN,
+            "o3": 17.345882952213287,
+            "pm25": 23.03130340576172
+        },
+        {
+            "time": "2025-03-26 03:00:00",
+            "no2": 22.613679817595767,
+            "corrected": 26.741254806518555,
+            "pandora": NaN,
+            "o3": 20.227162167429924,
+            "pm25": 23.248258590698242
+        },
+        {
+            "time": "2025-03-26 04:00:00",
+            "no2": 23.51590033811135,
+            "corrected": 31.37687110900879,
+            "pandora": NaN,
+            "o3": 18.2189978659153,
+            "pm25": 30.592058181762695
+        },
+        {
+            "time": "2025-03-26 05:00:00",
+            "no2": 24.971091860948036,
+            "corrected": 36.07101821899414,
+            "pandora": NaN,
+            "o3": 16.298237426326523,
+            "pm25": 37.53141784667969
+        },
+        {
+            "time": "2025-03-26 06:00:00",
+            "no2": 25.1457130673316,
+            "corrected": 35.83126449584961,
+            "pandora": NaN,
+            "o3": 15.745261094934904,
+            "pm25": 41.778621673583984
+        },
+        {
+            "time": "2025-03-26 07:00:00",
+            "no2": 24.185286662259387,
+            "corrected": 37.36590576171875,
+            "pandora": NaN,
+            "o3": 15.745845516335066,
+            "pm25": 44.649330139160156
+        },
+        {
+            "time": "2025-03-26 08:00:00",
+            "no2": 22.992031389890144,
+            "corrected": 43.05501937866211,
+            "pandora": NaN,
+            "o3": 16.443715722402885,
+            "pm25": 46.0830078125
+        },
+        {
+            "time": "2025-03-26 09:00:00",
+            "no2": 22.49726449576883,
+            "corrected": 40.233646392822266,
+            "pandora": NaN,
+            "o3": 17.260816775888088,
+            "pm25": 46.01416015625
+        },
+        {
+            "time": "2025-03-26 10:00:00",
+            "no2": 23.19575642673044,
+            "corrected": 44.927764892578125,
+            "pandora": NaN,
+            "o3": 16.82225736487908,
+            "pm25": 45.512245178222656
+        },
+        {
+            "time": "2025-03-26 11:00:00",
+            "no2": 21.944289940734052,
+            "corrected": 47.75339889526367,
+            "pandora": NaN,
+            "o3": 16.99664586851668,
+            "pm25": 46.76874542236328
+        },
+        {
+            "time": "2025-03-26 12:00:00",
+            "no2": 16.880223441262387,
+            "corrected": 38.2290153503418,
+            "pandora": NaN,
+            "o3": 22.060703486204147,
+            "pm25": 42.8950309753418
+        },
+        {
+            "time": "2025-03-26 13:00:00",
+            "no2": 6.446499778434145,
+            "corrected": 22.691715240478516,
+            "pandora": NaN,
+            "o3": 39.115558791991134,
+            "pm25": 15.147686958312988
+        },
+        {
+            "time": "2025-03-26 14:00:00",
+            "no2": 4.416507604076969,
+            "corrected": 14.84085750579834,
+            "pandora": NaN,
+            "o3": 42.20055416226387,
+            "pm25": 11.603378295898438
+        },
+        {
+            "time": "2025-03-26 15:00:00",
+            "no2": 3.470632892188519,
+            "corrected": 12.92083740234375,
+            "pandora": NaN,
+            "o3": 43.71395334601402,
+            "pm25": 8.302847862243652
+        },
+        {
+            "time": "2025-03-26 16:00:00",
+            "no2": 2.92129809231767,
+            "corrected": 9.564373016357422,
+            "pandora": NaN,
+            "o3": 45.05272954702377,
+            "pm25": 6.920526504516602
+        },
+        {
+            "time": "2025-03-26 17:00:00",
+            "no2": 2.7357611731559928,
+            "corrected": 9.47273063659668,
+            "pandora": NaN,
+            "o3": 46.10046744346619,
+            "pm25": 6.169918537139893
+        },
+        {
+            "time": "2025-03-26 18:00:00",
+            "no2": 2.7357611731559928,
+            "corrected": 9.479015350341797,
+            "pandora": NaN,
+            "o3": 46.91537469625473,
+            "pm25": 5.813834190368652
+        },
+        {
+            "time": "2025-03-26 19:00:00",
+            "no2": 2.935850229590642,
+            "corrected": 8.318513870239258,
+            "pandora": NaN,
+            "o3": 47.43924364447594,
+            "pm25": 5.839060306549072
+        },
+        {
+            "time": "2025-03-26 20:00:00",
+            "no2": 3.4851850294614906,
+            "corrected": 9.478355407714844,
+            "pandora": NaN,
+            "o3": 47.322828322649,
+            "pm25": 6.353144645690918
+        },
+        {
+            "time": "2025-03-26 21:00:00",
+            "no2": 4.860341018542158,
+            "corrected": 22.233488082885742,
+            "pandora": NaN,
+            "o3": 46.04225978255272,
+            "pm25": 7.4262166023254395
+        },
+        {
+            "time": "2025-03-26 22:00:00",
+            "no2": 15.104889783401632,
+            "corrected": 17.029098510742188,
+            "pandora": NaN,
+            "o3": 35.50667315721512,
+            "pm25": 12.637480735778809
+        },
+        {
+            "time": "2025-03-26 23:00:00",
+            "no2": 32.13062882423401,
+            "corrected": 17.264116287231445,
+            "pandora": NaN,
+            "o3": 18.044374883174896,
+            "pm25": 19.090171813964844
+        },
+        {
+            "time": "2025-03-27 00:00:00",
+            "no2": 39.93045538663864,
+            "corrected": 22.822416305541992,
+            "pandora": NaN,
+            "o3": 11.612428352236748,
+            "pm25": 24.780149459838867
+        },
+        {
+            "time": "2025-03-27 01:00:00",
+            "no2": 41.32743924856186,
+            "corrected": 24.990978240966797,
+            "pandora": NaN,
+            "o3": 10.972144082188606,
+            "pm25": 30.06471824645996
+        },
+        {
+            "time": "2025-03-27 02:00:00",
+            "no2": 39.75583595661192,
+            "corrected": 27.129840850830078,
+            "pandora": NaN,
+            "o3": 11.539669664273333,
+            "pm25": 32.847320556640625
+        },
+        {
+            "time": "2025-03-27 03:00:00",
+            "no2": 35.91413033632307,
+            "corrected": 26.633989334106445,
+            "pandora": NaN,
+            "o3": 11.801603250205517,
+            "pm25": 32.03524398803711
+        },
+        {
+            "time": "2025-03-27 04:00:00",
+            "no2": 28.37623824802904,
+            "corrected": 26.33003044128418,
+            "pandora": NaN,
+            "o3": 16.065314412117004,
+            "pm25": 29.626962661743164
+        },
+        {
+            "time": "2025-03-27 05:00:00",
+            "no2": 11.292289769926356,
+            "corrected": 23.870159149169922,
+            "pandora": NaN,
+            "o3": 32.130667904084476,
+            "pm25": 22.69135856628418
+        },
+        {
+            "time": "2025-03-27 06:00:00",
+            "no2": 10.81207567921183,
+            "corrected": 23.1058292388916,
+            "pandora": NaN,
+            "o3": 32.421727524933885,
+            "pm25": 22.34950828552246
+        },
+        {
+            "time": "2025-03-27 07:00:00",
+            "no2": 12.805688065498089,
+            "corrected": 18.75885581970215,
+            "pandora": NaN,
+            "o3": 29.16204522307453,
+            "pm25": 24.409900665283203
+        },
+        {
+            "time": "2025-03-27 08:00:00",
+            "no2": 13.227693607120727,
+            "corrected": 19.681032180786133,
+            "pandora": NaN,
+            "o3": 28.232689075480266,
+            "pm25": 24.68910026550293
+        },
+        {
+            "time": "2025-03-27 09:00:00",
+            "no2": 12.980310160060071,
+            "corrected": 22.869956970214844,
+            "pandora": NaN,
+            "o3": 27.940240343582445,
+            "pm25": 23.96573257446289
+        },
+        {
+            "time": "2025-03-27 10:00:00",
+            "no2": 13.242244634170675,
+            "corrected": 24.33542251586914,
+            "pandora": NaN,
+            "o3": 26.426384636124567,
+            "pm25": 23.773841857910156
+        },
+        {
+            "time": "2025-03-27 11:00:00",
+            "no2": 12.951206329603338,
+            "corrected": 25.28200912475586,
+            "pandora": NaN,
+            "o3": 25.87340652837611,
+            "pm25": 23.326128005981445
+        },
+        {
+            "time": "2025-03-27 12:00:00",
+            "no2": 7.3996506699813835,
+            "corrected": 19.20079231262207,
+            "pandora": NaN,
+            "o3": 32.247339021296284,
+            "pm25": 16.57046890258789
+        },
+        {
+            "time": "2025-03-27 13:00:00",
+            "no2": 4.7002703951193325,
+            "corrected": 16.381210327148438,
+            "pandora": NaN,
+            "o3": 37.13653740078371,
+            "pm25": 10.773001670837402
+        },
+        {
+            "time": "2025-03-27 14:00:00",
+            "no2": 4.285540367021667,
+            "corrected": 15.195674896240234,
+            "pandora": NaN,
+            "o3": 38.475263863801956,
+            "pm25": 9.97637939453125
+        },
+        {
+            "time": "2025-03-27 15:00:00",
+            "no2": 3.9799501472259635,
+            "corrected": 13.5104398727417,
+            "pandora": NaN,
+            "o3": 39.406586438417435,
+            "pm25": 9.211965560913086
+        },
+        {
+            "time": "2025-03-27 16:00:00",
+            "no2": 3.57977270049048,
+            "corrected": 11.111357688903809,
+            "pandora": NaN,
+            "o3": 40.745362639427185,
+            "pm25": 7.5554938316345215
+        },
+        {
+            "time": "2025-03-27 17:00:00",
+            "no2": 3.1759570529033,
+            "corrected": 10.545825004577637,
+            "pandora": NaN,
+            "o3": 42.84083843231201,
+            "pm25": 6.338693618774414
+        },
+        {
+            "time": "2025-03-27 18:00:00",
+            "no2": 2.895832684757238,
+            "corrected": 11.096471786499023,
+            "pandora": NaN,
+            "o3": 44.93631422519684,
+            "pm25": 5.591728687286377
+        },
+        {
+            "time": "2025-03-27 19:00:00",
+            "no2": 2.910384599985605,
+            "corrected": 12.54244613647461,
+            "pandora": NaN,
+            "o3": 46.333298087120056,
+            "pm25": 5.3338470458984375
+        },
+        {
+            "time": "2025-03-27 20:00:00",
+            "no2": 3.3069242899586015,
+            "corrected": 14.283493041992188,
+            "pandora": NaN,
+            "o3": 46.85716703534126,
+            "pm25": 5.54067325592041
+        },
+        {
+            "time": "2025-03-27 21:00:00",
+            "no2": 4.620234417274105,
+            "corrected": 14.739324569702148,
+            "pandora": NaN,
+            "o3": 45.693013817071915,
+            "pm25": 5.945103645324707
+        },
+        {
+            "time": "2025-03-27 22:00:00",
+            "no2": 14.42094887948997,
+            "corrected": 17.35207748413086,
+            "pandora": NaN,
+            "o3": 35.68129613995552,
+            "pm25": 11.381518363952637
+        },
+        {
+            "time": "2025-03-27 23:00:00",
+            "no2": 30.035153031349182,
+            "corrected": 25.709211349487305,
+            "pandora": NaN,
+            "o3": 19.528670236468315,
+            "pm25": 20.535140991210938
+        },
+        {
+            "time": "2025-03-28 00:00:00",
+            "no2": 36.67082637548447,
+            "corrected": 26.941181182861328,
+            "pandora": NaN,
+            "o3": 13.31500243395567,
+            "pm25": 27.9034481048584
+        },
+        {
+            "time": "2025-03-28 01:00:00",
+            "no2": 37.66036016372709,
+            "corrected": 28.11975860595703,
+            "pandora": NaN,
+            "o3": 12.034433893859386,
+            "pm25": 34.717403411865234
+        },
+        {
+            "time": "2025-03-28 02:00:00",
+            "no2": 38.06781379012136,
+            "corrected": 31.930566787719727,
+            "pandora": NaN,
+            "o3": 10.142684914171696,
+            "pm25": 41.89601135253906
+        },
+        {
+            "time": "2025-03-28 03:00:00",
+            "no2": 39.63942063478498,
+            "corrected": 37.44151306152344,
+            "pandora": NaN,
+            "o3": 7.1523231781611685,
+            "pm25": 50.336246490478516
+        },
+        {
+            "time": "2025-03-28 04:00:00",
+            "no2": 42.258765375891016,
+            "corrected": 35.434051513671875,
+            "pandora": NaN,
+            "o3": 3.4160740902677844,
+            "pm25": 60.069583892822266
+        },
+        {
+            "time": "2025-03-28 05:00:00",
+            "no2": 43.5393339159873,
+            "corrected": 39.70454788208008,
+            "pandora": NaN,
+            "o3": 1.1641549946261875,
+            "pm25": 68.82750701904297
+        },
+        {
+            "time": "2025-03-28 06:00:00",
+            "no2": 42.02593473223715,
+            "corrected": 37.9179573059082,
+            "pandora": NaN,
+            "o3": 1.115052494782276,
+            "pm25": 73.43498992919922
+        },
+        {
+            "time": "2025-03-28 07:00:00",
+            "no2": 40.279704904833125,
+            "corrected": 47.690250396728516,
+            "pandora": NaN,
+            "o3": 1.3169628720888227,
+            "pm25": 74.43689727783203
+        },
+        {
+            "time": "2025-03-28 08:00:00",
+            "no2": 38.940928703823374,
+            "corrected": 43.555015563964844,
+            "pandora": NaN,
+            "o3": 1.6280375936261748,
+            "pm25": 72.6971664428711
+        },
+        {
+            "time": "2025-03-28 09:00:00",
+            "no2": 37.71856782464056,
+            "corrected": 44.48164367675781,
+            "pandora": NaN,
+            "o3": 2.3828801154479606,
+            "pm25": 67.70974731445312
+        },
+        {
+            "time": "2025-03-28 10:00:00",
+            "no2": 35.44846904901533,
+            "corrected": 47.39835739135742,
+            "pandora": NaN,
+            "o3": 3.399518444524574,
+            "pm25": 62.098297119140625
+        },
+        {
+            "time": "2025-03-28 11:00:00",
+            "no2": 32.421670681515025,
+            "corrected": 44.53538131713867,
+            "pandora": NaN,
+            "o3": 5.3710187408739785,
+            "pm25": 61.73488235473633
+        },
+        {
+            "time": "2025-03-28 12:00:00",
+            "no2": 30.675440854111002,
+            "corrected": 49.34648132324219,
+            "pandora": NaN,
+            "o3": 8.135014439858423,
+            "pm25": 66.11222076416016
+        },
+        {
+            "time": "2025-03-28 13:00:00",
+            "no2": 33.23657793430357,
+            "corrected": 60.47513961791992,
+            "pandora": NaN,
+            "o3": 6.395598273201131,
+            "pm25": 75.3639907836914
+        },
+        {
+            "time": "2025-03-28 14:00:00",
+            "no2": 31.257517463245676,
+            "corrected": 74.96366119384766,
+            "pandora": NaN,
+            "o3": 9.938967870937176,
+            "pm25": 75.23906707763672
+        },
+        {
+            "time": "2025-03-28 15:00:00",
+            "no2": 13.154933142800473,
+            "corrected": 32.232582092285156,
+            "pandora": NaN,
+            "o3": 33.993273973464966,
+            "pm25": 20.769975662231445
+        },
+        {
+            "time": "2025-03-28 16:00:00",
+            "no2": 9.022188329765868,
+            "corrected": 23.221397399902344,
+            "pandora": NaN,
+            "o3": 40.33790901303291,
+            "pm25": 16.646169662475586
+        },
+        {
+            "time": "2025-03-28 17:00:00",
+            "no2": 7.232302756676745,
+            "corrected": 21.133342742919922,
+            "pandora": NaN,
+            "o3": 43.888576328754425,
+            "pm25": 14.100739479064941
+        },
+        {
+            "time": "2025-03-28 18:00:00",
+            "no2": 5.5151767597294565,
+            "corrected": 16.11896514892578,
+            "pandora": NaN,
+            "o3": 47.730281949043274,
+            "pm25": 14.052291870117188
+        },
+        {
+            "time": "2025-03-28 19:00:00",
+            "no2": 4.99130781150825,
+            "corrected": 18.998790740966797,
+            "pandora": NaN,
+            "o3": 50.52424967288971,
+            "pm25": 15.721237182617188
+        },
+        {
+            "time": "2025-03-28 20:00:00",
+            "no2": 5.282345671986377,
+            "corrected": 15.257028579711914,
+            "pandora": NaN,
+            "o3": 52.212271839380264,
+            "pm25": 17.640640258789062
+        },
+        {
+            "time": "2025-03-28 21:00:00",
+            "no2": 6.373739314113891,
+            "corrected": 12.888711929321289,
+            "pandora": NaN,
+            "o3": 51.68840289115906,
+            "pm25": 20.045961380004883
+        },
+        {
+            "time": "2025-03-28 22:00:00",
+            "no2": 16.298145055770874,
+            "corrected": 14.674792289733887,
+            "pandora": NaN,
+            "o3": 39.98866304755211,
+            "pm25": 26.76252555847168
+        },
+        {
+            "time": "2025-03-28 23:00:00",
+            "no2": 27.474015951156616,
+            "corrected": 15.82050609588623,
+            "pandora": NaN,
+            "o3": 24.476321414113045,
+            "pm25": 36.23065948486328
+        },
+        {
+            "time": "2025-03-29 00:00:00",
+            "no2": 26.368072170157575,
+            "corrected": 16.58247947692871,
+            "pandora": NaN,
+            "o3": 21.30400389432907,
+            "pm25": 40.8574104309082
+        },
+        {
+            "time": "2025-03-29 01:00:00",
+            "no2": 23.166650819916867,
+            "corrected": 20.71129035949707,
+            "pandora": NaN,
+            "o3": 22.08980731666088,
+            "pm25": 43.73293685913086
+        },
+        {
+            "time": "2025-03-29 02:00:00",
+            "no2": 23.603208276767873,
+            "corrected": 20.26314926147461,
+            "pandora": NaN,
+            "o3": 20.838342607021332,
+            "pm25": 48.35847091674805
+        },
+        {
+            "time": "2025-03-29 03:00:00",
+            "no2": 24.505427020926618,
+            "corrected": 27.407819747924805,
+            "pandora": NaN,
+            "o3": 18.422724679112434,
+            "pm25": 52.60993576049805
+        },
+        {
+            "time": "2025-03-29 04:00:00",
+            "no2": 24.418115529556417,
+            "corrected": 31.510046005249023,
+            "pandora": NaN,
+            "o3": 16.64739102125168,
+            "pm25": 54.23676681518555
+        },
+        {
+            "time": "2025-03-29 05:00:00",
+            "no2": 22.32263973667159,
+            "corrected": 31.591211318969727,
+            "pandora": NaN,
+            "o3": 17.025740817189217,
+            "pm25": 52.54991149902344
+        },
+        {
+            "time": "2025-03-29 06:00:00",
+            "no2": 19.41225669099822,
+            "corrected": 30.622900009155273,
+            "pandora": NaN,
+            "o3": 18.597347661852837,
+            "pm25": 50.23529052734375
+        },
+        {
+            "time": "2025-03-29 07:00:00",
+            "no2": 17.724234524507665,
+            "corrected": 25.68883514404297,
+            "pandora": NaN,
+            "o3": 19.033905118703842,
+            "pm25": 50.172061920166016
+        },
+        {
+            "time": "2025-03-29 08:00:00",
+            "no2": 17.14215791537299,
+            "corrected": 25.96051597595215,
+            "pandora": NaN,
+            "o3": 18.07347871363163,
+            "pm25": 52.11090087890625
+        },
+        {
+            "time": "2025-03-29 09:00:00",
+            "no2": 17.20036557628646,
+            "corrected": 30.00554084777832,
+            "pandora": NaN,
+            "o3": 16.065314412117004,
+            "pm25": 55.73698425292969
+        },
+        {
+            "time": "2025-03-29 10:00:00",
+            "no2": 17.549611541767263,
+            "corrected": 38.43720245361328,
+            "pandora": NaN,
+            "o3": 14.130073999751858,
+            "pm25": 58.23564529418945
+        },
+        {
+            "time": "2025-03-29 11:00:00",
+            "no2": 16.327250662584447,
+            "corrected": 35.713478088378906,
+            "pandora": NaN,
+            "o3": 15.454681090432132,
+            "pm25": 59.424957275390625
+        }
+    ]
+}
