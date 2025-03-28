@@ -401,7 +401,7 @@ function create_map(sites, param) {
 
     const legendItems = [
         { color: '#4C4B63', label: 'NASA PM2.5 Forecast' },
-        { color: '#5386E4', label: 'NASA NASA NO2 Forecast (beta)' },
+        { color: '#5386E4', label: 'NASA NO2 Forecast (beta)' },
         { color: 'white', label: 'Other' }
     ];
 
