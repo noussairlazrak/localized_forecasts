@@ -350,6 +350,8 @@ function create_map(sites, param) {
         });
         map.on('click', 'clustered-point', function(e) {
             var features = map.queryRenderedFeatures(e.point, { layers: ['clustered-point'] });
+            console.log("features");
+            console.log(features);
             var clusterId = features[0].properties.cluster_id;
         
             map.getSource('locations_dst').getClusterExpansionZoom(clusterId, function(err, zoom) {
