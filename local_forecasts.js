@@ -684,7 +684,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
     fetch(fileUrl)
         .then(response => {
             if (!response.ok) throw new Error('Network response was not ok');
-            return response.text(); // Get the response as text
+            return response.text(); 
         })
         .then(text => {
 
@@ -1276,7 +1276,7 @@ function getDates(startDate, stopDate) {
 
 
 function cleanAndSortData(datetime_data, combined_dataset) {
-    // Create an array of objects to pair datetime with other data
+
     const pairedData = datetime_data.map((datetime, index) => {
         const dataPoint = { datetime };
         for (const key in combined_dataset) {
@@ -1512,23 +1512,26 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
     $(`#${forecasts_div}`).before(predictionElement);
 
     // Add filter buttons
-    const filterButtons = `
+       const filterButtons = `
         <div class="filter-buttons" style="display: flex; ">
             <button class="filter-btn" data-filter="1D" style="margin: 0 5px;">1 Day</button>
-            <button class="filter-btn active" data-filter="5D" style="margin: 0 5px;">5 Days</button>
-            <button class="filter-btn" data-filter="ALL" style="margin: 0 5px;">All</button>
+            <button class="filter-btn" data-filter="5D" style="margin: 0 5px;">5 Days</button>
+            <button class="filter-btn" data-filter="1M" style="margin: 0 5px;">1 Month</button>
+            <button class="filter-btn" data-filter="6M" style="margin: 0 5px;">6 Months</button>
+            <button class="filter-btn" data-filter="1Y" style="margin: 0 5px;">1 Year</button>
+            <button class="filter-btn active" data-filter="ALL" style="margin: 0 5px;">All</button>
         </div>
     `;
     $(`#${forecasts_div}`).before(filterButtons);
-
-    // Add filter functionality
+    
     $('.filter-btn').on('click', function () {
         $('.filter-btn').removeClass('active');
         $(this).addClass('active');
-
+    
         const filter = $(this).data('filter');
         let filteredRange;
-
+        let filteredYValues = [];
+    
         switch (filter) {
             case '1D':
                 const oneDayAgo = new Date();
@@ -1538,7 +1541,7 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
                     new Date().toISOString()
                 ];
                 break;
-            
+    
             case '5D':
                 const fiveDaysAgo = new Date();
                 fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
@@ -1547,7 +1550,34 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
                     new Date().toISOString()
                 ];
                 break;
-            
+    
+            case '1M':
+                const oneMonthAgo = new Date();
+                oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+                filteredRange = [
+                    oneMonthAgo.toISOString(),
+                    new Date().toISOString()
+                ];
+                break;
+    
+            case '6M':
+                const sixMonthsAgo = new Date();
+                sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+                filteredRange = [
+                    sixMonthsAgo.toISOString(),
+                    new Date().toISOString()
+                ];
+                break;
+    
+            case '1Y':
+                const oneYearAgo = new Date();
+                oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+                filteredRange = [
+                    oneYearAgo.toISOString(),
+                    new Date().toISOString()
+                ];
+                break;
+    
             case 'ALL':
             default:
                 filteredRange = [
@@ -1555,9 +1585,25 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
                     cleanedData.master_datetime[cleanedData.master_datetime.length - 1]
                 ];
         }
-
+    
+        // Filter the Y values based on the selected time range
+        const startIndex = cleanedData.master_datetime.findIndex(datetime => new Date(datetime) >= new Date(filteredRange[0]));
+        const endIndex = cleanedData.master_datetime.findIndex(datetime => new Date(datetime) > new Date(filteredRange[1]));
+    
+        if (startIndex !== -1 && endIndex !== -1) {
+            filteredYValues = cleanedData.master_predicted.slice(startIndex, endIndex);
+        } else {
+            filteredYValues = cleanedData.master_predicted; // Default to all values if range is invalid
+        }
+    
+        // Calculate the new Y-axis range
+        const yMin = Math.min(...filteredYValues);
+        const yMax = Math.max(...filteredYValues);
+    
+        // Update the plot with the new X and Y ranges
         Plotly.relayout(forecasts_div, {
-            'xaxis.range': filteredRange
+            'xaxis.range': filteredRange,
+            'yaxis.range': [yMin, yMax]
         });
     });
 }
