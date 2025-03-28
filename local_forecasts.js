@@ -226,6 +226,8 @@ function add_marker(map, lat, long, open_aq_id, param, site) {
     new mapboxgl.Marker(el_open_aq_id)
         .setLngLat(site)
         .addTo(map);
+
+    
 }
 
 
@@ -335,14 +337,10 @@ function create_map(sites, param) {
     
     mapVisible = !mapVisible;
     });
-
-        
-      
-   
-        
-  
     
-    map.on('load', () => {
+    
+    map.on('load', async () => {
+    
         map.addSource('locations_dst', {
             type: 'geojson',
             data: 'https://www.noussair.com/get_data.php?type=location2&param=no2',
@@ -376,9 +374,9 @@ function create_map(sites, param) {
                 'circle-color': [
                     'match',
                     ['get', 'observation_source'],
-                    'OpenAQ', '#1da1f2', 
-                    'AirNow', '#f44336',  
-                    'NASA Pandora', '#4caf50',
+                    'OpenAQ', '#01BAEF', 
+                    'AirNow', '#4C4B63',  
+                    'NASA Pandora', '#5386E4',
                     '#9e9e9e'         
                 ],
                 'circle-radius': 5,
@@ -386,9 +384,51 @@ function create_map(sites, param) {
                 'circle-stroke-color': '#ffffff'
             }
         });
-  
         
-          map.addLayer({
+        
+         const legend = document.createElement('div');
+    legend.id = 'map-legend';
+    legend.style.position = 'absolute';
+    legend.style.top = '30px';
+    legend.style.left = '10px';
+    legend.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+    legend.style.padding = '10px';
+    legend.style.borderRadius = '5px';
+    legend.style.fontSize = '12px';
+    legend.style.boxShadow = '0 0 5px rgba(0, 0, 0, 0.3)';
+
+    const legendItems = [
+        { color: '#4C4B63', label: 'NASA PM2.5 Forecast' },
+        { color: '#5386E4', label: 'NASA NASA NO2 Forecast (beta)' },
+        { color: 'white', label: 'Other' }
+    ];
+
+    legendItems.forEach(item => {
+        const legendItem = document.createElement('div');
+        legendItem.style.display = 'flex';
+        legendItem.style.alignItems = 'center';
+        legendItem.style.marginBottom = '5px';
+
+        const colorBox = document.createElement('span');
+        colorBox.style.width = '12px';
+        colorBox.style.height = '12px';
+        colorBox.style.backgroundColor = item.color;
+        colorBox.style.display = 'inline-block';
+        colorBox.style.marginRight = '8px';
+        colorBox.style.border = '1px solid #000';
+
+        const label = document.createElement('span');
+        label.textContent = item.label;
+
+        legendItem.appendChild(colorBox);
+        legendItem.appendChild(label);
+        legend.appendChild(legendItem);
+    });
+
+    document.body.appendChild(legend);
+          
+    
+    map.addLayer({
             id: 'clustered-point',
             type: 'circle',
             source: 'locations_dst',
@@ -473,6 +513,7 @@ function create_map(sites, param) {
         const precomputed_forecasts = e.features[0].properties.precomputed_forecasts ? $.parseJSON(e.features[0].properties.precomputed_forecasts) : [];
         const obs_option = e.features[0].properties.obs_options ? $.parseJSON(e.features[0].properties.obs_options) : [];
         const observation_unit = obs_option?.[0]?.no2?.unit || 'N/A'; 
+        const param = e.features[0].properties.parameter;
         
         
 
@@ -487,8 +528,8 @@ function create_map(sites, param) {
             "Connecting..."
         ];
 
-        openForecastsWindow(messages, location_id, 'o3', location_name, observation_value, observation_unit, observation_source, precomputed_forecasts);
-    
+        openForecastsWindow(["Loading", "Please hold"], location_id, param || 'no2', location_name, observation_value, observation_unit, observation_source, precomputed_forecasts);
+
 
     });
 
@@ -636,8 +677,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
 
     $('.loader').show();
 
-    const paramCode = pollutant_details(param).id;
-    const fileUrl = `https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/ArlingtonTX_o3_output.json`;
+    const fileUrl = `https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Altzomoni.json`;
 
     console.log(fileUrl);
 
@@ -647,82 +687,46 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             return response.text(); // Get the response as text
         })
         .then(text => {
-            // Replace NaN with null in the JSON string
+
             const sanitizedText = text.replace(/NaN/g, "null");
-            return JSON.parse(sanitizedText); // Parse the sanitized JSON
+            return JSON.parse(sanitizedText); 
         })
         .then(data => {
             if (!data || data.status !== "200") throw new Error("No valid data received");
 
             console.log(data);
 
-            const modelHtml = `
-                <div class="container my-5">
-                    <h1>API Baker Model Information</h1>
-                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Total Observations</h5>
-                                    <p class="card-text fs-3 fw-bold">${data.metrics.total_observation}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Last Model Update</h5>
-                                    <p class="card-text fs-3 fw-bold">${data.metrics.latest_training}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Start Date</h5>
-                                    <p class="card-text">${data.metrics.start_date}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">End Date</h5>
-                                    <p class="card-text">${data.metrics.end_date}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            $('.model_data').html(modelHtml);
-
             let masterData = {
                 master_datetime: [],
-                master_observation: [],
+                master_no2: [],
+                master_o3: [],
+                master_pm25: [],
                 master_predicted: [],
-                master_o3: []
+                master_observation: []
             };
 
             if (Array.isArray(data.forecasts) && data.forecasts.length > 0) {
                 data.forecasts.forEach(forecast => {
-                    masterData.master_datetime.push(forecast.time || null);
-                    masterData.master_observation.push(forecast.value || null);
-                    masterData.master_predicted.push(forecast.predicted || null);
-                    masterData.master_o3.push(forecast.o3 || null);
+                    if (forecast.time) {
+                        masterData.master_datetime.push(forecast.time);
+                    }
+                    if (forecast.no2 >= 0) {
+                        masterData.master_no2.push(forecast.no2);
+                    }
+                    if (forecast.o3 >= 0) {
+                        masterData.master_o3.push(forecast.o3);
+                    }
+                    if (forecast.pm25 >= 0) {
+                        masterData.master_pm25.push(forecast.pm25);
+                    }
+                    if (forecast.corrected >= 0) {
+                        masterData.master_predicted.push(forecast.corrected);
+                    }
+                    if (forecast.pandora >= 0) {
+                        masterData.master_observation.push(forecast.pandora);
+                    }
                 });
             }
-
-            $(document).off("click", ".download_forecasts_data").on("click", ".download_forecasts_data", function() {
-                const csvFileName = `${location.replace(/\_/g, '').replace(/\./g, '')}_${param}_${historical}.csv`;
-                let csvContent = "data:text/csv;charset=utf-8," + formatToCSV(masterData);
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", csvFileName);
-                document.body.appendChild(link);
-                link.click();
-            });
 
             const tabsNav = $("#pills-tabContent").prev();
             const tabsContainer = $(".tab-content");
@@ -734,7 +738,11 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             tabsNav.append(tabsList);
 
             const plots = [
-                { id: "main_plot_for_api_baker", title: "Ozone Forecasts", data: masterData }
+                { id: "plot_no2", title: "Nitrogen Dioxide (NO2)", data: masterData, columns: [
+                    { column: "master_predicted", name: "Prediction", color: "red", width: 2 },
+                    { column: "master_observation", name: "Pandora", color: "black", width: 2 },
+                    { column: "master_no2", name: "GEOS CF", color: "grey", width: 3, dash: "dot" }
+                ]}
             ];
 
             plots.forEach((plot, index) => {
@@ -760,22 +768,28 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             });
 
             plots.forEach(plot => {
-                const plotColumns = [
-                    { column: "master_predicted", name: "Predicted", color: "green", width: 3 },
-                    { column: "master_observation", name: "AirNow", color: "blue", width: 3 },
-                    { column: "master_o3", name: "GEOS CF", color: "green", width: 3 },
-                ];
-
-                draw_plot(plot.data, param, unit, plot.id, plot.title, plotColumns);
-
-                window.dispatchEvent(new Event('resize'));
+                draw_plot(
+                    combined_dataset = plot.data,
+                    param = param,
+                    unit = unit,
+                    forecasts_div = plot.id,
+                    plot_columns = plot.columns,
+                    dates_ranges = false,
+                    enableFading = false,
+                    text = `<b>Source:</b> NASA GEOS Composition Forecasting (GEOS-CF) | NASA Pandora | SNWG Bias Corrected Model`
+                );
             });
 
             $('.loader').hide();
         })
         .catch(error => {
             console.error("Error loading data:", error);
-            $('.api_baker_plots').html('Sorry, we are not able to connect with API Baker at this moment. Please check back later...');
+            $('.thewindow').html(`
+                <h3 style="text-align: center; color: red; margin-top: 20px;">Sorry :(</h3>
+                <p style="text-align: justify;">The forecasts for this location have not been updated recently. Please check back soon, or feel free to contact us at noussair.lazrak@nyu.edu</p>
+            `);
+            $('.model_data').html(``);
+
             $('.loader').hide();
         });
 }
@@ -794,7 +808,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
     $('.loader').show();
 
     const paramCode = pollutant_details(param).id;
-    const fileUrl = `https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Guatemala_City.json`;
+    const fileUrl = `https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Buenos_Aires.json`;
 
     console.log(fileUrl);
 
@@ -816,7 +830,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
                             <div class="card shadow-sm">
                                 <div class="card-body">
                                     <h5 class="card-title">Total Observations</h5>
-                                    <p class="card-text fs-3 fw-bold">${data.metrics.total_observation}</p>
+                                    <p class="card-text fs-3 fw-bold">${data.metrics.total_observation || 'N/A'}</p>
                                 </div>
                             </div>
                         </div>
@@ -824,7 +838,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
                             <div class="card shadow-sm">
                                 <div class="card-body">
                                     <h5 class="card-title">Last Model Update</h5>
-                                    <p class="card-text fs-3 fw-bold">${data.metrics.latest_training}</p>
+                                    <p class="card-text fs-3 fw-bold">${data.metrics.latest_training || 'N/A'}</p>
                                 </div>
                             </div>
                         </div>
@@ -832,7 +846,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
                             <div class="card shadow-sm">
                                 <div class="card-body">
                                     <h5 class="card-title">Start Date</h5>
-                                    <p class="card-text">${data.metrics.start_date}</p>
+                                    <p class="card-text">${data.metrics.start_date || 'N/A'}</p>
                                 </div>
                             </div>
                         </div>
@@ -840,10 +854,28 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
                             <div class="card shadow-sm">
                                 <div class="card-body">
                                     <h5 class="card-title">End Date</h5>
-                                    <p class="card-text">${data.metrics.end_date}</p>
+                                    <p class="card-text">${data.metrics.end_date || 'N/A'}</p>
                                 </div>
                             </div>
                         </div>
+                        ${data.metrics.validation_score ? `
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Validation Score</h5>
+                                    <p class="card-text">${data.metrics.validation_score}</p>
+                                </div>
+                            </div>
+                        </div>` : ''}
+                        ${data.metrics.performance?.metrics?.length ? data.metrics.performance.metrics.map(metric => `
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">${metric.name.toUpperCase()}</h5>
+                                    <p class="card-text">${metric.value}</p>
+                                </div>
+                            </div>
+                        </div>`).join('') : ''}
                     </div>
                 </div>
             `;
@@ -912,7 +944,18 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
                     { column: "master_observation", name: "Forecasted Value", color: "blue", width: 3 }
                 ];
 
-                draw_plot(plot.data, param, unit, plot.id, plot.title, plotColumns);
+
+
+                draw_plot(
+                    combined_dataset = plot.data,
+                    param = 'pm2.5',
+                    unit = 'um3g',
+                    forecasts_div = plot.id,
+                    plot_columns = plotColumns,
+                    dates_ranges = false,
+                    enableFading = false,
+                    text = "<b>Sources:</b> NASA Modern-Era Retrospective analysis for Research and Applications (MERRA)| | SNWG Bias CNN Model."
+                );
 
                 window.dispatchEvent(new Event('resize'));
             });
@@ -1204,15 +1247,37 @@ function cleanAndSortData(datetime_data, combined_dataset) {
     return cleanedData;
 }
 
-function draw_plot(combined_dataset, param, unit, forecasts_div, location_name, plot_columns, dates_ranges = false) {
-    // Extract datetime data
+
+function validateData(data, requiredKeys = [], minLength = 1) {
+
+    if (!data || typeof data !== 'object') {
+        console.error("Data is not available or invalid.");
+        return false;
+    }
+
+
+    for (const key of requiredKeys) {
+        if (!data[key] || !Array.isArray(data[key]) || data[key].length < minLength) {
+            console.error(`Data for key "${key}" is missing or insufficient.`);
+            return false;
+        }
+    }
+
+    return true;
+}
+function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, dates_ranges = false, enableFading = false, text = "Forecasts") {
     const datetime_data = combined_dataset["master_datetime"];
-
-    // Clean and sort the data
     const cleanedData = cleanAndSortData(datetime_data, combined_dataset);
+    const maxValues = plot_columns.map(({ column }) => Math.max(...cleanedData[column]));
+    const maxValue = Math.max(...maxValues);
 
-    // Generate traces for the plot
-    const traces = plot_columns.map(({ column, name, color, width }) => {
+    const traces = plot_columns.map(({ column, name, color, width, dash }, index) => {
+        const lineColor = color || 'rgba(7, 23, 16, 0.65)';
+        const rgbaMatch = lineColor.match(/\d+/g);
+        const fadingColor = rgbaMatch
+            ? `rgba(${rgbaMatch[0]}, ${rgbaMatch[1]}, ${rgbaMatch[2]}, 0.6)`
+            : 'rgba(0, 0, 0, 0.6)';
+
         return {
             type: "scatter",
             mode: "lines",
@@ -1220,56 +1285,67 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, location_name, 
             x: cleanedData.master_datetime,
             y: cleanedData[column],
             line: {
-                color: color || 'rgba(142, 142, 142, 0.8)',
-                width: width || 3
+                color: lineColor,
+                width: width || 1,
+                dash: dash || 'solid'
             },
+            fill: enableFading && index === 0 ? 'tozeroy' : 'none',
+            fillcolor: enableFading && index === 0 ? fadingColor : 'none',
             hoverinfo: 'x+y',
             name: name
         };
     });
 
-    // Define the layout for the plot
+     
+     const lastIndex = cleanedData.master_datetime.length - 1;
+     const lastX = cleanedData.master_datetime[lastIndex]; 
+     const lastY = cleanedData.master_observation[lastIndex]; 
+ 
     const layout = {
         title: {
-            text: `<b>${location_name}</b>`,
+            text: text,
             font: {
-                family: 'Roboto, sans-serif',
-                size: 24,
-                color: '#FFFFFF'
+                family: 'Manrope, sans-serif',
+                size: 10,
+                color: '#000000'
             },
-            x: 0.05,
+            x: 0.00,
             xanchor: 'left'
         },
         autosize: true,
         width: 1000,
         height: 500,
-        plot_bgcolor: 'rgb(22, 26, 30)',
-        paper_bgcolor: 'rgb(22, 26, 30)',
+        plot_bgcolor: '#F4F4F4',
+        paper_bgcolor: '#FFFFFF',
         legend: {
             orientation: 'h',
             x: 0.5,
             y: -0.2,
             xanchor: 'center',
             font: {
-                color: '#FFFFFF'
+                color: '#000000'
             }
         },
         font: {
-            family: 'Roboto, sans-serif',
-            color: '#FFFFFF',
+            family: 'Manrope, sans-serif',
+            color: '#000000',
             size: 14
         },
         xaxis: {
             type: 'date',
-            color: '#FFFFFF',
+            color: '#000000',
             rangeslider: { visible: false },
-            range: [cleanedData.master_datetime[0], cleanedData.master_datetime[cleanedData.master_datetime.length - 1]],
-            showgrid: false,
+            range: [
+                cleanedData.master_datetime[cleanedData.master_datetime.length - 120], // Default to 5 days
+                cleanedData.master_datetime[cleanedData.master_datetime.length - 1]
+            ],
+            showgrid: true,
+            gridcolor: '#D3D3D3',
             title: {
                 text: 'Time',
                 font: {
                     size: 16,
-                    color: '#FFFFFF'
+                    color: '#000000'
                 }
             }
         },
@@ -1280,14 +1356,14 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, location_name, 
                 text: unit,
                 font: {
                     size: 16,
-                    color: '#FFFFFF'
+                    color: '#000000'
                 }
             },
-            color: '#FFFFFF',
+            color: '#000000',
             showgrid: true,
-            gridcolor: 'rgba(255, 255, 255, 0.2)'
+            gridcolor: '#D3D3D3'
         },
-        hovermode: 'x unified', // Unified hover mode for better interaction
+        hovermode: 'x unified',
         shapes: [
             {
                 type: 'line',
@@ -1297,44 +1373,138 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, location_name, 
                 y1: 1,
                 yref: 'paper',
                 line: {
-                    color: 'yellow',
+                    color: '#FF0000',
                     width: 2,
                     dash: 'dot'
+                }
+            },
+            {
+                type: 'line',
+                x0: cleanedData.master_datetime[0],
+                x1: cleanedData.master_datetime[cleanedData.master_datetime.length - 1],
+                y0: maxValue,
+                y1: maxValue,
+                line: {
+                    color: 'red',
+                    width: 1,
+                    dash: 'dash'
                 }
             }
         ]
     };
 
-    // Render the plot
     Plotly.newPlot(forecasts_div, traces, layout);
 
-    // Add filter button
-    const filterButton = `
-        <div class="filter-button" style="display: flex; justify-content: center; margin-bottom: 10px;">
-            <button class="btn btn-outline-light filter-btn" data-filter="5D" style="margin: 0 5px;">5D</button>
+    const currentValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 1] || 'N/A';
+    const previousValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 2] || 'N/A';
+    const nextValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 1] || 'N/A'; // Assuming next hour is the last value
+    
+    let percentageChange = 'N/A';
+    if (currentValue !== 'N/A' && previousValue !== 'N/A') {
+        percentageChange = ((currentValue - previousValue) / previousValue) * 100;
+    }
+    
+    // Add previous day's average and change
+    let previousDayAverage = 'N/A';
+    let previousDayChange = 'N/A';
+    if (cleanedData.master_predicted?.length >= 24) {
+        const previousDayValues = cleanedData.master_predicted.slice(-24); // Assuming 24 data points per day
+        previousDayAverage = previousDayValues.reduce((a, b) => a + b, 0) / previousDayValues.length;
+    
+        if (currentValue !== 'N/A') {
+            previousDayChange = ((currentValue - previousDayAverage) / previousDayAverage) * 100;
+        }
+    }
+    
+    // Build the prediction elements conditionally
+    let predictionElement = `<div class="prediction-container">`;
+    
+    if (currentValue !== 'N/A') {
+        predictionElement += `
+            <div class="prediction-box">
+                <h5>Current Prediction</h5>
+                <h2>${currentValue.toFixed(2)}</h2>
+                ${percentageChange !== 'N/A' ? `
+                    <span class="${percentageChange >= 0 ? 'positive' : 'negative'}">
+                        ${percentageChange >= 0 ? '+' : ''}${percentageChange.toFixed(2)}%
+                    </span>` : ''}
+            </div>`;
+    }
+    
+    if (nextValue !== 'N/A') {
+        predictionElement += `
+            <div class="prediction-box">
+                <h5>Next Hour Prediction</h5>
+                <h2>${nextValue.toFixed(2)}</h2>
+            </div>`;
+    }
+    
+    if (previousDayAverage !== 'N/A') {
+        predictionElement += `
+            <div class="prediction-box">
+                <h5>Previous Day Average</h5>
+                <h2>${previousDayAverage.toFixed(2)}</h2>
+                ${previousDayChange !== 'N/A' ? `
+                    <span class="${previousDayChange >= 0 ? 'positive' : 'negative'}">
+                        ${previousDayChange >= 0 ? '+' : ''}${previousDayChange.toFixed(2)}%
+                    </span>` : ''}
+            </div>`;
+    }
+    
+    predictionElement += `</div>`;
+    
+    // Add the prediction element to the DOM
+    $(`#${forecasts_div}`).before(predictionElement);
+
+    // Add filter buttons
+    const filterButtons = `
+        <div class="filter-buttons" style="display: flex; ">
+            <button class="filter-btn" data-filter="1D" style="margin: 0 5px;">1 Day</button>
+            <button class="filter-btn active" data-filter="5D" style="margin: 0 5px;">5 Days</button>
+            <button class="filter-btn" data-filter="ALL" style="margin: 0 5px;">All</button>
         </div>
     `;
-    $(`#${forecasts_div}`).before(filterButton);
+    $(`#${forecasts_div}`).before(filterButtons);
 
     // Add filter functionality
     $('.filter-btn').on('click', function () {
+        $('.filter-btn').removeClass('active');
+        $(this).addClass('active');
+
         const filter = $(this).data('filter');
         let filteredRange;
 
         switch (filter) {
-            case '5D':
-                filteredRange = [cleanedData.master_datetime[cleanedData.master_datetime.length - 5], cleanedData.master_datetime[cleanedData.master_datetime.length - 1]];
+            case '1D':
+                const oneDayAgo = new Date();
+                oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+                filteredRange = [
+                    oneDayAgo.toISOString(),
+                    new Date().toISOString()
+                ];
                 break;
+            
+            case '5D':
+                const fiveDaysAgo = new Date();
+                fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
+                filteredRange = [
+                    fiveDaysAgo.toISOString(),
+                    new Date().toISOString()
+                ];
+                break;
+            
+            case 'ALL':
             default:
-                filteredRange = [cleanedData.master_datetime[0], cleanedData.master_datetime[cleanedData.master_datetime.length - 1]];
+                filteredRange = [
+                    cleanedData.master_datetime[0],
+                    cleanedData.master_datetime[cleanedData.master_datetime.length - 1]
+                ];
         }
 
         Plotly.relayout(forecasts_div, {
             'xaxis.range': filteredRange
         });
     });
-
-    console.log("Plot rendered at " + forecasts_div);
 }
 
 function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_div,merge,precomputer_forecasts,historical){
@@ -1661,6 +1831,10 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
     const $forecastsContainer = $(".forecasts_container");
     const $loadingScreen = $('#loading-screen');
 
+    if (obs_src === 'NASA Pandora') {
+        obs_src = 's3';
+    }
+
     $loadingDiv.fadeIn(10);
     $forecastsContainer.load(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`, function() {
         
@@ -1691,9 +1865,11 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
 
 
         if (obs_src === 'AirNow') {
+            console.log("Calling readAirNow");
             readAirNow(location_name, param, current_observation_unit, 'main_plot_for_airnow', true, 2, 2, 2, false, 2);
         } else {
-            readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker', true, 2, 2, 2, false, 2);
+            console.log("Calling readApiBaker with obs_src:", obs_src);
+            readApiBaker(location_name, 'no2', 'ppbv', 'main_plot_for_api_baker', true, 2, 2, 2, false, 2);
         }
         
         $loadingScreen.hide();
