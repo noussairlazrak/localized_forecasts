@@ -879,12 +879,12 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
 
             const modelHtml = `
                 <div class="container my-5">
-                    <h1>AirNow Model Information</h1>
+                    <h6>Model Information</h6>
                     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                         <div class="col">
                             <div class="card shadow-sm">
                                 <div class="card-body">
-                                    <h5 class="card-title">Total Observations</h5>
+                                    <h5 class="card-title">Total Estimates</h5>
                                     <p class="card-text fs-3 fw-bold">${data.metrics.total_observation || 'N/A'}</p>
                                 </div>
                             </div>
@@ -892,7 +892,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
                         <div class="col">
                             <div class="card shadow-sm">
                                 <div class="card-body">
-                                    <h5 class="card-title">Last Model Update</h5>
+                                    <h5 class="card-title">Last Update</h5>
                                     <p class="card-text fs-3 fw-bold">${data.metrics.latest_training || 'N/A'}</p>
                                 </div>
                             </div>
