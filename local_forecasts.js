@@ -677,7 +677,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
 
     $('.loader').show();
 
-    const fileUrl = `https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Altzomoni.json`;
+    const fileUrl = `precomputed/no2/${location}.json`;
 
     console.log(fileUrl);
 
@@ -695,6 +695,61 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             if (!data || data.status !== "200") throw new Error("No valid data received");
 
             console.log(data);
+
+            console.log(data);
+
+            const modelHtml = `
+                <div class="container my-5">
+                    <h5 class="mb-4">Machine learning model information</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped model_info">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Total Observations</td>
+                                    <td>${data.metrics.total_observation || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                    <td>Last Model Update</td>
+                                    <td>${data.latest_update || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                    <td>Start Date</td>
+                                    <td>${data.metrics.start_date || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                    <td>End Date</td>
+                                    <td>${data.metrics.end_date || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                    <td>R² (R-squared)</td>
+                                    <td>${data.metrics.performance?.metrics?.find(metric => metric.name === 'rmse')?.value || 'N/A'} (Compared to actual Pandora observation)</td>
+                                </tr>
+                                <tr>
+                                    <td>RMSE (Root Mean Squared Error)</td>
+                                    <td>${data.metrics.performance?.metrics?.find(metric => metric.name === 'r2')?.value || 'N/A'}</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>MAE (Mean Absolute Error) </td>
+                                    <td>${data.metrics.performance?.metrics?.find(metric => metric.name === 'mae')?.value || 'N/A'}</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Validation</td>
+                                    <td>Predictions not validated. Interpret with caution.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            $('.model_data').html(modelHtml);
 
             let masterData = {
                 master_datetime: [],
@@ -808,7 +863,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
     $('.loader').show();
 
     const paramCode = pollutant_details(param).id;
-    const fileUrl = `https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/Buenos_Aires.json`;
+    const fileUrl = `precomputed/merra2/${location}.json`;
 
     console.log(fileUrl);
 
