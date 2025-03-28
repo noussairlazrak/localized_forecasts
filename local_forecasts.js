@@ -208,8 +208,6 @@ function add_marker(map, lat, long, open_aq_id, param, site) {
         }
     }
    
-    
-
     station_id.value = open_aq_id;
     parameter.value = param;
 
@@ -224,9 +222,12 @@ function add_marker(map, lat, long, open_aq_id, param, site) {
     el_open_aq_id.setAttributeNode(location_name);
     el_open_aq_id.setAttributeNode(observation_value);
     el_open_aq_id.setAttributeNode(current_observation_unit);
+    el_open_aq_id.setAttributeNode(source);
     new mapboxgl.Marker(el_open_aq_id)
         .setLngLat(site)
         .addTo(map);
+
+    
 }
 
 
@@ -336,14 +337,10 @@ function create_map(sites, param) {
     
     mapVisible = !mapVisible;
     });
-
-        
-      
-   
-        
-  
     
-    map.on('load', () => {
+    
+    map.on('load', async () => {
+    
         map.addSource('locations_dst', {
             type: 'geojson',
             data: 'https://www.noussair.com/get_data.php?type=location2&param=no2',
@@ -353,6 +350,8 @@ function create_map(sites, param) {
         });
         map.on('click', 'clustered-point', function(e) {
             var features = map.queryRenderedFeatures(e.point, { layers: ['clustered-point'] });
+            console.log("features");
+            console.log(features);
             var clusterId = features[0].properties.cluster_id;
         
             map.getSource('locations_dst').getClusterExpansionZoom(clusterId, function(err, zoom) {
@@ -365,46 +364,73 @@ function create_map(sites, param) {
             });
           });
 
-       // Add background circle layer
-        map.addLayer({
-            id: 'background-circle',
-            type: 'circle',
-            source: 'locations_dst',
-            filter: ['!', ['has', 'point_count']],
-            paint: {
-            'circle-color': [
-                'interpolate',
-                ['linear'],
-                ['get', 'status'],
-                1, '#009688',
-                40, '#d6d7d6'
-            ],
-            'circle-radius': 20
-            }
-        });
+
         
-        // Add label symbol layer
+
         map.addLayer({
             id: 'unclustered-point',
-            type: 'symbol',
+            type: 'circle', 
             source: 'locations_dst',
             filter: ['!', ['has', 'point_count']],
-            layout: {
-            'text-field': ['to-string', ['get', 'status']],
-            'text-font': ['Manrope Bold'],
-            'text-size': 14,
-            'text-offset': [0, 0.5],
-            'text-anchor': 'bottom'
-            },
             paint: {
-            'text-color': '#152c1c',
-            'text-halo-color': '#ffffff',
-            'text-halo-width': 1
+                'circle-color': [
+                    'match',
+                    ['get', 'observation_source'],
+                    'OpenAQ', '#01BAEF', 
+                    'AirNow', '#4C4B63',  
+                    'NASA Pandora', '#5386E4',
+                    '#9e9e9e'         
+                ],
+                'circle-radius': 5,
+                'circle-stroke-width': 0.4,
+                'circle-stroke-color': '#ffffff'
             }
         });
-  
         
-          map.addLayer({
+        
+         const legend = document.createElement('div');
+    legend.id = 'map-legend';
+    legend.style.position = 'absolute';
+    legend.style.top = '30px';
+    legend.style.left = '10px';
+    legend.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+    legend.style.padding = '10px';
+    legend.style.borderRadius = '5px';
+    legend.style.fontSize = '12px';
+    legend.style.boxShadow = '0 0 5px rgba(0, 0, 0, 0.3)';
+
+    const legendItems = [
+        { color: '#4C4B63', label: 'NASA PM2.5 Forecast' },
+        { color: '#5386E4', label: 'NASA NO2 Forecast (beta)' },
+        { color: 'white', label: 'Other' }
+    ];
+
+    legendItems.forEach(item => {
+        const legendItem = document.createElement('div');
+        legendItem.style.display = 'flex';
+        legendItem.style.alignItems = 'center';
+        legendItem.style.marginBottom = '5px';
+
+        const colorBox = document.createElement('span');
+        colorBox.style.width = '12px';
+        colorBox.style.height = '12px';
+        colorBox.style.backgroundColor = item.color;
+        colorBox.style.display = 'inline-block';
+        colorBox.style.marginRight = '8px';
+        colorBox.style.border = '1px solid #000';
+
+        const label = document.createElement('span');
+        label.textContent = item.label;
+
+        legendItem.appendChild(colorBox);
+        legendItem.appendChild(label);
+        legend.appendChild(legendItem);
+    });
+
+    document.body.appendChild(legend);
+          
+    
+    map.addLayer({
             id: 'clustered-point',
             type: 'circle',
             source: 'locations_dst',
@@ -457,7 +483,8 @@ function create_map(sites, param) {
                 if(site.properties.location_id){
                     var l_id =site.properties.location_id;
                     if (!~$.inArray(l_id,list_in))  {
-                        add_the_banner(site.properties, 'no2')
+                        console.log(site)
+                        add_the_banner(site.properties, site.properties.parameter);
                         list_in.push(l_id);
                        
                     }
@@ -487,7 +514,8 @@ function create_map(sites, param) {
         const observation_value = e.features[0].properties.forecasted_value;
         const precomputed_forecasts = e.features[0].properties.precomputed_forecasts ? $.parseJSON(e.features[0].properties.precomputed_forecasts) : [];
         const obs_option = e.features[0].properties.obs_options ? $.parseJSON(e.features[0].properties.obs_options) : [];
-        const observation_unit = obs_option.length > 0 ? obs_option[0].no2.unit : 'N/A'; // Default value if not available
+        const observation_unit = obs_option?.[0]?.no2?.unit || 'N/A'; 
+        const param = e.features[0].properties.parameter;
         
         
 
@@ -502,8 +530,8 @@ function create_map(sites, param) {
             "Connecting..."
         ];
 
-        openForecastsWindow(messages, location_id, 'no2', location_name, observation_value, observation_unit, 's3', precomputed_forecasts);
-    
+        openForecastsWindow(["Loading", "Please hold"], location_id, param || 'no2', location_name, observation_value, observation_unit, observation_source, precomputed_forecasts);
+
 
     });
 
@@ -530,7 +558,8 @@ function add_the_banner(site, param) {
  
 
         animateValue(obj, 100, 0, 5000);
-        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "' + site.forecasted_value + '" status= "' + site.status + '" current_observation_unit= "' + obs_options[0].no2.unit+ ' " latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+precomputed_forecasts[0].no2.forecasts+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last model update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value"></span> </h1> <span class="source">Observation source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';
+        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "' + site.forecasted_value + '" status= "' + site.status + '" current_observation_unit= "' + (obs_options?.[0]?.no2?.unit || 'N/A') + '" latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+(precomputed_forecasts?.[0]?.no2?.forecasts || '[]')+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <span class="last_update_widget"> Last model update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value"></span> </h1> <span class="source">Observation source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';       
+        
         $(".pollutant-banner-o").prepend(html);
 
         
@@ -637,140 +666,293 @@ function csvToArray(str, delimiter = ",") {
     return arr;
 }
 
-
-/**
- * Fetches data from API Baker and updates the UI with forecasts.
- * 
- * @param {string} location - Location for which data is fetched.
- * @param {string} param - Parameter to fetch data for.
- * @param {string} unit - Unit of measurement for the parameter.
- * @param {string} forecastsDiv - ID of the div where forecasts are plotted.
- * @param {boolean} [buttonOption=true] - Whether button option is enabled.
- * @param {number} [historical=2] - Historical data range.
- * @param {number} [reinforceTraining=2] - Reinforce training value.
- * @param {number} [hpTunning=2] - Hyperparameter tuning value.
- * @param {boolean} [resample=false] - Whether to resample data.
- * @param {number} [update=2] - Update flag.
- */
 function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
     const messages = [
         "Generating data", 
-        "Connecting to SMCE", 
+        "Connecting to API Baker", 
         "Fetching the data from API Baker", 
-        "Fetching data from GMAO FTP", 
         "Fetching observations", 
         "Getting the forecasts", 
         "Please wait...", 
         "Connecting..."
     ];
 
-    // Show loader
     $('.loader').show();
 
-    // Get parameter code
-    const paramCode = pollutant_details(param).id;
-
-    // Construct file URL based on update flag
-    const fileUrl = update === 1 
-        ? `https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/ArlingtonTX_o3_output.json`
-        : `https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/ArlingtonTX_o3_output.json`;
+    const fileUrl = `precomputed/no2/${location}.json`;
 
     console.log(fileUrl);
 
-    // Fetch data from API
     fetch(fileUrl)
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.text(); 
+        })
+        .then(text => {
+
+            const sanitizedText = text.replace(/NaN/g, "null");
+            return JSON.parse(sanitizedText); 
         })
         .then(data => {
-            if (!data) {
-                throw new Error("No data received");
-            }
+            if (!data || data.status !== "200") throw new Error("No valid data received");
 
             console.log(data);
 
-            // Update UI with model data
+            console.log(data);
+
             const modelHtml = `
                 <div class="container my-5">
-                    <h1>Bias Corrected Model Information</h1>
-                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Total Observations</h5>
-                                    <p class="card-text fs-3 fw-bold">${data.metrics.total_observation}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Last Model Update</h5>
-                                    <p class="card-text fs-3 fw-bold">${data.metrics.latest_training.substring(0, 19)}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Mean Square Error</h5>
-                                    <p class="card-text">${data.metrics["rmse"]}<br></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Mean Absolute Error</h5>
-                                    <p class="card-text">${data.metrics["mae"]}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">R2 Score</h5>
-                                    <p class="card-text">${data.metrics["r2"]}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Observation Dates</h5>
-                                    <p class="card-text">${data.metrics.start_date.substring(0, 10)} to ${data.metrics.end_date.substring(0, 10)}</p>
-                                </div>
-                            </div>
-                        </div>
+                    <h5 class="mb-4">Machine learning model information</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped model_info">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Total Observations</td>
+                                    <td>${data.metrics.total_observation || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                    <td>Last Model Update</td>
+                                    <td>${data.latest_update || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                    <td>Start Date</td>
+                                    <td>${data.metrics.start_date || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                    <td>End Date</td>
+                                    <td>${data.metrics.end_date || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                    <td>R² (R-squared)</td>
+                                    <td>${data.metrics.performance?.metrics?.find(metric => metric.name === 'rmse')?.value || 'N/A'} (Compared to actual Pandora observation)</td>
+                                </tr>
+                                <tr>
+                                    <td>RMSE (Root Mean Squared Error)</td>
+                                    <td>${data.metrics.performance?.metrics?.find(metric => metric.name === 'r2')?.value || 'N/A'}</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>MAE (Mean Absolute Error) </td>
+                                    <td>${data.metrics.performance?.metrics?.find(metric => metric.name === 'mae')?.value || 'N/A'}</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Validation</td>
+                                    <td>Predictions not validated. Interpret with caution.</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             `;
             $('.model_data').html(modelHtml);
 
-            // Prepare master data
             let masterData = {
                 master_datetime: [],
-                master_observation: [],
-                master_localized: [],
-                master_uncorrected: [],
-                master_pandora_no2_l1col: []
+                master_no2: [],
+                master_o3: [],
+                master_pm25: [],
+                master_predicted: [],
+                master_observation: []
             };
 
-            data.forecasts.forEach(forecast => {
-                masterData.master_datetime.push(forecast.time);
-                masterData.master_observation.push(forecast.value);
-                masterData.master_localized.push(forecast.predicted);
-                masterData.master_uncorrected.push(forecast.no2);
-                masterData.master_pandora_no2_l1col.push(forecast.pandora_no2_l1col);
+            if (Array.isArray(data.forecasts) && data.forecasts.length > 0) {
+                data.forecasts.forEach(forecast => {
+                    if (forecast.time) {
+                        masterData.master_datetime.push(forecast.time);
+                    }
+                    if (forecast.no2 >= 0) {
+                        masterData.master_no2.push(forecast.no2);
+                    }
+                    if (forecast.o3 >= 0) {
+                        masterData.master_o3.push(forecast.o3);
+                    }
+                    if (forecast.pm25 >= 0) {
+                        masterData.master_pm25.push(forecast.pm25);
+                    }
+                    if (forecast.corrected >= 0) {
+                        masterData.master_predicted.push(forecast.corrected);
+                    }
+                    if (forecast.pandora >= 0) {
+                        masterData.master_observation.push(forecast.pandora);
+                    }
+                });
+            }
+
+            const tabsNav = $("#pills-tabContent").prev();
+            const tabsContainer = $(".tab-content");
+
+            tabsNav.empty();
+            tabsContainer.empty();
+
+            const tabsList = $('<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist"></ul>');
+            tabsNav.append(tabsList);
+
+            const plots = [
+                { id: "plot_no2", title: "Nitrogen Dioxide (NO2)", data: masterData, columns: [
+                    { column: "master_predicted", name: "Prediction", color: "red", width: 2 },
+                    { column: "master_observation", name: "Pandora", color: "black", width: 2 },
+                    { column: "master_no2", name: "GEOS CF", color: "grey", width: 3, dash: "dot" }
+                ]}
+            ];
+
+            plots.forEach((plot, index) => {
+                const isActive = index === 0 ? "active" : "";
+
+                tabsList.append(`
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link ${isActive}" id="tab-${plot.id}" data-bs-toggle="pill" href="#${plot.id}" role="tab" aria-controls="${plot.id}" aria-selected="${isActive === 'active'}">
+                            ${plot.title}
+                        </a>
+                    </li>
+                `);
+
+                tabsContainer.append(`
+                    <div class="tab-pane fade ${isActive} show" id="${plot.id}" role="tabpanel" aria-labelledby="tab-${plot.id}">
+                    </div>
+                `);
             });
 
-            // Add event listener for downloading forecasts data
+            $(".nav-link").on("click", function() {
+                $(".tab-pane").removeClass("active show");
+                $($(this).attr("href")).addClass("active show");
+            });
+
+            plots.forEach(plot => {
+                draw_plot(
+                    combined_dataset = plot.data,
+                    param = param,
+                    unit = unit,
+                    forecasts_div = plot.id,
+                    plot_columns = plot.columns,
+                    dates_ranges = false,
+                    enableFading = false,
+                    text = `<b>Source:</b> NASA GEOS Composition Forecasting (GEOS-CF) | NASA Pandora | SNWG Bias Corrected Model`
+                );
+            });
+
+            $('.loader').hide();
+        })
+        .catch(error => {
+            console.error("Error loading data:", error);
+            $('.thewindow').html(`
+                <h3 style="text-align: center; color: red; margin-top: 20px;">Sorry :(</h3>
+                <p style="text-align: justify;">The forecasts for this location have not been updated recently. Please check back soon, or feel free to contact us at noussair.lazrak@nyu.edu</p>
+            `);
+            $('.model_data').html(``);
+
+            $('.loader').hide();
+        });
+}
+
+function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
+    const messages = [
+        "Generating data",
+        "Connecting to AirNow",
+        "Fetching the data from AirNow API",
+        "Fetching observations",
+        "Getting the forecasts",
+        "Please wait...",
+        "Connecting..."
+    ];
+
+    $('.loader').show();
+
+    const paramCode = pollutant_details(param).id;
+    const fileUrl = `precomputed/merra2/${location}.json`;
+
+    console.log(fileUrl);
+
+    fetch(fileUrl)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            if (!data || data.status !== "200") throw new Error("No valid data received");
+
+            console.log(data);
+
+            const modelHtml = `
+                <div class="container my-5">
+                    <h6>Model Information</h6>
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Estimates</h5>
+                                    <p class="card-text fs-3 fw-bold">${data.metrics.total_observation || 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Last Update</h5>
+                                    <p class="card-text fs-3 fw-bold">${data.metrics.latest_training || 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Start Date</h5>
+                                    <p class="card-text">${data.metrics.start_date || 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">End Date</h5>
+                                    <p class="card-text">${data.metrics.end_date || 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+                        ${data.metrics.validation_score ? `
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Validation Score</h5>
+                                    <p class="card-text">${data.metrics.validation_score}</p>
+                                </div>
+                            </div>
+                        </div>` : ''}
+                        ${data.metrics.performance?.metrics?.length ? data.metrics.performance.metrics.map(metric => `
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">${metric.name.toUpperCase()}</h5>
+                                    <p class="card-text">${metric.value}</p>
+                                </div>
+                            </div>
+                        </div>`).join('') : ''}
+                    </div>
+                </div>
+            `;
+            $('.model_data').html(modelHtml);
+
+            let masterData = {
+                master_datetime: [],
+                master_observation: []
+            };
+
+            if (Array.isArray(data.forecasts) && data.forecasts.length > 0) {
+                data.forecasts.forEach(forecast => {
+                    masterData.master_datetime.push(forecast.time || null);
+                    masterData.master_observation.push(forecast.value || null);
+                });
+            }
+
             $(document).off("click", ".download_forecasts_data").on("click", ".download_forecasts_data", function() {
-                const csvFileName = location.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '_' + historical + '.csv';
-                let csvContent = "data:text/csv;charset=utf-8," + formatToCSV(masterData); // Ensure you format this correctly for CSV
+                const csvFileName = `${location.replace(/\_/g, '').replace(/\./g, '')}_${param}_${historical}.csv`;
+                let csvContent = "data:text/csv;charset=utf-8," + formatToCSV(masterData);
                 const encodedUri = encodeURI(csvContent);
                 const link = document.createElement("a");
                 link.setAttribute("href", encodedUri);
@@ -779,33 +961,80 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                 link.click();
             });
 
-            // Get current hour forecasts
-            const currentData = get_current_hour_forecasts(masterData);
+            const tabsNav = $("#pills-tabContent").prev();
+            const tabsContainer = $(".tab-content");
+
+            tabsNav.empty();
+            tabsContainer.empty();
+
+            const tabsList = $('<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist"></ul>');
+            tabsNav.append(tabsList);
+
+            const plots = [
+                { id: "main_plot_for_airnow", title: "PM 2.5 Forecasts", data: masterData }
+            ];
+
+            plots.forEach((plot, index) => {
+                const isActive = index === 0 ? "active" : "";
+
+                tabsList.append(`
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link ${isActive}" id="tab-${plot.id}" data-bs-toggle="pill" href="#${plot.id}" role="tab" aria-controls="${plot.id}" aria-selected="${isActive === 'active'}">
+                            ${plot.title}
+                        </a>
+                    </li>
+                `);
+
+                tabsContainer.append(`
+                    <div class="tab-pane fade ${isActive} show" id="${plot.id}" role="tabpanel" aria-labelledby="tab-${plot.id}">
+                    </div>
+                `);
+            });
+
+            $(".nav-link").on("click", function() {
+                $(".tab-pane").removeClass("active show");
+                $($(this).attr("href")).addClass("active show");
+            });
+
+            plots.forEach(plot => {
+                const plotColumns = [
+                    { column: "master_observation", name: "Forecasted Value", color: "blue", width: 3 }
+                ];
 
 
-            // Filter master data by date
-            var filteredMasterData = filter_data_set_by_date(masterData, 2, -5);
-            var historicalMasterData = filter_data_set_by_date(masterData, 365, 20);
 
-            // Plot historical data
-            const plotElementId = forecastsDiv;
-            const plotElement = document.getElementById(plotElementId);
-            
-            if (plotElement) {
-                draw_plot(historicalMasterData, param, unit, plotElementId, "Bias Corrected NO2", false, true, true);
-            } else {
-                console.error(`No DOM element with id '${plotElementId}' exists on the page.`);
-            }
+                draw_plot(
+                    combined_dataset = plot.data,
+                    param = 'pm2.5',
+                    unit = 'um3g',
+                    forecasts_div = plot.id,
+                    plot_columns = plotColumns,
+                    dates_ranges = false,
+                    enableFading = false,
+                    text = "<b>Sources:</b> NASA Modern-Era Retrospective analysis for Research and Applications (MERRA)| | SNWG Bias CNN Model."
+                );
 
-            // Hide loader
+                window.dispatchEvent(new Event('resize'));
+            });
+
             $('.loader').hide();
         })
         .catch(error => {
             console.error("Error loading data:", error);
-            $('.api_baker_plots').html('Sorry, we are not able to connect with OpenAQ API at this moment. Please check back later...');
+            $('.api_baker_plots').html('Sorry, we are not able to connect with AirNow API at this moment. Please check back later...');
             $('.loader').hide();
         });
 }
+
+function generateModelCards(metrics) {
+    return `
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Total Observations</h5><p class="card-text fs-3 fw-bold">${metrics.total_observation}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Last Model Update</h5><p class="card-text fs-3 fw-bold">${metrics.latest_training.substring(0, 19)}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Mean Square Error</h5><p class="card-text">${metrics.rmse}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Mean Absolute Error</h5><p class="card-text">${metrics.preformance.metrics["Test MAE"]}</p></div></div></div>
+    `;
+}
+
 
 
 
@@ -1048,444 +1277,337 @@ function getDates(startDate, stopDate) {
 }
 
 
-function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ranges = false, button = false, historical = true) {
-    // Extract data from combined dataset
-    const localized_data = combined_dataset["master_localized"];
-    const uncorrected_data = combined_dataset["master_uncorrected"];
-    const observation_data = combined_dataset["master_observation"];
-    const datetime_data = combined_dataset["master_datetime"];
-    const pandora_no2_l1col = combined_dataset["master_pandora_no2_l1col"];
+function cleanAndSortData(datetime_data, combined_dataset) {
 
-    console.log(combined_dataset);
-
-    if (!historical) {
-        const currentDate = new Date();
-        const currentDateString = currentDate.toISOString().slice(0, 13) + ":00:00";
-        currentDateString = currentDateString.replace("T", " ");
-
-        const currentDateIndex = datetime_data.indexOf(currentDateString);
-        if (currentDateIndex === -1) {
-            console.error("Current date not found in dataset.");
-            return;
+    const pairedData = datetime_data.map((datetime, index) => {
+        const dataPoint = { datetime };
+        for (const key in combined_dataset) {
+            if (Array.isArray(combined_dataset[key])) {
+                dataPoint[key] = combined_dataset[key][index];
+            }
         }
-        const localizedValue = localized_data[currentDateIndex];
+        return dataPoint;
+    });
 
-        // Define shapes for non-historical plots
-        const shapes_layouts = {
-            shapes: [
-                {
-                    type: 'line',
-                    x0: datetime_data[currentDateIndex],
-                    y0: localizedValue,
-                    x1: datetime_data[currentDateIndex],
-                    y1: 0,
-                    line: {
-                        color: 'green',
-                        width: 5,
-                        dash: 'dot'
-                    }
-                }
-            ]
-        };
-    } else {
-        const shapes_layouts = {};
+    // Remove duplicates and sort by datetime
+    const uniqueData = Array.from(new Map(pairedData.map(item => [item.datetime, item])).values());
+    uniqueData.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+
+    // Reconstruct cleaned and sorted data
+    const cleanedData = {};
+    for (const key in combined_dataset) {
+        if (Array.isArray(combined_dataset[key])) {
+            cleanedData[key] = uniqueData.map(item => item[key]);
+        }
     }
 
-    // Define plot traces
-    const master_localized = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: localized_data,
-        line: {
-            color: 'green',
-            width: 3
-        },
-        name: 'ML + Model'
-    };
+    return cleanedData;
+}
 
-    const master_uncorrected = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: uncorrected_data,
-        line: {
-            color: 'rgba(142, 142, 142, 0.8)',
-            width: 3
-        },
-        name: 'Model'
-    };
 
-    const master_observation = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: observation_data,
-        line: {
-            color: 'rgba(255, 0, 0, 0.8)',
-            width: 3
-        },
-        name: 'Observation'
-    };
+function validateData(data, requiredKeys = [], minLength = 1) {
 
-    const master_pandora_no2_l1col = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: pandora_no2_l1col,
-        line: {
-            color: 'rgba(255, 0, 0, 0.8)',
-            width: 3
-        },
-        name: 'L1 Col'
-    };
+    if (!data || typeof data !== 'object') {
+        console.error("Data is not available or invalid.");
+        return false;
+    }
 
-    // Define plot layout
-    const whoPm25Limit = 10; // WHO PM2.5 concentration limit
+
+    for (const key of requiredKeys) {
+        if (!data[key] || !Array.isArray(data[key]) || data[key].length < minLength) {
+            console.error(`Data for key "${key}" is missing or insufficient.`);
+            return false;
+        }
+    }
+
+    return true;
+}
+function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, dates_ranges = false, enableFading = false, text = "Forecasts") {
+    const datetime_data = combined_dataset["master_datetime"];
+    const cleanedData = cleanAndSortData(datetime_data, combined_dataset);
+    const maxValues = plot_columns.map(({ column }) => Math.max(...cleanedData[column]));
+    const maxValue = Math.max(...maxValues);
+
+    const traces = plot_columns.map(({ column, name, color, width, dash }, index) => {
+        const lineColor = color || 'rgba(7, 23, 16, 0.65)';
+        const rgbaMatch = lineColor.match(/\d+/g);
+        const fadingColor = rgbaMatch
+            ? `rgba(${rgbaMatch[0]}, ${rgbaMatch[1]}, ${rgbaMatch[2]}, 0.6)`
+            : 'rgba(0, 0, 0, 0.6)';
+
+        return {
+            type: "scatter",
+            mode: "lines",
+            connectgaps: false,
+            x: cleanedData.master_datetime,
+            y: cleanedData[column],
+            line: {
+                color: lineColor,
+                width: width || 1,
+                dash: dash || 'solid'
+            },
+            fill: enableFading && index === 0 ? 'tozeroy' : 'none',
+            fillcolor: enableFading && index === 0 ? fadingColor : 'none',
+            hoverinfo: 'x+y',
+            name: name
+        };
+    });
+
+     
+     const lastIndex = cleanedData.master_datetime.length - 1;
+     const lastX = cleanedData.master_datetime[lastIndex]; 
+     const lastY = cleanedData.master_observation[lastIndex]; 
+ 
     const layout = {
-        title: title,
-        plot_bgcolor: 'rgb(22 26 30)',
-        paper_bgcolor: 'rgb(22 26 30)',
+        title: {
+            text: text,
+            font: {
+                family: 'Manrope, sans-serif',
+                size: 10,
+                color: '#000000'
+            },
+            x: 0.00,
+            xanchor: 'left'
+        },
+        autosize: true,
+        width: 1000,
+        height: 500,
+        plot_bgcolor: '#F4F4F4',
+        paper_bgcolor: '#FFFFFF',
         legend: {
-            orientation: 'v',
-            x: 1.1,
-            y: 0.5,
+            orientation: 'h',
+            x: 0.5,
+            y: -0.2,
+            xanchor: 'center',
+            font: {
+                color: '#000000'
+            }
         },
         font: {
-            family: 'Roboto, sans-serif',
-            color: '#FFFFFF',
-            size: 16
+            family: 'Manrope, sans-serif',
+            color: '#000000',
+            size: 14
         },
         xaxis: {
             type: 'date',
-            color: '#FFFFFF',
-            rangeslider: {},
-            range: [datetime_data[0], datetime_data[datetime_data.length - 1]],
-            shapes: [{
-                type: 'line',
-                x0: datetime_data[0],
-                y0: whoPm25Limit,
-                x1: datetime_data[datetime_data.length - 1],
-                y1: whoPm25Limit,
-                line: {
-                    color: 'red',
-                    width: 2,
-                    dash: 'dash',
+            color: '#000000',
+            rangeslider: { visible: false },
+            range: [
+                cleanedData.master_datetime[cleanedData.master_datetime.length - 120], // Default to 5 days
+                cleanedData.master_datetime[cleanedData.master_datetime.length - 1]
+            ],
+            showgrid: true,
+            gridcolor: '#D3D3D3',
+            title: {
+                text: 'Time',
+                font: {
+                    size: 16,
+                    color: '#000000'
                 }
-            }]
+            }
         },
         yaxis: {
             autorange: true,
             type: 'linear',
-            title: 'PPBV',
-            color: '#FFFFFF'
-        }
+            title: {
+                text: unit,
+                font: {
+                    size: 16,
+                    color: '#000000'
+                }
+            },
+            color: '#000000',
+            showgrid: true,
+            gridcolor: '#D3D3D3'
+        },
+        hovermode: 'x unified',
+        shapes: [
+            {
+                type: 'line',
+                x0: new Date().toISOString().slice(0, 13) + ":00:00Z",
+                x1: new Date().toISOString().slice(0, 13) + ":00:00Z",
+                y0: 0,
+                y1: 1,
+                yref: 'paper',
+                line: {
+                    color: '#FF0000',
+                    width: 2,
+                    dash: 'dot'
+                }
+            },
+            {
+                type: 'line',
+                x0: cleanedData.master_datetime[0],
+                x1: cleanedData.master_datetime[cleanedData.master_datetime.length - 1],
+                y0: maxValue,
+                y1: maxValue,
+                line: {
+                    color: 'red',
+                    width: 1,
+                    dash: 'dash'
+                }
+            }
+        ]
     };
 
-    // Add shapes for date ranges if specified
-    if (dates_ranges) {
-        layout.shapes = [
-            {
-                type: 'rect',
-                x0: dates_ranges[0],
-                y0: 0,
-                x1: dates_ranges[1],
-                y1: 1,
-                yref: 'paper',
-                fillcolor: '#00ffff2e',
-                line: {
-                    color: 'rgb(55, 128, 191)',
-                    width: 0.5
-                }
-            },
-            {
-                type: 'rect',
-                x0: dates_ranges[2],
-                y0: 0,
-                x1: dates_ranges[3],
-                y1: 1,
-                yref: 'paper',
-                fillcolor: '#00ffa973',
-                line: {
-                    color: 'green',
-                    width: 0.5
-                }
-            }
-        ];
+    Plotly.newPlot(forecasts_div, traces, layout);
+
+    const currentValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 1] || 'N/A';
+    const previousValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 2] || 'N/A';
+    const nextValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 1] || 'N/A'; // Assuming next hour is the last value
+    
+    let percentageChange = 'N/A';
+    if (currentValue !== 'N/A' && previousValue !== 'N/A') {
+        percentageChange = ((currentValue - previousValue) / previousValue) * 100;
     }
+    
+    // Add previous day's average and change
+    let previousDayAverage = 'N/A';
+    let previousDayChange = 'N/A';
+    if (cleanedData.master_predicted?.length >= 24) {
+        const previousDayValues = cleanedData.master_predicted.slice(-24); // Assuming 24 data points per day
+        previousDayAverage = previousDayValues.reduce((a, b) => a + b, 0) / previousDayValues.length;
+    
+        if (currentValue !== 'N/A') {
+            previousDayChange = ((currentValue - previousDayAverage) / previousDayAverage) * 100;
+        }
+    }
+    
+    // Build the prediction elements conditionally
+    let predictionElement = `<div class="prediction-container">`;
+    
+    if (currentValue !== 'N/A') {
+        predictionElement += `
+            <div class="prediction-box">
+                <h5>Current Prediction</h5>
+                <h2>${currentValue.toFixed(2)}</h2>
+                ${percentageChange !== 'N/A' ? `
+                    <span class="${percentageChange >= 0 ? 'positive' : 'negative'}">
+                        ${percentageChange >= 0 ? '+' : ''}${percentageChange.toFixed(2)}%
+                    </span>` : ''}
+            </div>`;
+    }
+    
+    if (nextValue !== 'N/A') {
+        predictionElement += `
+            <div class="prediction-box">
+                <h5>Next Hour Prediction</h5>
+                <h2>${nextValue.toFixed(2)}</h2>
+            </div>`;
+    }
+    
+    if (previousDayAverage !== 'N/A') {
+        predictionElement += `
+            <div class="prediction-box">
+                <h5>Previous Day Average</h5>
+                <h2>${previousDayAverage.toFixed(2)}</h2>
+                ${previousDayChange !== 'N/A' ? `
+                    <span class="${previousDayChange >= 0 ? 'positive' : 'negative'}">
+                        ${previousDayChange >= 0 ? '+' : ''}${previousDayChange.toFixed(2)}%
+                    </span>` : ''}
+            </div>`;
+    }
+    
+    predictionElement += `</div>`;
+    
+    // Add the prediction element to the DOM
+    $(`#${forecasts_div}`).before(predictionElement);
 
-    // Render plot
-    Plotly.newPlot(forecasts_div, [master_localized, master_uncorrected, master_observation], layout);
-
-    // Add current value marker if not historical
-    if (!historical) {
-        Plotly.addTraces(forecasts_div, {
-            x: [datetime_data[currentDateIndex]],
-            y: [localizedValue],
-            mode: 'markers',
-            marker: {
-                color: 'green',
-                size: 20
-            },
-            name: 'Current Value'
+    // Add filter buttons
+       const filterButtons = `
+        <div class="filter-buttons" style="display: flex; ">
+            <button class="filter-btn" data-filter="1D" style="margin: 0 5px;">1 Day</button>
+            <button class="filter-btn" data-filter="5D" style="margin: 0 5px;">5 Days</button>
+            <button class="filter-btn" data-filter="1M" style="margin: 0 5px;">1 Month</button>
+            <button class="filter-btn" data-filter="6M" style="margin: 0 5px;">6 Months</button>
+            <button class="filter-btn" data-filter="1Y" style="margin: 0 5px;">1 Year</button>
+            <button class="filter-btn active" data-filter="ALL" style="margin: 0 5px;">All</button>
+        </div>
+    `;
+    $(`#${forecasts_div}`).before(filterButtons);
+    
+    $('.filter-btn').on('click', function () {
+        $('.filter-btn').removeClass('active');
+        $(this).addClass('active');
+    
+        const filter = $(this).data('filter');
+        let filteredRange;
+        let filteredYValues = [];
+    
+        switch (filter) {
+            case '1D':
+                const oneDayAgo = new Date();
+                oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+                filteredRange = [
+                    oneDayAgo.toISOString(),
+                    new Date().toISOString()
+                ];
+                break;
+    
+            case '5D':
+                const fiveDaysAgo = new Date();
+                fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
+                filteredRange = [
+                    fiveDaysAgo.toISOString(),
+                    new Date().toISOString()
+                ];
+                break;
+    
+            case '1M':
+                const oneMonthAgo = new Date();
+                oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+                filteredRange = [
+                    oneMonthAgo.toISOString(),
+                    new Date().toISOString()
+                ];
+                break;
+    
+            case '6M':
+                const sixMonthsAgo = new Date();
+                sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+                filteredRange = [
+                    sixMonthsAgo.toISOString(),
+                    new Date().toISOString()
+                ];
+                break;
+    
+            case '1Y':
+                const oneYearAgo = new Date();
+                oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+                filteredRange = [
+                    oneYearAgo.toISOString(),
+                    new Date().toISOString()
+                ];
+                break;
+    
+            case 'ALL':
+            default:
+                filteredRange = [
+                    cleanedData.master_datetime[0],
+                    cleanedData.master_datetime[cleanedData.master_datetime.length - 1]
+                ];
+        }
+    
+        // Filter the Y values based on the selected time range
+        const startIndex = cleanedData.master_datetime.findIndex(datetime => new Date(datetime) >= new Date(filteredRange[0]));
+        const endIndex = cleanedData.master_datetime.findIndex(datetime => new Date(datetime) > new Date(filteredRange[1]));
+    
+        if (startIndex !== -1 && endIndex !== -1) {
+            filteredYValues = cleanedData.master_predicted.slice(startIndex, endIndex);
+        } else {
+            filteredYValues = cleanedData.master_predicted; // Default to all values if range is invalid
+        }
+    
+        // Calculate the new Y-axis range
+        const yMin = Math.min(...filteredYValues);
+        const yMax = Math.max(...filteredYValues);
+    
+        // Update the plot with the new X and Y ranges
+        Plotly.relayout(forecasts_div, {
+            'xaxis.range': filteredRange,
+            'yaxis.range': [yMin, yMax]
         });
-    }
-
-
-    if (button) {
-        $('.plot_additional_features').append('<button type="button" change_to="' + forecasts_div + '" class="btn btn-outline-primary change_plot ' + forecasts_div + '"  href="#">' + title + '</button>');
-    }
-
-
-    const downlaod_label_text = historical ? "download historical simulation data" : "download forecast data";
-    $('.lf-downloads').append('<a class="download_forecasts_data" href="#">| ' + downlaod_label_text + ' </a>');
-}
-
-
-function side_by_side_plots(param, unit, title, precomputer_forecasts, observation_unit){
-    $(document).ready(function() {
-
-        var year1_file = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/" + precomputer_forecasts;
-        var year2_file = year1_file.replace('.json', '_historical.json');
-        try {
-            
-        $.getJSON(year1_file, function(dataset1) {
-            var dataArray =  csvToArray(dataset1.latest_forecast.data);
-            var renamedArray_year1 = dataArray.map(function(forecast) {
-                var date = new Date(forecast.forecast_datetime);
-                var formattedDate = date.toLocaleString('en-US', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-                return {
-                  datetime: formattedDate.replace(/\d{4}/, '').trim(),
-                  uncorrected_pm25_2022: forecast.uncorrected_pm25,
-                  localized_pm25_2022: forecast.localized_pm25,
-                  observation_2022: forecast.observation,
-                  uncorrected_pm25_24H_2022: forecast.uncorrected_pm25_24H,
-                  observation_24H_2022: forecast.observation_24H,
-                  localized_pm25_24H_2022: forecast.localized_pm25_24H,
-                };
-              });
-
-            $.getJSON(year2_file, function(dataset2) {
-                
-                var dataArray_year2 =  csvToArray(dataset2.latest_forecast.data);
-                var renamedArray_year2 = dataArray_year2.map(function(forecast) {
-                    var date = new Date(forecast.forecast_datetime);
-                    var formattedDate = date.toLocaleString('en-US', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-                    return {
-                        datetime: formattedDate.replace(/\d{4}/, '').trim(),
-                        uncorrected_pm25_2023: forecast.uncorrected_pm25,
-                        localized_pm25_2023: forecast.localized_pm25,
-                        observation_2023: forecast.observation,
-                        uncorrected_pm25_24H_2023: forecast.uncorrected_pm25_24H,
-                        observation_24H_2023: forecast.observation_24H,
-                        localized_pm25_24H_2023: forecast.localized_pm25_24H,
-                    };
-                });
-
-              var mergedArray = [];
-
-
-            renamedArray_year1.forEach(function(item1) {
-
-
-            var item2 = renamedArray_year2.find(function(item) {
-                return item.datetime === item1.datetime;
-            });
-
-            
-
-            if (item2) {
-                mergedArray.push({
-                datetime: item1.datetime,
-                uncorrected_pm25_2022: item1.uncorrected_pm25_2022,
-                localized_pm25_2022: item1.localized_pm25_2022,
-                observation_2022: item1.observation_2022,
-                uncorrected_pm25_24H_2022: item1.uncorrected_pm25_24H_2022,
-                localized_pm25_24H_2022: item1.localized_pm25_24H_2022,
-                observation_24H_2022: item1.observation_24H_2022,
-                
-                
-                uncorrected_pm25_2023: item2.uncorrected_pm25_2023,
-                localized_pm25_2023: item2.localized_pm25_2023,
-                observation_2023: item2.observation_2023,
-                uncorrected_pm25_24H_2023: item2.uncorrected_pm25_24H_2023,
-                localized_pm25_24H_2023: item2.localized_pm25_24H_2023,
-                observation_24H_2023: item2.observation_24H_2023,
-
-
-                });
-            }
-            });
-
-
-            function formatDate(datetime) {
-                var date = new Date(datetime);
-                var day = date.getDate();
-                var month = date.getMonth() + 1;
-                var hour = date.getHours();
-                var minute = date.getMinutes();
-            
-                return day + '/' + month + ' ' + hour + ':' + minute;
-            }
-            
-            mergedArray.forEach(function(item, index) {
-                item.datetime = formatDate(item.datetime);
-                var changePercentage = ((item.localized_pm25_2023 - item.localized_pm25_2022) / item.localized_pm25_2022) * 100;
-                item.change_percentage = changePercentage;
-                if (index > 0) {
-                    var prevItem = mergedArray[index - 1];
-                    var changePercentage2022 = ((item.localized_pm25_2022 - prevItem.localized_pm25_2022) / prevItem.localized_pm25_2022) * 100;
-                    var change_prev_hour = prevItem.localized_pm25_2023
-                    item.change_percentage_prev_hour = changePercentage2022;
-                    item.change_prev_hour = change_prev_hour;
-                  } else {
-                    item.change_percentage_prev_hour = null;
-                  }
-            });
-
-            function findRowByDateTime(data, month, day, hour) {
-                for (var i = 0; i < data.length; i++) {
-                  var datetime = data[i].datetime;
-                  var datetimeParts = datetime.split(' ');
-                  var dateParts = datetimeParts[0].split('/');
-                  var rowMonth = parseInt(dateParts[1]);
-                  var rowDay = parseInt(dateParts[0]);
-                  var rowHour = parseInt(datetimeParts[1].split(':')[0]);
-                  
-                  if (rowMonth === month && rowDay === day && rowHour === hour) {
-                    return data[i];
-                  }
-                }
-                
-                return null;
-              }
-            var currentDate = new Date();
-            var currentDay = currentDate.getDate();
-            var currentMonth = currentDate.getMonth() + 1; 
-            var currentHour = currentDate.getHours();
-
-              var row = findRowByDateTime(mergedArray, currentMonth, currentDay, currentHour);
-              if (row !== null) {
-               
-                var localized_pm25_2022 = row.localized_pm25_2022;
-                var localized_pm25_2023 = row.localized_pm25_2023;
-                var observation_2022 = row.observation_2022;
-                var observation_2023 = row.observation_2023;
-                var uncorrected_pm25_2022 = row.uncorrected_pm25_2022;
-                var uncorrected_pm25_2023 = row.uncorrected_pm25_2023;
-               
-                var localized_pm25_24H_2022 = row.localized_pm25_24H_2022;
-                var localized_pm25_24H_2023 = row.localized_pm25_24H_2023;
-                var uncorrected_pm25_24H_2022 = row.uncorrected_pm25_24H_2022;
-                var uncorrected_pm25_24H_2023 = row.uncorrected_pm25_24H_2023;
-                var observation_24H_2022 = row.observation_24H_2022;
-                var observation_24H_2023 = row.observation_24H_2023;
-                
-                
-                var change_percentage = row.change_percentage;
-                var change_percentage_prev_hour = row.change_percentage_prev_hour;
-                var change_prev_hour = row.change_prev_hour;
-
-                var diffrence_last_year = calculateDifferenceAndPercentage(localized_pm25_2022,localized_pm25_2023)
-                var diffrence_last_hour = calculateDifferenceAndPercentage(change_prev_hour,localized_pm25_2023)
-               
-
-
-                $('.local_forecats_window').html('<div class="col-md-4"> <div class="lf-fcst-info"> <div class="lf-fcst-name">CURRENT</div> <div class="lf-fcst-value">'+localized_pm25_2023+'<span>'+rewriteUnits(observation_unit)+'</span></div> <div class="lf-fcst-change current_observation_unit_span"><i class="fas fa-arrow-up"></i> </div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info years_difference"> <div class="lf-fcst-name">SAME DAY/ LAST YEAR </div> <div class="lf-fcst-value">'+localized_pm25_2022+'<span>'+rewriteUnits(observation_unit)+'</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_year"></span> '+rewritePercentage(diffrence_last_year[1])+'</div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info days_difference"> <div class="lf-fcst-name">PREVIOUS HOUR</div> <div class="lf-fcst-value">'+change_prev_hour+'<span>'+rewriteUnits(observation_unit)+'</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_day"></span> '+rewritePercentage(diffrence_last_hour[1])+'</div> </div> </div>')
-                
-               
-            
-
-              } else {
-                console.log('Row not found');
-              }
-
-            var dates = mergedArray.map(function(item) { return item.datetime; });
-            var uncorrected_pm25_2022 = mergedArray.map(function(item) { return item.uncorrected_pm25_2022; });
-            var uncorrected_pm25_24H_2022 = mergedArray.map(function(item) { return item.uncorrected_pm25_24H_2022; });
-            var observation_2022 = mergedArray.map(function(item) { return item.observation_2022; });
-            var observation_24H_2022 = mergedArray.map(function(item) { return item.observation_24H_2022; });
-            var localized_pm25_2022 = mergedArray.map(function(item) { return item.localized_pm25_2022; });
-            var localized_pm25_24H_2022 = mergedArray.map(function(item) { return item.localized_pm25_24H_2022; });
-           
-
-            var uncorrected_pm25_2023 = mergedArray.map(function(item) { return item.uncorrected_pm25_2023; });
-            var uncorrected_pm25_24H_2023 = mergedArray.map(function(item) { return item.uncorrected_pm25_24H_2023; });
-            var observation_2023 = mergedArray.map(function(item) { return item.observation_2023; });
-            var observation_24H_2023 = mergedArray.map(function(item) { return item.observation_24H_2023; });
-            var localized_pm25_2023 = mergedArray.map(function(item) { return item.localized_pm25_2023; });
-            var localized_pm25_24H_2023 = mergedArray.map(function(item) { return item.localized_pm25_24H_2023; });
-
-
-            var trace_uncorrected_pm25_2022 = {
-            x: dates,
-            y: uncorrected_pm25_2022,
-            mode: 'lines',
-            name: 'uncorrected_pm25_2022'
-            };
-            
-            var trace_localized_pm25_2022 = {
-                x: dates,
-                y: localized_pm25_2022,
-                mode: 'lines',
-                name: 'localized_pm25_2022'
-                };
-
-            var trace_uncorrected_pm25_2023 = {
-            x: dates,
-            y: uncorrected_pm25_2023,
-            mode: 'lines',
-            name: 'uncorrected_pm25_2023'
-            };
-
-            var trace_localized_pm25_2023 = {
-                x: dates,
-                y: localized_pm25_2023,
-                mode: 'lines',
-                name: 'localized_pm25_2023'
-                };
-
-
-            var layout = {
-            title: 'PM2.5 Data for 2022 and 2023',
-            plot_bgcolor: 'rgb(22 26 30)',
-            paper_bgcolor: 'rgb(22 26 30)',
-
-            font: {
-                family: 'Roboto, sans-serif',
-                color: '#FFFFFF'
-            },
-                        
-            xaxis: {
-                title: 'Date',
-                color: '#FFFFFF'
-            },
-            yaxis: {
-                title: 'PM2.5',
-                color: '#FFFFFF'
-            },
-            };
-
-            if (mergedArray.length>0){
-                Plotly.newPlot('comparaison_plot_js', [trace_uncorrected_pm25_2022, trace_uncorrected_pm25_2023, trace_localized_pm25_2022,trace_localized_pm25_2023], layout);
-                $('.plot_additional_features').append('<button type="button" change_to="comparaison_plot_js" class="btn btn-outline-primary change_plot comparaison_plot_js"  href="#">'+title+'</button>');
-            }
-           
-        
-            });
-          });
-
-        
-
-        }catch (error) {
-            console.error('An error occurred while running the side_by_side_plots function:', error);
-          }
-      });
-      
+    });
 }
 
 function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_div,merge,precomputer_forecasts,historical){
@@ -1811,12 +1933,15 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
     const $loadingDiv = $(".loading_div");
     const $forecastsContainer = $(".forecasts_container");
     const $loadingScreen = $('#loading-screen');
-    //alert("version 1.4")
+
+    if (obs_src === 'NASA Pandora') {
+        obs_src = 's3';
+    }
 
     $loadingDiv.fadeIn(10);
     $forecastsContainer.load(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`, function() {
         
-        console.log(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`)
+        console.log(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`);
         $loadingScreen.show();
         
         $(this).fadeOut(10).fadeIn(10);
@@ -1833,7 +1958,6 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
         $('.current_observation_value').html(observation_value);
         $('.current_observation_unit_span').html(current_observation_unit);
         
-
         $forecastsContainer.addClass("noussair_animations zoom_in");
         $loadingDiv.fadeOut(10);
         
@@ -1841,19 +1965,15 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
             "animation": "intro 2s cubic-bezier(0.03, 1.08, 0.56, 1)",
             "animation-delay": "2s"
         });
-        
-        readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker_historical', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
-        //readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker_col', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
 
-        try {
-            // Uncomment if needed
-            //get_plot(location_name, param, current_observation_unit, 'plot_model_', 'plot_resample_', false, precomputed_forecasts, '');
-            //get_plot(location_name, param, current_observation_unit, 'plot_model_historical', 'plot_resample_historical', false, precomputed_forecasts, 'historical');
-            // side_by_side_plots(param, current_observation_unit, 'Historical Comparison', precomputed_forecasts, current_observation_unit);
-        } catch (error) {
-            console.error('An error occurred while running the get_plot function:', error);
+
+        if (obs_src === 'AirNow') {
+            console.log("Calling readAirNow");
+            readAirNow(location_name, param, current_observation_unit, 'main_plot_for_airnow', true, 2, 2, 2, false, 2);
+        } else {
+            console.log("Calling readApiBaker with obs_src:", obs_src);
+            readApiBaker(location_name, 'no2', 'ppbv', 'main_plot_for_api_baker', true, 2, 2, 2, false, 2);
         }
-        
         
         $loadingScreen.hide();
         clearInterval(intervalId); 
@@ -1881,7 +2001,7 @@ $(document).on("click", ".launch-local-forecasts", function() {
     const current_observation_unit = $(this).attr("current_observation_unit");
     const obs_src = $(this).attr("obs_src");
 
-    openForecastsWindow(["Loading", "Please hold"], location_id, param || 'no2', location_name, observation_value, current_observation_unit, observation_source, precomputed_forecasts);
+    openForecastsWindow(["Loading", "Please hold"], location_id, param || 'no2', location_name, observation_value, current_observation_unit, obs_src, precomputed_forecasts);
 });
 
 $(document).on("click", ".upload-your-data", function() {
