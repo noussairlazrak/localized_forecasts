@@ -1510,22 +1510,37 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
     
     predictionElement += `</div>`;
     
-    // Add the prediction element to the DOM
+   
+    
+     // Add the prediction element to the DOM
     $(`#${forecasts_div}`).before(predictionElement);
-
-    // Add filter buttons
-       const filterButtons = `
-        <div class="filter-buttons" style="display: flex; ">
-            <button class="filter-btn" data-filter="1D" style="margin: 0 5px;">1 Day</button>
-            <button class="filter-btn" data-filter="5D" style="margin: 0 5px;">5 Days</button>
-            <button class="filter-btn" data-filter="1M" style="margin: 0 5px;">1 Month</button>
-            <button class="filter-btn" data-filter="6M" style="margin: 0 5px;">6 Months</button>
-            <button class="filter-btn" data-filter="1Y" style="margin: 0 5px;">1 Year</button>
-            <button class="filter-btn active" data-filter="ALL" style="margin: 0 5px;">All</button>
+    
+    // Add filter buttons dynamically based on available data
+    const availableDays = cleanedData.master_datetime.length; // Total number of data points
+    const filterOptions = [];
+    
+    // Dynamically determine which filters to show based on available data
+    if (availableDays >= 1) filterOptions.push({ label: "1 Day", value: "1D" });
+    if (availableDays >= 5) filterOptions.push({ label: "5 Days", value: "5D" });
+    if (availableDays >= 30) filterOptions.push({ label: "1 Month", value: "1M" });
+    if (availableDays >= 180) filterOptions.push({ label: "6 Months", value: "6M" });
+    if (availableDays >= 365) filterOptions.push({ label: "1 Year", value: "1Y" });
+    filterOptions.push({ label: "All", value: "ALL" }); // Always include "All"
+    
+    // Generate filter buttons
+    const filterButtons = `
+        <div class="filter-buttons" style="display: flex; margin-bottom: 10px;">
+            ${filterOptions
+                .map(
+                    (option, index) =>
+                        `<button class="filter-btn ${index === filterOptions.length - 1 ? "active" : ""}" data-filter="${option.value}" style="margin: 0 5px;">${option.label}</button>`
+                )
+                .join("")}
         </div>
     `;
     $(`#${forecasts_div}`).before(filterButtons);
     
+    // Add filter functionality
     $('.filter-btn').on('click', function () {
         $('.filter-btn').removeClass('active');
         $(this).addClass('active');
@@ -1534,6 +1549,7 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
         let filteredRange;
         let filteredYValues = [];
     
+        // Determine the filtered range based on the selected filter
         switch (filter) {
             case '1D':
                 const oneDayAgo = new Date();
@@ -1593,9 +1609,19 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
         const endIndex = cleanedData.master_datetime.findIndex(datetime => new Date(datetime) > new Date(filteredRange[1]));
     
         if (startIndex !== -1 && endIndex !== -1) {
-            filteredYValues = cleanedData.master_predicted.slice(startIndex, endIndex);
+            if (cleanedData.master_predicted) {
+                filteredYValues = cleanedData.master_predicted.slice(startIndex, endIndex);
+            } else {
+                console.warn("Column 'master_predicted' is missing. Falling back to 'master_observation'.");
+                filteredYValues = cleanedData.master_observation.slice(startIndex, endIndex);
+            }
         } else {
-            filteredYValues = cleanedData.master_predicted; // Default to all values if range is invalid
+            if (cleanedData.master_predicted) {
+                filteredYValues = cleanedData.master_predicted; // Default to all values if range is invalid
+            } else {
+                console.warn("Column 'master_predicted' is missing. Falling back to 'master_observation'.");
+                filteredYValues = cleanedData.master_observation; // Default to all values if range is invalid
+            }
         }
     
         // Calculate the new Y-axis range
@@ -1607,7 +1633,7 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
             'xaxis.range': filteredRange,
             'yaxis.range': [yMin, yMax]
         });
-    });
+    });   
 }
 
 function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_div,merge,precomputer_forecasts,historical){
