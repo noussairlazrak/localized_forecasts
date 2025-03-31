@@ -350,8 +350,7 @@ function create_map(sites, param) {
         });
         map.on('click', 'clustered-point', function(e) {
             var features = map.queryRenderedFeatures(e.point, { layers: ['clustered-point'] });
-            console.log("features");
-            console.log(features);
+
             var clusterId = features[0].properties.cluster_id;
         
             map.getSource('locations_dst').getClusterExpansionZoom(clusterId, function(err, zoom) {
@@ -388,7 +387,7 @@ function create_map(sites, param) {
         });
         
         
-         const legend = document.createElement('div');
+    const legend = document.createElement('div');
     legend.id = 'map-legend';
     legend.style.position = 'absolute';
     legend.style.top = '30px';
@@ -1461,11 +1460,11 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
         percentageChange = ((currentValue - previousValue) / previousValue) * 100;
     }
     
-    // Add previous day's average and change
+
     let previousDayAverage = 'N/A';
     let previousDayChange = 'N/A';
     if (cleanedData.master_predicted?.length >= 24) {
-        const previousDayValues = cleanedData.master_predicted.slice(-24); // Assuming 24 data points per day
+        const previousDayValues = cleanedData.master_predicted.slice(-24);
         previousDayAverage = previousDayValues.reduce((a, b) => a + b, 0) / previousDayValues.length;
     
         if (currentValue !== 'N/A') {
@@ -1473,7 +1472,7 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
         }
     }
     
-    // Build the prediction elements conditionally
+
     let predictionElement = `<div class="prediction-container">`;
     
     if (currentValue !== 'N/A') {
@@ -1512,22 +1511,22 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
     
    
     
-     // Add the prediction element to the DOM
+
     $(`#${forecasts_div}`).before(predictionElement);
     
-    // Add filter buttons dynamically based on available data
-    const availableDays = cleanedData.master_datetime.length; // Total number of data points
+
+    const availableDays = cleanedData.master_datetime.length; 
     const filterOptions = [];
     
-    // Dynamically determine which filters to show based on available data
+
     if (availableDays >= 1) filterOptions.push({ label: "1 Day", value: "1D" });
     if (availableDays >= 5) filterOptions.push({ label: "5 Days", value: "5D" });
     if (availableDays >= 30) filterOptions.push({ label: "1 Month", value: "1M" });
     if (availableDays >= 180) filterOptions.push({ label: "6 Months", value: "6M" });
     if (availableDays >= 365) filterOptions.push({ label: "1 Year", value: "1Y" });
-    filterOptions.push({ label: "All", value: "ALL" }); // Always include "All"
+    filterOptions.push({ label: "All", value: "ALL" });
     
-    // Generate filter buttons
+
     const filterButtons = `
         <div class="filter-buttons" style="display: flex; margin-bottom: 10px;">
             ${filterOptions
@@ -1540,7 +1539,7 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
     `;
     $(`#${forecasts_div}`).before(filterButtons);
     
-    // Add filter functionality
+
     $('.filter-btn').on('click', function () {
         $('.filter-btn').removeClass('active');
         $(this).addClass('active');
@@ -1549,7 +1548,7 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
         let filteredRange;
         let filteredYValues = [];
     
-        // Determine the filtered range based on the selected filter
+
         switch (filter) {
             case '1D':
                 const oneDayAgo = new Date();
@@ -1604,7 +1603,7 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
                 ];
         }
     
-        // Filter the Y values based on the selected time range
+      
         const startIndex = cleanedData.master_datetime.findIndex(datetime => new Date(datetime) >= new Date(filteredRange[0]));
         const endIndex = cleanedData.master_datetime.findIndex(datetime => new Date(datetime) > new Date(filteredRange[1]));
     
@@ -1617,18 +1616,18 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
             }
         } else {
             if (cleanedData.master_predicted) {
-                filteredYValues = cleanedData.master_predicted; // Default to all values if range is invalid
+                filteredYValues = cleanedData.master_predicted; 
             } else {
                 console.warn("Column 'master_predicted' is missing. Falling back to 'master_observation'.");
-                filteredYValues = cleanedData.master_observation; // Default to all values if range is invalid
+                filteredYValues = cleanedData.master_observation; 
             }
         }
     
-        // Calculate the new Y-axis range
+
         const yMin = Math.min(...filteredYValues);
         const yMax = Math.max(...filteredYValues);
     
-        // Update the plot with the new X and Y ranges
+
         Plotly.relayout(forecasts_div, {
             'xaxis.range': filteredRange,
             'yaxis.range': [yMin, yMax]
