@@ -1460,6 +1460,14 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
     const maxValues = plot_columns.map(({ column }) => Math.max(...cleanedData[column]));
     const maxValue = Math.max(...maxValues);
 
+    const currentDate = new Date();
+    const currentDateString = currentDate.toISOString().split('T')[0];
+    const currentHour = currentDate.getHours();
+    const lastIndex = cleanedData.master_datetime.length - 1;
+    let currentX = null;
+    let currentY = null;
+
+
     const traces = plot_columns.map(({ column, name, color, width, dash }, index) => {
         const lineColor = color || 'rgba(7, 23, 16, 0.65)';
         const rgbaMatch = lineColor.match(/\d+/g);
@@ -1485,10 +1493,22 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
         };
     });
 
-     
-     const lastIndex = cleanedData.master_datetime.length - 1;
-     const lastX = cleanedData.master_datetime[lastIndex]; 
-     const lastY = cleanedData.master_observation[lastIndex]; 
+    for (let i = 0; i < cleanedData.master_datetime.length; i++) {
+        const datetime = new Date(cleanedData.master_datetime[i]);
+        const dateString = datetime.toISOString().split('T')[0];
+        const hour = datetime.getHours();
+    
+
+        if (dateString === currentDateString && hour === currentHour) {
+            currentX = cleanedData.master_datetime[i];
+            currentY = cleanedData.master_observation[i];
+            break;
+        }
+    }
+    
+
+       
+
  
     const layout = {
         title: {
@@ -1562,7 +1582,7 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
                 y1: 1,
                 yref: 'paper',
                 line: {
-                    color: '#FF0000',
+                    color: 'grey',
                     width: 2,
                     dash: 'dot'
                 }
@@ -1581,6 +1601,67 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
             }
         ]
     };
+
+        if (currentX && currentY) {
+        // Add a scatter trace for the current value
+        const currentPointTrace = {
+            type: "scatter",
+            mode: "markers",
+            x: [currentX],
+            y: [currentY],
+            marker: {
+                color: "black",
+                size: 10,
+                symbol: "circle"
+            },
+            hoverinfo: "x+y",
+            name: "Current Value"
+        };
+        traces.push(currentPointTrace);
+    
+        // Add an annotation for the current value
+        const annotation = {
+            x: currentX,
+            y: currentY,
+            xref: "x",
+            yref: "y",
+            text: "Current Estimates",
+            showarrow: true,
+            arrowhead: 2,
+            ax: -50, // Position the text to the left of the point
+            ay: 0, // Align vertically with the point
+            font: {
+                color: "black",
+                size: 12
+            },
+            bgcolor: "white",
+            bordercolor: "black",
+            borderwidth: 1,
+            borderpad: 4
+        };
+    
+        // Add a horizontal line for the current value
+        const horizontalLine = {
+            type: "line",
+            x0: cleanedData.master_datetime[0],
+            x1: cleanedData.master_datetime[cleanedData.master_datetime.length - 1],
+            y0: currentY,
+            y1: currentY,
+            line: {
+                color: "black",
+                width: 1,
+                dash: "dot"
+            }
+        };
+    
+        // Add the annotation and horizontal line to the layout
+        layout.annotations = layout.annotations || [];
+        layout.annotations.push(annotation);
+    
+        layout.shapes = layout.shapes || [];
+        layout.shapes.push(horizontalLine);
+    }
+    
 
     Plotly.newPlot(forecasts_div, traces, layout);
 
