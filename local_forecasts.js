@@ -695,10 +695,6 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
         .then(data => {
             if (!data || data.status !== "200") throw new Error("No valid data received");
 
-            console.log(data);
-
-            console.log(data);
-
             const modelHtml = `
                 <div class="container my-5">
                     <h5 class="mb-4">Machine learning model information</h5>
@@ -850,6 +846,76 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
         });
 }
 
+function calculateAqiForNo2(concentration) {
+    if (concentration === null || concentration === undefined || isNaN(concentration)) {
+        return 'N/A';
+    }
+
+    const breakpoints = [
+        { concentration: [0, 53], aqi: [0, 50] },
+        { concentration: [54, 100], aqi: [51, 100] },
+        { concentration: [101, 360], aqi: [101, 150] },
+        { concentration: [361, 649], aqi: [151, 200] },
+        { concentration: [650, 1249], aqi: [201, 300] },
+        { concentration: [1250, 2049], aqi: [301, 400] },
+        { concentration: [2050, 4049], aqi: [401, 500] }
+    ];
+
+    for (const breakpoint of breakpoints) {
+        const [cLow, cHigh] = breakpoint.concentration;
+        const [aqiLow, aqiHigh] = breakpoint.aqi;
+
+        if (concentration >= cLow && concentration <= cHigh) {
+            return Math.round(((aqiHigh - aqiLow) / (cHigh - cLow)) * (concentration - cLow) + aqiLow);
+        }
+    }
+
+    return 'N/A'; 
+}
+
+function calculateAqiForPm25(concentration) {
+    if (concentration === null || concentration === undefined || isNaN(concentration)) {
+        return 'N/A';
+    }
+
+    const breakpoints = [
+        { concentration: [0.0, 12.0], aqi: [0, 50] },
+        { concentration: [12.1, 35.4], aqi: [51, 100] },
+        { concentration: [35.5, 55.4], aqi: [101, 150] },
+        { concentration: [55.5, 150.4], aqi: [151, 200] },
+        { concentration: [150.5, 250.4], aqi: [201, 300] },
+        { concentration: [250.5, 350.4], aqi: [301, 400] },
+        { concentration: [350.5, 500.4], aqi: [401, 500] }
+    ];
+
+    for (const breakpoint of breakpoints) {
+        const [cLow, cHigh] = breakpoint.concentration;
+        const [aqiLow, aqiHigh] = breakpoint.aqi;
+
+        if (concentration >= cLow && concentration <= cHigh) {
+            return Math.round(((aqiHigh - aqiLow) / (cHigh - cLow)) * (concentration - cLow) + aqiLow);
+        }
+    }
+
+    return 'N/A';
+}
+
+function getAqiLevel(aqi) {
+    if (aqi <= 50) {
+        return { level: "Good", color: "#4CAF50", message: "Air quality is considered satisfactory." };
+    } else if (aqi <= 100) {
+        return { level: "Moderate", color: "#FFEB3B", message: "Air quality is acceptable." };
+    } else if (aqi <= 150) {
+        return { level: "Unhealthy for Sensitive Groups", color: "#FF9800", message: "Members of sensitive groups may experience health effects." };
+    } else if (aqi <= 200) {
+        return { level: "Unhealthy", color: "#F44336", message: "Everyone may begin to experience health effects." };
+    } else if (aqi <= 300) {
+        return { level: "Very Unhealthy", color: "#9C27B0", message: "Health alert: everyone may experience serious health effects." };
+    } else {
+        return { level: "Hazardous", color: "#7E0023", message: "Health warnings of emergency conditions." };
+    }
+}
+
 function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
     const messages = [
         "Generating data",
@@ -866,7 +932,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
     const paramCode = pollutant_details(param).id;
     const fileUrl = `precomputed/merra2/${location}.json`;
 
-    console.log(fileUrl);
+    
 
     fetch(fileUrl)
         .then(response => {
@@ -944,8 +1010,19 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
 
             if (Array.isArray(data.forecasts) && data.forecasts.length > 0) {
                 data.forecasts.forEach(forecast => {
-                    masterData.master_datetime.push(forecast.time || null);
-                    masterData.master_observation.push(forecast.value || null);
+                    const utcTime = forecast.time || null;
+                    if (utcTime) {
+                        const date = new Date(utcTime);
+                        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get user's timezone
+                        console.log("current timezone: " + userTimeZone);
+                        const localTime = new Date(date.toLocaleString('en-US', { timeZone: userTimeZone }));
+                        masterData.master_datetime.push(localTime.toISOString()); // Store in ISO 8601 format
+                    } else {
+                        masterData.master_datetime.push(null);
+                    }
+            
+                    const observationValue = forecast.value || null;
+                    masterData.master_observation.push(observationValue);
                 });
             }
 
@@ -1015,8 +1092,64 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
 
                 window.dispatchEvent(new Event('resize'));
             });
+           
+            const currentValue = masterData.master_observation[masterData.master_observation.length - 1] || 'N/A';
+            const nextValue = masterData.master_observation[masterData.master_observation.length - 2] || 'N/A'; // Assuming next hour is the second last value
 
+            const currentAqi = param === "no2" ? calculateAqiForNo2(currentValue) : calculateAqiForPm25(currentValue);
+            const nextAqi = param === "no2" ? calculateAqiForNo2(nextValue) : calculateAqiForPm25(nextValue);
+
+            // Build the AQI elements
+            let aqiElement = `<div class="prediction-container">`;
+
+            if (currentAqi !== 'N/A') {
+                const currentAqiLevel = getAqiLevel(currentAqi);
+            
+                // Add a container for the horizontal scale
+                aqiElement += `
+                    <div class="prediction-box" style="background-color: ${currentAqiLevel.color};">
+                        <h5>Current AQI (${param.toUpperCase()})</h5>
+                        <h2>${currentAqi}</h2>
+                        <span>${currentAqiLevel.message}</span>
+                        <div class="aqi-scale-container">
+                            <div class="aqi-scale">
+                                <div class="aqi-scale-step" style="background-color: #4CAF50;" title="Good (0-50)"></div>
+                                <div class="aqi-scale-step" style="background-color: #FFEB3B;" title="Moderate (51-100)"></div>
+                                <div class="aqi-scale-step" style="background-color: #FF9800;" title="Unhealthy for Sensitive Groups (101-150)"></div>
+                                <div class="aqi-scale-step" style="background-color: #F44336;" title="Unhealthy (151-200)"></div>
+                                <div class="aqi-scale-step" style="background-color: #9C27B0;" title="Very Unhealthy (201-300)"></div>
+                                <div class="aqi-scale-step" style="background-color: #7E0023;" title="Hazardous (301-500)"></div>
+                            </div>
+                            <div class="aqi-indicator" style="left: ${Math.min((currentAqi / 500) * 100, 100)}%;"></div>
+                        </div>
+                    </div>`;
+            }
+
+            if (nextAqi !== 'N/A') {
+                const nextAqiLevel = getAqiLevel(nextAqi);
+                aqiElement += `
+                    <div class="prediction-box" style="background-color: ${nextAqiLevel.color};">
+                        <h5>Next Hour AQI (${param.toUpperCase()})</h5>
+                        <h2>${nextAqi}</h2>
+                        <span>${nextAqiLevel.message}</span>
+                        <div class="aqi-scale-container">
+                            <div class="aqi-scale">
+                                <div class="aqi-scale-step" style="background-color: #4CAF50;" title="Good (0-50)"></div>
+                                <div class="aqi-scale-step" style="background-color: #FFEB3B;" title="Moderate (51-100)"></div>
+                                <div class="aqi-scale-step" style="background-color: #FF9800;" title="Unhealthy for Sensitive Groups (101-150)"></div>
+                                <div class="aqi-scale-step" style="background-color: #F44336;" title="Unhealthy (151-200)"></div>
+                                <div class="aqi-scale-step" style="background-color: #9C27B0;" title="Very Unhealthy (201-300)"></div>
+                                <div class="aqi-scale-step" style="background-color: #7E0023;" title="Hazardous (301-500)"></div>
+                            </div>
+                            <div class="aqi-indicator" style="left: ${Math.min((currentAqi / 500) * 100, 100)}%;"></div>
+                        </div>
+                    </div>`;
+            }
+
+            aqiElement += `</div>`;
             $('.loader').hide();
+            $(`#${forecastsDiv}`).before(aqiElement);
+
         })
         .catch(error => {
             console.error("Error loading data:", error);
@@ -1452,67 +1585,65 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
     Plotly.newPlot(forecasts_div, traces, layout);
 
     const currentValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 1] || 'N/A';
-    const previousValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 2] || 'N/A';
-    const nextValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 1] || 'N/A'; // Assuming next hour is the last value
-    
-    let percentageChange = 'N/A';
-    if (currentValue !== 'N/A' && previousValue !== 'N/A') {
-        percentageChange = ((currentValue - previousValue) / previousValue) * 100;
-    }
-    
+     const previousValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 2] || 'N/A';
+     const nextValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 1] || 'N/A'; // Assuming next hour is the last value
+ 
+     let percentageChange = 'N/A';
+     if (currentValue !== 'N/A' && previousValue !== 'N/A') {
+         percentageChange = ((currentValue - previousValue) / previousValue) * 100;
+     }
+ 
+  
+     let previousDayAverage = 'N/A';
+     let previousDayChange = 'N/A';
+     if (cleanedData.master_predicted?.length >= 24) {
+         const previousDayValues = cleanedData.master_predicted.slice(-24); // Assuming 24 data points per day
+         previousDayAverage = previousDayValues.reduce((a, b) => a + b, 0) / previousDayValues.length;
+ 
+         if (currentValue !== 'N/A') {
+             previousDayChange = ((currentValue - previousDayAverage) / previousDayAverage) * 100;
+         }
+     }
+ 
 
-    let previousDayAverage = 'N/A';
-    let previousDayChange = 'N/A';
-    if (cleanedData.master_predicted?.length >= 24) {
-        const previousDayValues = cleanedData.master_predicted.slice(-24);
-        previousDayAverage = previousDayValues.reduce((a, b) => a + b, 0) / previousDayValues.length;
-    
-        if (currentValue !== 'N/A') {
-            previousDayChange = ((currentValue - previousDayAverage) / previousDayAverage) * 100;
-        }
-    }
-    
-
-    let predictionElement = `<div class="prediction-container">`;
-    
-    if (currentValue !== 'N/A') {
-        predictionElement += `
-            <div class="prediction-box">
-                <h5>Current Prediction</h5>
-                <h2>${currentValue.toFixed(2)}</h2>
-                ${percentageChange !== 'N/A' ? `
-                    <span class="${percentageChange >= 0 ? 'positive' : 'negative'}">
-                        ${percentageChange >= 0 ? '+' : ''}${percentageChange.toFixed(2)}%
-                    </span>` : ''}
-            </div>`;
-    }
-    
-    if (nextValue !== 'N/A') {
-        predictionElement += `
-            <div class="prediction-box">
-                <h5>Next Hour Prediction</h5>
-                <h2>${nextValue.toFixed(2)}</h2>
-            </div>`;
-    }
-    
-    if (previousDayAverage !== 'N/A') {
-        predictionElement += `
-            <div class="prediction-box">
-                <h5>Previous Day Average</h5>
-                <h2>${previousDayAverage.toFixed(2)}</h2>
-                ${previousDayChange !== 'N/A' ? `
-                    <span class="${previousDayChange >= 0 ? 'positive' : 'negative'}">
-                        ${previousDayChange >= 0 ? '+' : ''}${previousDayChange.toFixed(2)}%
-                    </span>` : ''}
-            </div>`;
-    }
-    
-    predictionElement += `</div>`;
-    
-   
-    
-
-    $(`#${forecasts_div}`).before(predictionElement);
+     let predictionElement = `<div class="prediction-container">`;
+ 
+     if (currentValue !== 'N/A') {
+         predictionElement += `
+             <div class="prediction-box">
+                 <h5>Current Prediction</h5>
+                 <h2>${currentValue.toFixed(2)}</h2>
+                 ${percentageChange !== 'N/A' ? `
+                     <span class="${percentageChange >= 0 ? 'positive' : 'negative'}">
+                         ${percentageChange >= 0 ? '+' : ''}${percentageChange.toFixed(2)}%
+                     </span>` : ''}
+             </div>`;
+     }
+ 
+     if (nextValue !== 'N/A') {
+         predictionElement += `
+             <div class="prediction-box">
+                 <h5>Next Hour Prediction</h5>
+                 <h2>${nextValue.toFixed(2)}</h2>
+             </div>`;
+     }
+ 
+     if (previousDayAverage !== 'N/A') {
+         predictionElement += `
+             <div class="prediction-box">
+                 <h5>Previous Day Average</h5>
+                 <h2>${previousDayAverage.toFixed(2)}</h2>
+                 ${previousDayChange !== 'N/A' ? `
+                     <span class="${previousDayChange >= 0 ? 'positive' : 'negative'}">
+                         ${previousDayChange >= 0 ? '+' : ''}${previousDayChange.toFixed(2)}%
+                     </span>` : ''}
+             </div>`;
+     }
+ 
+     predictionElement += `</div>`;
+ 
+     // Add the prediction element to the DOM
+     $(`#${forecasts_div}`).before(predictionElement);
     
 
     const availableDays = cleanedData.master_datetime.length; 
