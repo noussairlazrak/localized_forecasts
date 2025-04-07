@@ -1074,7 +1074,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
 
             plots.forEach(plot => {
                 const plotColumns = [
-                    { column: "master_observation", name: "Forecasted Value", color: "blue", width: 3 }
+                    { column: "master_observation", name: "Forecasted Value", color: "green", width: 2 }
                 ];
 
 
