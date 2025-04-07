@@ -834,8 +834,6 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
 
             const currentValue = masterData.master_observation[masterData.master_observation.length - 1] || 'N/A';
             const nextValue = masterData.master_observation[masterData.master_observation.length - 2] || 'N/A'; // Assuming next hour is the second last value
-            console.log("the current value is: " + currentValue);
-            console.log("the next value is: " + nextValue);
             const currentAqi = param === "no2" ? calculateAqiForNo2(currentValue) : calculateAqiForPm25(currentValue);
             const nextAqi = param === "no2" ? calculateAqiForNo2(nextValue) : calculateAqiForPm25(nextValue);
     
@@ -1525,6 +1523,10 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
     let currentX = null;
     let currentY = null;
 
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get user's timezone
+    const currentTimeInUserTimeZone = new Date().toLocaleString('en-US', { timeZone: userTimeZone });
+
+
 
     const traces = plot_columns.map(({ column, name, color, width, dash }, index) => {
         const lineColor = color || 'rgba(7, 23, 16, 0.65)';
@@ -1630,8 +1632,8 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
         shapes: [
             {
                 type: 'line',
-                x0: new Date().toISOString().slice(0, 13) + ":00:00Z",
-                x1: new Date().toISOString().slice(0, 13) + ":00:00Z",
+                x0: new Date(currentTimeInUserTimeZone).toISOString(),
+                x1: new Date(currentTimeInUserTimeZone).toISOString(),
                 y0: 0,
                 y1: 1,
                 yref: 'paper',
@@ -1702,7 +1704,17 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
              </div>`;
      }
  
-     
+     if (previousDayAverage !== 'N/A') {
+         predictionElement += `
+             <div class="prediction-box">
+                 <h5>Previous Day Average</h5>
+                 <h2>${previousDayAverage.toFixed(2)}</h2>
+                 ${previousDayChange !== 'N/A' ? `
+                     <span class="${previousDayChange >= 0 ? 'positive' : 'negative'}">
+                         ${previousDayChange >= 0 ? '+' : ''}${previousDayChange.toFixed(2)}%
+                     </span>` : ''}
+             </div>`;
+     }
  
      predictionElement += `</div>`;
  
