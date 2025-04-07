@@ -832,6 +832,64 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                 );
             });
 
+            const currentValue = masterData.master_observation[masterData.master_observation.length - 1] || 'N/A';
+            const nextValue = masterData.master_observation[masterData.master_observation.length - 2] || 'N/A'; // Assuming next hour is the second last value
+            console.log("the current value is: " + currentValue);
+            console.log("the next value is: " + nextValue);
+            const currentAqi = param === "no2" ? calculateAqiForNo2(currentValue) : calculateAqiForPm25(currentValue);
+            const nextAqi = param === "no2" ? calculateAqiForNo2(nextValue) : calculateAqiForPm25(nextValue);
+    
+            // Build the AQI elements
+            let aqiElement = `<div class="prediction-container">`;
+    
+            if (currentAqi !== 'N/A') {
+                const currentAqiLevel = getAqiLevel(currentAqi);
+            
+                // Add a container for the horizontal scale
+                aqiElement += `
+                    <div class="prediction-box" style="background-color: ${currentAqiLevel.color};">
+                        <h5>Current AQI (${param.toUpperCase()})</h5>
+                        <h2>${currentAqi}</h2> 
+                        <span>${currentAqiLevel.message}</span>
+                        <div class="aqi-scale-container">
+                            <div class="aqi-scale">
+                                <div class="aqi-scale-step" style="background-color: #4CAF50;" title="Good (0-50)"></div>
+                                <div class="aqi-scale-step" style="background-color: #FFEB3B;" title="Moderate (51-100)"></div>
+                                <div class="aqi-scale-step" style="background-color: #FF9800;" title="Unhealthy for Sensitive Groups (101-150)"></div>
+                                <div class="aqi-scale-step" style="background-color: #F44336;" title="Unhealthy (151-200)"></div>
+                                <div class="aqi-scale-step" style="background-color: #9C27B0;" title="Very Unhealthy (201-300)"></div>
+                                <div class="aqi-scale-step" style="background-color: #7E0023;" title="Hazardous (301-500)"></div>
+                            </div>
+                            <div class="aqi-indicator" style="left: ${Math.min((currentAqi / 500) * 100, 100)}%;"></div>
+                        </div>
+                    </div>`;
+            }
+    
+            if (nextAqi !== 'N/A') {
+                const nextAqiLevel = getAqiLevel(nextAqi);
+                aqiElement += `
+                    <div class="prediction-box" style="background-color: ${nextAqiLevel.color};">
+                        <h5>Next Hour AQI (${param.toUpperCase()})</h5>
+                        <h2>${nextAqi}</h2>
+                        <span>${nextAqiLevel.message}</span>
+                        <div class="aqi-scale-container">
+                            <div class="aqi-scale">
+                                <div class="aqi-scale-step" style="background-color: #4CAF50;" title="Good (0-50)"></div>
+                                <div class="aqi-scale-step" style="background-color: #FFEB3B;" title="Moderate (51-100)"></div>
+                                <div class="aqi-scale-step" style="background-color: #FF9800;" title="Unhealthy for Sensitive Groups (101-150)"></div>
+                                <div class="aqi-scale-step" style="background-color: #F44336;" title="Unhealthy (151-200)"></div>
+                                <div class="aqi-scale-step" style="background-color: #9C27B0;" title="Very Unhealthy (201-300)"></div>
+                                <div class="aqi-scale-step" style="background-color: #7E0023;" title="Hazardous (301-500)"></div>
+                            </div>
+                            <div class="aqi-indicator" style="left: ${Math.min((currentAqi / 500) * 100, 100)}%;"></div>
+                        </div>
+                    </div>`;
+            }
+    
+            aqiElement += `</div>`;
+            $('.loader').hide();
+            $(`#${forecastsDiv}`).before(aqiElement);
+
             $('.loader').hide();
         })
         .catch(error => {
@@ -1109,7 +1167,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
                 aqiElement += `
                     <div class="prediction-box" style="background-color: ${currentAqiLevel.color};">
                         <h5>Current AQI (${param.toUpperCase()})</h5>
-                        <h2>${currentAqi}</h2>
+                        <h2>${currentAqi}</h2> 
                         <span>${currentAqiLevel.message}</span>
                         <div class="aqi-scale-container">
                             <div class="aqi-scale">
@@ -1506,10 +1564,6 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
         }
     }
     
-
-       
-
- 
     const layout = {
         title: {
             text: text,
@@ -1602,72 +1656,11 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
         ]
     };
 
-        if (currentX && currentY) {
-        // Add a scatter trace for the current value
-        const currentPointTrace = {
-            type: "scatter",
-            mode: "markers",
-            x: [currentX],
-            y: [currentY],
-            marker: {
-                color: "black",
-                size: 10,
-                symbol: "circle"
-            },
-            hoverinfo: "x+y",
-            name: "Current Value"
-        };
-        traces.push(currentPointTrace);
-    
-        // Add an annotation for the current value
-        const annotation = {
-            x: currentX,
-            y: currentY,
-            xref: "x",
-            yref: "y",
-            text: "Current Estimates",
-            showarrow: true,
-            arrowhead: 2,
-            ax: -50, // Position the text to the left of the point
-            ay: 0, // Align vertically with the point
-            font: {
-                color: "black",
-                size: 12
-            },
-            bgcolor: "white",
-            bordercolor: "black",
-            borderwidth: 1,
-            borderpad: 4
-        };
-    
-        // Add a horizontal line for the current value
-        const horizontalLine = {
-            type: "line",
-            x0: cleanedData.master_datetime[0],
-            x1: cleanedData.master_datetime[cleanedData.master_datetime.length - 1],
-            y0: currentY,
-            y1: currentY,
-            line: {
-                color: "black",
-                width: 1,
-                dash: "dot"
-            }
-        };
-    
-        // Add the annotation and horizontal line to the layout
-        layout.annotations = layout.annotations || [];
-        layout.annotations.push(annotation);
-    
-        layout.shapes = layout.shapes || [];
-        layout.shapes.push(horizontalLine);
-    }
-    
-
     Plotly.newPlot(forecasts_div, traces, layout);
 
     const currentValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 1] || 'N/A';
-     const previousValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 2] || 'N/A';
-     const nextValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 1] || 'N/A'; // Assuming next hour is the last value
+    const previousValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 2] || 'N/A';
+    const nextValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 1] || 'N/A'; // Assuming next hour is the last value
  
      let percentageChange = 'N/A';
      if (currentValue !== 'N/A' && previousValue !== 'N/A') {
@@ -1709,17 +1702,7 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
              </div>`;
      }
  
-     if (previousDayAverage !== 'N/A') {
-         predictionElement += `
-             <div class="prediction-box">
-                 <h5>Previous Day Average</h5>
-                 <h2>${previousDayAverage.toFixed(2)}</h2>
-                 ${previousDayChange !== 'N/A' ? `
-                     <span class="${previousDayChange >= 0 ? 'positive' : 'negative'}">
-                         ${previousDayChange >= 0 ? '+' : ''}${previousDayChange.toFixed(2)}%
-                     </span>` : ''}
-             </div>`;
-     }
+     
  
      predictionElement += `</div>`;
  
