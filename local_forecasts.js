@@ -1143,7 +1143,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
                     plot_columns = plotColumns,
                     dates_ranges = false,
                     enableFading = false,
-                    text = "<b>Sources:</b> NASA Modern-Era Retrospective analysis for Research and Applications (MERRA)| | SNWG Bias CNN Model."
+                    text = "<b>Sources:</b> NASA Modern-Era Retrospective analysis for Research and Applications (MERRA-2)| | SNWG Bias CNN Model."
                 );
 
                 window.dispatchEvent(new Event('resize'));
