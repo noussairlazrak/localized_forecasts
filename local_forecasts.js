@@ -1069,10 +1069,10 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
                     const utcTime = forecast.time || null;
                     if (utcTime) {
                         const date = new Date(utcTime);
-                        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get user's timezone
+                        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; 
                         console.log("current timezone: " + userTimeZone);
                         const localTime = new Date(date.toLocaleString('en-US', { timeZone: userTimeZone }));
-                        masterData.master_datetime.push(localTime.toISOString()); // Store in ISO 8601 format
+                        masterData.master_datetime.push(localTime.toISOString()); 
                     } else {
                         masterData.master_datetime.push(null);
                     }
@@ -1149,8 +1149,25 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
                 window.dispatchEvent(new Event('resize'));
             });
            
-            const currentValue = masterData.master_observation[masterData.master_observation.length - 1] || 'N/A';
-            const nextValue = masterData.master_observation[masterData.master_observation.length - 2] || 'N/A'; // Assuming next hour is the second last value
+            const currentDate = new Date();
+            const currentDateString = currentDate.toISOString().split('T')[0];
+            const currentHour = currentDate.getHours();
+            
+            let currentValue = 'N/A';
+            let nextValue = 'N/A';
+            
+
+            for (let i = 0; i < masterData.master_datetime.length; i++) {
+                const datetime = new Date(masterData.master_datetime[i]);
+                const dateString = datetime.toISOString().split('T')[0];
+                const hour = datetime.getHours();
+            
+                if (dateString === currentDateString && hour === currentHour) {
+                    currentValue = masterData.master_observation[i];
+                } else if (dateString === currentDateString && hour === currentHour + 1) {
+                    nextValue = masterData.master_observation[i];
+                }
+            }
 
             const currentAqi = param === "no2" ? calculateAqiForNo2(currentValue) : calculateAqiForPm25(currentValue);
             const nextAqi = param === "no2" ? calculateAqiForNo2(nextValue) : calculateAqiForPm25(nextValue);
