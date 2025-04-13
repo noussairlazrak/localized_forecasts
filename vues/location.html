@@ -998,19 +998,18 @@ span.d_source {
 
 
 .row.local_forecats_window a {
-    background: #cdcdcd !important;
-    font-size: smaller;
-    padding: 5px;
-    color: #141414;
+    background: #d8d8d8 !important;
+    font-size: small;
+    padding: 8px;
+    color: #000000;
     margin-top: 11px;
+    border-radius: 0;
 }
 
 .row.local_forecats_window .active {
-    background: #ff98005c !important;
-    font-size: smaller;
-    padding: 5px;
-    color: black !important;
-    margin-top: 11px;
+    background: #000000 !important;
+    color: #ffffff;
+    border-color: #00000069 !important;
 }
 span.current_location_name {font-size: xxx-large;}
 
@@ -1140,7 +1139,10 @@ button.filter-btn.active {
     border-radius: 5px;
     transform: translateX(-50%);
 }
-
+span.time {
+    color: #000000;
+    margin-top: 0 !important;
+}
 </style>
 <div class="container forecasts-box">
     <div class="modal-dialog modal-dialog-centered modal-md">
@@ -1152,7 +1154,14 @@ button.filter-btn.active {
                     <h3 class="module_title location_parameter_name"></h3>
                     <h1 class="sub-title site-name"><span class="current_location_name"></span></h1>
                     <div class="thewindow">
-                    <h5 class="latest_time">Generated Forecast</h5>
+                        <div class="loading_forecasts">
+                            <div id="loading-screen">
+                                <div class="spinner-border text-light" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <h5 class="latest_time"></h5>
+                            </div>
+                        </div>
                     <div class="row local_forecats_window"></div>
                     <div class="tab-content" id="pills-tabContent"></div>
                    </div>

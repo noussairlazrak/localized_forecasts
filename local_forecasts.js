@@ -930,6 +930,9 @@ function calculateAqiForNo2(concentration) {
 }
 
 function calculateAqiForPm25(concentration) {
+
+    console.log("Concentration: " + concentration);
+
     if (concentration === null || concentration === undefined || isNaN(concentration)) {
         return 'N/A';
     }
@@ -971,8 +974,265 @@ function getAqiLevel(aqi) {
         return { level: "Hazardous", color: "#7E0023", message: "Health warnings of emergency conditions." };
     }
 }
-
 function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
+    const messages = [
+        "Generating data",
+        "Connecting to AirNow",
+        "Fetching the data from AirNow API",
+        "Fetching observations",
+        "Getting the forecasts",
+        "Please wait...",
+        "Connecting..."
+    ];
+
+    $('.loader').show();
+
+    const paramCode = pollutant_details(param).id;
+    const fileUrl = `precomputed/merra2/${location}.json`;
+
+    fetch(fileUrl)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            if (!data || data.status !== "200") throw new Error("No valid data received");
+
+            const modelHtml = `
+                <div class="container my-5">
+                    <h6>Model Information</h6>
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Estimates</h5>
+                                    <p class="card-text fs-3 fw-bold">${data.metrics.total_observation || 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Last Update</h5>
+                                    <p class="card-text fs-3 fw-bold">${data.metrics.latest_training || 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Start Date</h5>
+                                    <p class="card-text">${data.metrics.start_date || 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">End Date</h5>
+                                    <p class="card-text">${data.metrics.end_date || 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+                        ${data.metrics.validation_score ? `
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">Validation Score</h5>
+                                    <p class="card-text">${data.metrics.validation_score}</p>
+                                </div>
+                            </div>
+                        </div>` : ''}
+                        ${data.metrics.performance?.metrics?.length ? data.metrics.performance.metrics.map(metric => `
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">${metric.name.toUpperCase()}</h5>
+                                    <p class="card-text">${metric.value}</p>
+                                </div>
+                            </div>
+                        </div>`).join('') : ''}
+                    </div>
+                </div>
+            `;
+            $('.model_data').html(modelHtml);
+
+            let masterData = {
+                master_datetime: [],
+                master_observation: [],
+                master_aqi: [] // Add a new array to store AQI values
+            };
+
+            if (Array.isArray(data.forecasts) && data.forecasts.length > 0) {
+                data.forecasts.forEach(forecast => {
+                    const utcTime = forecast.time || null;
+                    if (utcTime) {
+                        const date = new Date(utcTime);
+                        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                        const localTime = new Date(date.toLocaleString('en-US', { timeZone: userTimeZone }));
+                        masterData.master_datetime.push(localTime.toISOString());
+                    } else {
+                        masterData.master_datetime.push(null);
+                    }
+
+                    const observationValue = forecast.value || null;
+                    masterData.master_observation.push(observationValue);
+
+                    // Calculate AQI for PM2.5 and store it
+                    const aqiValue = calculateAqiForPm25(observationValue);
+                    masterData.master_aqi.push(aqiValue);
+                });
+            }
+
+            const tabsNav = $("#pills-tabContent").prev();
+            const tabsContainer = $(".tab-content");
+
+            tabsNav.empty();
+            tabsContainer.empty();
+
+            const tabsList = $('<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist"></ul>');
+            tabsNav.append(tabsList);
+
+            const plots = [
+                { id: "main_plot_for_airnow", title: "PM 2.5 Forecasts", data: masterData },
+                { id: "aqi_plot_for_airnow", title: "PM 2.5 AQI", data: masterData } // Add a new tab for AQI
+            ];
+
+            plots.forEach((plot, index) => {
+                const isActive = index === 0 ? "active" : "";
+
+                tabsList.append(`
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link ${isActive}" id="tab-${plot.id}" data-bs-toggle="pill" href="#${plot.id}" role="tab" aria-controls="${plot.id}" aria-selected="${isActive === 'active'}">
+                            ${plot.title}
+                        </a>
+                    </li>
+                `);
+
+                tabsContainer.append(`
+                    <div class="tab-pane fade ${isActive} show" id="${plot.id}" role="tabpanel" aria-labelledby="tab-${plot.id}">
+                    </div>
+                `);
+            });
+
+            $(".nav-link").on("click", function () {
+                $(".tab-pane").removeClass("active show");
+                $($(this).attr("href")).addClass("active show");
+            });
+
+            plots.forEach(plot => {
+                const plotColumns = plot.id === "aqi_plot_for_airnow"
+                    ? [{ column: "master_aqi", name: "AQI", color: "blue", width: 2 }] // Use AQI for the new tab
+                    : [{ column: "master_observation", name: "Forecasted Value", color: "green", width: 2 }];
+
+                draw_plot(
+                    combined_dataset = plot.data,
+                    param = 'pm2.5',
+                    unit = plot.id === "aqi_plot_for_airnow" ? "AQI" : "μg/m³",
+                    forecasts_div = plot.id,
+                    plot_columns = plotColumns,
+                    dates_ranges = false,
+                    enableFading = false,
+                    text = plot.id === "aqi_plot_for_airnow"
+                        ? "<b>PM 2.5 AQI</b> | Calculated from PM 2.5 concentrations"
+                        : "<b>Sources:</b> NASA Modern-Era Retrospective analysis for Research and Applications (MERRA-2)| | SNWG Bias CNN Model.",
+                    plotType = "bar"
+                );
+
+                window.dispatchEvent(new Event('resize'));
+            });
+
+            const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get user's timezone
+            const currentDate = new Date();
+            const currentDateString = currentDate.toISOString().split('T')[0];
+            const currentHour = currentDate.getHours();
+            
+            // Initialize variables for current and next 3-hour averages
+            let currentValue = 'N/A';
+            let nextValue = 'N/A';
+            
+            // Loop through the dataset to find the current and next 3-hour averages
+            for (let i = 0; i < masterData.master_datetime.length; i++) {
+                const datetime = new Date(masterData.master_datetime[i]);
+                const dateString = datetime.toISOString().split('T')[0];
+                const hour = datetime.getHours();
+            
+                // Match the current 3-hour average
+                if (dateString === currentDateString && hour <= currentHour && currentHour < hour + 3) {
+                    currentValue = masterData.master_observation[i];
+                }
+            
+                // Match the next 3-hour average
+                if (dateString === currentDateString && hour <= currentHour + 3 && currentHour + 3 < hour + 3) {
+                    nextValue = masterData.master_observation[i];
+                }
+            }
+
+            const currentAqi = param === "no2" ? calculateAqiForNo2(currentValue) : calculateAqiForPm25(currentValue);
+            const nextAqi = param === "no2" ? calculateAqiForNo2(nextValue) : calculateAqiForPm25(nextValue);
+
+            // Build the AQI elements
+            let aqiElement = `<div class="prediction-container">`;
+
+            if (currentAqi !== 'N/A') {
+                const currentAqiLevel = getAqiLevel(currentAqi);
+            
+                // Add a container for the horizontal scale
+                aqiElement += `
+                    <div class="prediction-box" style="background-color: ${currentAqiLevel.color};">
+                        <h5>Current AQI (${param.toUpperCase()})</h5>
+                        <span class="time">${currentHour}:00, ${userTimeZone}</span>
+                        <h2>${currentAqi}</h2> 
+                        <span>${currentAqiLevel.message}</span>
+                        <div class="aqi-scale-container">
+                            <div class="aqi-scale">
+                                <div class="aqi-scale-step" style="background-color: #4CAF50;" title="Good (0-50)"></div>
+                                <div class="aqi-scale-step" style="background-color: #FFEB3B;" title="Moderate (51-100)"></div>
+                                <div class="aqi-scale-step" style="background-color: #FF9800;" title="Unhealthy for Sensitive Groups (101-150)"></div>
+                                <div class="aqi-scale-step" style="background-color: #F44336;" title="Unhealthy (151-200)"></div>
+                                <div class="aqi-scale-step" style="background-color: #9C27B0;" title="Very Unhealthy (201-300)"></div>
+                                <div class="aqi-scale-step" style="background-color: #7E0023;" title="Hazardous (301-500)"></div>
+                            </div>
+                            <div class="aqi-indicator" style="left: ${Math.min((currentAqi / 500) * 100, 100)}%;"></div>
+                        </div>
+                    </div>`;
+            }
+
+            if (nextAqi !== 'N/A') {
+                const nextAqiLevel = getAqiLevel(nextAqi);
+                aqiElement += `
+                    <div class="prediction-box" style="background-color: ${nextAqiLevel.color};">
+                        <h5>Next Hour AQI (${param.toUpperCase()})</h5>
+                        <span class="time">${currentHour}:00, ${userTimeZone}</span>
+                        <h2>${nextAqi}</h2>
+                        <span>${nextAqiLevel.message}</span>
+                        <div class="aqi-scale-container">
+                            <div class="aqi-scale">
+                                <div class="aqi-scale-step" style="background-color: #4CAF50;" title="Good (0-50)"></div>
+                                <div class="aqi-scale-step" style="background-color: #FFEB3B;" title="Moderate (51-100)"></div>
+                                <div class="aqi-scale-step" style="background-color: #FF9800;" title="Unhealthy for Sensitive Groups (101-150)"></div>
+                                <div class="aqi-scale-step" style="background-color: #F44336;" title="Unhealthy (151-200)"></div>
+                                <div class="aqi-scale-step" style="background-color: #9C27B0;" title="Very Unhealthy (201-300)"></div>
+                                <div class="aqi-scale-step" style="background-color: #7E0023;" title="Hazardous (301-500)"></div>
+                            </div>
+                            <div class="aqi-indicator" style="left: ${Math.min((currentAqi / 500) * 100, 100)}%;"></div>
+                        </div>
+                    </div>`;
+            }
+
+            aqiElement += `</div>`;
+            $('.loader').hide();
+            $(`#${forecastsDiv}`).before(aqiElement);
+
+            $('.loader').hide();
+        })
+        .catch(error => {
+            console.error("Error loading data:", error);
+            $('.api_baker_plots').html('Sorry, we are not able to connect with AirNow API at this moment. Please check back later...');
+            $('.loader').hide();
+        });
+}
+function readAirNow_22(location, param, unit, forecastsDiv, buttonOption = true, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
     const messages = [
         "Generating data",
         "Connecting to AirNow",
@@ -1143,28 +1403,34 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
                     plot_columns = plotColumns,
                     dates_ranges = false,
                     enableFading = false,
-                    text = "<b>Sources:</b> NASA Modern-Era Retrospective analysis for Research and Applications (MERRA-2)| | SNWG Bias CNN Model."
+                    text = "<b>Sources:</b> NASA Modern-Era Retrospective analysis for Research and Applications (MERRA-2)| | SNWG Bias CNN Model.",
+                    plotType = "bar"
                 );
 
                 window.dispatchEvent(new Event('resize'));
             });
-           
+            const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get user's timezone
             const currentDate = new Date();
             const currentDateString = currentDate.toISOString().split('T')[0];
             const currentHour = currentDate.getHours();
             
+            // Initialize variables for current and next 3-hour averages
             let currentValue = 'N/A';
             let nextValue = 'N/A';
             
-
+            // Loop through the dataset to find the current and next 3-hour averages
             for (let i = 0; i < masterData.master_datetime.length; i++) {
                 const datetime = new Date(masterData.master_datetime[i]);
                 const dateString = datetime.toISOString().split('T')[0];
                 const hour = datetime.getHours();
             
-                if (dateString === currentDateString && hour === currentHour) {
+                // Match the current 3-hour average
+                if (dateString === currentDateString && hour <= currentHour && currentHour < hour + 3) {
                     currentValue = masterData.master_observation[i];
-                } else if (dateString === currentDateString && hour === currentHour + 1) {
+                }
+            
+                // Match the next 3-hour average
+                if (dateString === currentDateString && hour <= currentHour + 3 && currentHour + 3 < hour + 3) {
                     nextValue = masterData.master_observation[i];
                 }
             }
@@ -1182,6 +1448,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
                 aqiElement += `
                     <div class="prediction-box" style="background-color: ${currentAqiLevel.color};">
                         <h5>Current AQI (${param.toUpperCase()})</h5>
+                        <span class="time">${currentHour}:00, ${userTimeZone}</span>
                         <h2>${currentAqi}</h2> 
                         <span>${currentAqiLevel.message}</span>
                         <div class="aqi-scale-container">
@@ -1203,6 +1470,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
                 aqiElement += `
                     <div class="prediction-box" style="background-color: ${nextAqiLevel.color};">
                         <h5>Next Hour AQI (${param.toUpperCase()})</h5>
+                        <span class="time">${currentHour}:00, ${userTimeZone}</span>
                         <h2>${nextAqi}</h2>
                         <span>${nextAqiLevel.message}</span>
                         <div class="aqi-scale-container">
@@ -1527,7 +1795,7 @@ function validateData(data, requiredKeys = [], minLength = 1) {
 
     return true;
 }
-function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, dates_ranges = false, enableFading = false, text = "Forecasts") {
+function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, dates_ranges = false, enableFading = false, text = "Forecasts", plotType = "scatter") {
     const datetime_data = combined_dataset["master_datetime"];
     const cleanedData = cleanAndSortData(datetime_data, combined_dataset);
     const maxValues = plot_columns.map(({ column }) => Math.max(...cleanedData[column]));
@@ -1545,31 +1813,38 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
 
 
 
-    const traces = plot_columns.map(({ column, name, color, width, dash }, index) => {
+        const traces = plot_columns.map(({ column, name, color, width, dash }, index) => {
         const lineColor = color || 'rgba(7, 23, 16, 0.65)';
         const rgbaMatch = lineColor.match(/\d+/g);
         const fadingColor = rgbaMatch
             ? `rgba(${rgbaMatch[0]}, ${rgbaMatch[1]}, ${rgbaMatch[2]}, 0.6)`
             : 'rgba(0, 0, 0, 0.6)';
-
+    
+        const currentDate = new Date();
+    
+        const barColors = cleanedData.master_datetime.map((datetime) => {
+            const dataTime = new Date(datetime);
+            return dataTime < currentDate ? 'green' : 'black'; 
+        });
+    
         return {
-            type: "scatter",
-            mode: "lines",
-            connectgaps: false,
+            type: plotType === "bar" ? "bar" : "scatter",
+            mode: plotType === "bar" ? undefined : "lines",
+            connectgaps: plotType === "bar" ? undefined : false,
             x: cleanedData.master_datetime,
             y: cleanedData[column],
-            line: {
+            line: plotType === "bar" ? undefined : {
                 color: lineColor,
                 width: width || 1,
                 dash: dash || 'solid'
             },
-            fill: enableFading && index === 0 ? 'tozeroy' : 'none',
-            fillcolor: enableFading && index === 0 ? fadingColor : 'none',
+            marker: plotType === "bar" ? { color: barColors } : undefined,
+            fill: plotType === "bar" ? undefined : enableFading && index === 0 ? 'tozeroy' : 'none',
+            fillcolor: plotType === "bar" ? undefined : enableFading && index === 0 ? fadingColor : 'none',
             hoverinfo: 'x+y',
             name: name
         };
     });
-
     for (let i = 0; i < cleanedData.master_datetime.length; i++) {
         const datetime = new Date(cleanedData.master_datetime[i]);
         const dateString = datetime.toISOString().split('T')[0];
