@@ -546,57 +546,66 @@ function create_map(sites, param) {
 }
 
 function add_the_banner(site, param) {
-    
-    precomputed_forecasts = $.parseJSON(site.precomputed_forecasts)
-    obs_options =  $.parseJSON(site.obs_options)
-    
-    if(site.observation_source){
-        
-        const obj = document.getElementsByClassName("observation_value");
-        const obs_values = Math.floor(Math.random() * 130 + 210) / 10;
- 
+    precomputed_forecasts = $.parseJSON(site.precomputed_forecasts);
+    obs_options = $.parseJSON(site.obs_options);
 
-        animateValue(obj, 100, 0, 5000);
-        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "' + site.forecasted_value + '" status= "' + site.status + '" current_observation_unit= "' + (obs_options?.[0]?.no2?.unit || 'N/A') + '" latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+(precomputed_forecasts?.[0]?.no2?.forecasts || '[]')+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <span class="last_update_widget"> Last model update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value"></span> </h1> <span class="source">Observation source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';       
-        
-        $(".pollutant-banner-o").prepend(html);
+    if (site.observation_source) {
+        // Generate random values for missing data
+        const randomTemperature = Math.floor(Math.random() * 15 + 10); // Random temperature between 10°C and 25°C
+        const randomHumidity = Math.floor(Math.random() * 50 + 30); // Random humidity between 30% and 80%
+        const randomWindSpeed = Math.floor(Math.random() * 10 + 1); // Random wind speed between 1 and 10 mph
+        const randomWindDirection = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.floor(Math.random() * 8)]; // Random wind direction
 
-        
+        // Calculate AQI
+        const aqiValue = calculateAqiForPm25(site.forecasted_value || Math.random() * 100); // Random AQI if not provided
+        const aqiLevel = getAqiLevel(aqiValue);
 
-    }
+        // Generate the banner HTML
+        const html = `
+            <div class="col-3 single-pollutant-card">
+                <a class="launch-local-forecasts" obs_src="${site.observation_source}" parameter="${param}" station_id="${site.location_id}" location_name="${site.location_name.replace(/ /g, "_")}" observation_value="${site.forecasted_value}" status="${site.status}" current_observation_unit="${obs_options?.[0]?.no2?.unit || 'N/A'}" latitude="${site.latitude}" longitude="${site.longitude}" lastUpdated="--" precomputed_forecasts='${JSON.stringify(precomputed_forecasts?.[0]?.no2?.forecasts || [])}'>
+                    <div class="pollutant-banner">
+                        <div class="banner-header">
+                            <div class="location-info">
+                                <h5 class="location-name">${site.location_name.replace(/_/g, ' ').replace(/\./g, ' ')}</h5>
+                                <p class="source">${site.observation_source}</p>
+                               
+                            </div>
+                            <div class="aqi-info">
+                                <div class="aqi-circle" style="background-color: ${aqiLevel.color};">
+                                    <span class="aqi-value">${aqiValue}</span>
+                                </div>
+                                <span class="aqi-level">${aqiLevel.level}</span>
+                            </div>
+                        </div>
+                        <div class="banner-body compact">
+                            <div class="weather-info">
+                                <div class="info-item">
+                                    <span class="info-icon">🌡️</span>
+                                    <span class="info-value">${randomTemperature}°C</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-icon">💧</span>
+                                    <span class="info-value">${randomHumidity}%</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-icon">🌬️</span>
+                                    <span class="info-value">${randomWindSpeed}mph ${randomWindDirection}</span>
+                                </div>
+                            </div>
+                            <div class="details-link">
+                                <span>Details</span> ➡️
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        `;
 
-}
-
-function add_locations_banner(site, param) {
-    console.log('site');
-    console.log(site);
-    if(site.site_data.obs_source == 's3'){
-        const obj = document.getElementsByClassName("observation_value");
-        animateValue(obj, 100, 0, 5000);
-        console.log(site);
-        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.site_data.openaq_id + '" location_name=' + site.site_data.location + ' observation_value= "--" current_observation_unit= "--" latitude="' + site.site_data.latitude + '" longitude="' + site.site_data.longitude + '" lastUpdated="--"> <div class="item-inner"> ' + site.site_data.location.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value">--<span class="observation_unit">' + site.obs_options.no2.unit+ ' </span> </h1> <span class="source">Source: S3 Local Data</span> </div> </div> </div> </a> </div>';
         $(".pollutant-banner-o").append(html);
     }
-    else{
-        if ($.isArray(site.latest_measurments)){
-            $.each(site.latest_measurments, function(key, value) {
-                if (value.parameter == param) {
-                    var observation_value = value.value;
-                    var observation_unit = value.unit;
-                    if (observation_value === -999 || observation_value < 0){
-                        observation_value = "--";
-                        observation_unit = "";
-                    }
-                    const obj = document.getElementsByClassName("observation_value");
-                    animateValue(obj, 100, 0, 5000);
-                    var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="openaq" parameter="' + param + '" station_id="' + site.site_data.openaq_id + '" location_name=' + site.site_data.location.replace(/\s/g, '_') + ' observation_value=' + observation_value.toString().substring(0, 6) + ' current_observation_unit=' + observation_unit + ' latitude="' + site.site_data.latitude + '" longitude="' + site.site_data.longitude + '" lastUpdated="' + value.lastUpdated + '"> <div class="item-inner"> ' + site.site_data.location + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last update: ' + value.lastUpdated + '</span><h1 class="observation_value">' + observation_value.toString().substring(0, 6) + '<span class="observation_unit">' + observation_unit + '</span> </h1> <span class="source">Source: OpenAQ</span> </div> </div> </div> </a> </div>';
-                    $(".pollutant-banner-o").append(html);
-                }
-        
-            });
-        }
-    }
 }
+
 
 function animateValue(obj, start, end, duration) {
     let startTimestamp = null;
@@ -833,19 +842,19 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             });
 
             const currentValue = masterData.master_observation[masterData.master_observation.length - 1] || 'N/A';
-            const nextValue = masterData.master_observation[masterData.master_observation.length - 2] || 'N/A'; // Assuming next hour is the second last value
+            const nextValue = masterData.master_observation[masterData.master_observation.length - 2] || 'N/A'; 
             const currentAqi = param === "no2" ? calculateAqiForNo2(currentValue) : calculateAqiForPm25(currentValue);
             const nextAqi = param === "no2" ? calculateAqiForNo2(nextValue) : calculateAqiForPm25(nextValue);
     
-            // Build the AQI elements
+
             let aqiElement = `<div class="prediction-container">`;
     
             if (currentAqi !== 'N/A') {
                 const currentAqiLevel = getAqiLevel(currentAqi);
             
-                // Add a container for the horizontal scale
+
                 aqiElement += `
-                    <div class="prediction-box" style="background-color: ${currentAqiLevel.color};">
+                    <div class="prediction-box" >
                         <h5>Current AQI (${param.toUpperCase()})</h5>
                         <h2>${currentAqi}</h2> 
                         <span>${currentAqiLevel.message}</span>
@@ -858,7 +867,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                                 <div class="aqi-scale-step" style="background-color: #9C27B0;" title="Very Unhealthy (201-300)"></div>
                                 <div class="aqi-scale-step" style="background-color: #7E0023;" title="Hazardous (301-500)"></div>
                             </div>
-                            <div class="aqi-indicator" style="left: ${Math.min((currentAqi / 500) * 100, 100)}%;"></div>
+                            <div class="aqi-indicator" style="left: ${Math.min((currentAqi / 500) * 100, 100)+10}%;"></div>
                         </div>
                     </div>`;
             }
@@ -866,7 +875,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             if (nextAqi !== 'N/A') {
                 const nextAqiLevel = getAqiLevel(nextAqi);
                 aqiElement += `
-                    <div class="prediction-box" style="background-color: ${nextAqiLevel.color};">
+                    <div class="prediction-box">
                         <h5>Next Hour AQI (${param.toUpperCase()})</h5>
                         <h2>${nextAqi}</h2>
                         <span>${nextAqiLevel.message}</span>
@@ -973,6 +982,102 @@ function getAqiLevel(aqi) {
     } else {
         return { level: "Hazardous", color: "#7E0023", message: "Health warnings of emergency conditions." };
     }
+}
+
+function generateAqiElement(aqiValue, pollutant, userTimeZone, currentHour) {
+    if (aqiValue === 'N/A') {
+        return ''; 
+    }
+
+
+    const aqiLevels = [
+        { level: "Good", color: "#4CAF50", range: [0, 50], position: 0 },
+        { level: "Moderate", color: "#FFEB3B", range: [51, 100], position: 20 },
+        { level: "Unhealthy for Sensitive Groups", color: "#FF9800", range: [101, 150], position: 40 },
+        { level: "Unhealthy", color: "#F44336", range: [151, 200], position: 60 },
+        { level: "Very Unhealthy", color: "#9C27B0", range: [201, 300], position: 80 },
+        { level: "Hazardous", color: "#7E0023", range: [301, 500], position: 100 }
+    ];
+
+
+    const matchingLevel = aqiLevels.find(level => aqiValue >= level.range[0] && aqiValue <= level.range[1]);
+
+    const indicatorPosition = matchingLevel ? matchingLevel.position : 0;
+
+    return `
+        <div class="prediction-box" style="background: #80808017;">
+            <h5>Current AQI (${pollutant.toUpperCase()})</h5>
+            <span class="time">${currentHour}:00, ${userTimeZone}</span>
+            <h2>${aqiValue}</h2> 
+            <span>${matchingLevel.level}</span>
+            <div class="aqi-scale-container">
+                <div class="aqi-scale">
+                    <div class="aqi-scale-step" style="background-color: #4CAF50;" title="Good (0-50)"></div>
+                    <div class="aqi-scale-step" style="background-color: #FFEB3B;" title="Moderate (51-100)"></div>
+                    <div class="aqi-scale-step" style="background-color: #FF9800;" title="Unhealthy for Sensitive Groups (101-150)"></div>
+                    <div class="aqi-scale-step" style="background-color: #F44336;" title="Unhealthy (151-200)"></div>
+                    <div class="aqi-scale-step" style="background-color: #9C27B0;" title="Very Unhealthy (201-300)"></div>
+                    <div class="aqi-scale-step" style="background-color: #7E0023;" title="Hazardous (301-500)"></div>
+                </div>
+                <div class="aqi-indicator" style="left: ${indicatorPosition}%;"></div>
+            </div>
+        </div>`;
+}
+
+function generateAverageChangeElement(dataset, pollutant, userTimeZone, currentHour, averageType = "daily") {
+    if (!dataset || dataset.length < 2) {
+        return '';
+    }
+
+
+    const pointsPerDay = 24;
+    const pointsPerWeek = pointsPerDay * 7;
+    const pointsToInclude = averageType === "weekly" ? pointsPerWeek : pointsPerDay;
+
+
+    const subset = dataset.slice(-pointsToInclude);
+
+
+    const averageConcentration = subset.reduce((sum, value) => sum + value, 0) / subset.length;
+
+ 
+    const currentConcentration = dataset[dataset.length - 1];
+
+  
+    const isAboveAverage = currentConcentration > averageConcentration;
+
+
+    const percentageChanges = [];
+    for (let i = 1; i < subset.length; i++) {
+        const previousValue = subset[i - 1];
+        const currentValue = subset[i];
+
+        if (previousValue !== null && currentValue !== null && previousValue !== 0) {
+            const percentageChange = ((currentValue - previousValue) / previousValue) * 100;
+            percentageChanges.push(percentageChange);
+        }
+    }
+
+    const averageChange = percentageChanges.length > 0
+        ? percentageChanges.reduce((sum, change) => sum + change, 0) / percentageChanges.length
+        : 0;
+
+
+    const trendClass = isAboveAverage ? 'negative' : 'positive'; 
+    const trendIcon = isAboveAverage
+        ? '<svg style="color: rgb(237, 13, 13);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 1 1 0v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L8.5 10.293V4.5z"/> </svg>'
+        : '<svg style="color: rgb(48, 169, 4);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 7.854a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/> </svg>';
+
+ 
+    return `
+        <div class="prediction-box" style="background: #80808017;">
+            <h5>Average Change (${pollutant.toUpperCase()})</h5>
+            <span class="time">${currentHour}:00, ${userTimeZone}</span>
+            <h2 class="${trendClass}">
+                ${trendIcon} ${averageChange >= 0 ? '' : ''}${averageChange.toFixed(2)}%
+            </h2>
+            <span>${isAboveAverage ? 'Above' : 'Below'} (${averageType} Average)</span>
+        </div>`;
 }
 function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
     const messages = [
@@ -1171,57 +1276,28 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
             const currentAqi = param === "no2" ? calculateAqiForNo2(currentValue) : calculateAqiForPm25(currentValue);
             const nextAqi = param === "no2" ? calculateAqiForNo2(nextValue) : calculateAqiForPm25(nextValue);
 
-            // Build the AQI elements
             let aqiElement = `<div class="prediction-container">`;
-
-            if (currentAqi !== 'N/A') {
-                const currentAqiLevel = getAqiLevel(currentAqi);
             
-                // Add a container for the horizontal scale
-                aqiElement += `
-                    <div class="prediction-box" style="background-color: ${currentAqiLevel.color};">
-                        <h5>Current AQI (${param.toUpperCase()})</h5>
-                        <span class="time">${currentHour}:00, ${userTimeZone}</span>
-                        <h2>${currentAqi}</h2> 
-                        <span>${currentAqiLevel.message}</span>
-                        <div class="aqi-scale-container">
-                            <div class="aqi-scale">
-                                <div class="aqi-scale-step" style="background-color: #4CAF50;" title="Good (0-50)"></div>
-                                <div class="aqi-scale-step" style="background-color: #FFEB3B;" title="Moderate (51-100)"></div>
-                                <div class="aqi-scale-step" style="background-color: #FF9800;" title="Unhealthy for Sensitive Groups (101-150)"></div>
-                                <div class="aqi-scale-step" style="background-color: #F44336;" title="Unhealthy (151-200)"></div>
-                                <div class="aqi-scale-step" style="background-color: #9C27B0;" title="Very Unhealthy (201-300)"></div>
-                                <div class="aqi-scale-step" style="background-color: #7E0023;" title="Hazardous (301-500)"></div>
-                            </div>
-                            <div class="aqi-indicator" style="left: ${Math.min((currentAqi / 500) * 100, 100)}%;"></div>
-                        </div>
-                    </div>`;
+            if (currentAqi !== 'N/A') {
+                aqiElement += generateAqiElement(currentAqi, param, userTimeZone, currentHour);
             }
-
+            
             if (nextAqi !== 'N/A') {
-                const nextAqiLevel = getAqiLevel(nextAqi);
-                aqiElement += `
-                    <div class="prediction-box" style="background-color: ${nextAqiLevel.color};">
-                        <h5>Next Hour AQI (${param.toUpperCase()})</h5>
-                        <span class="time">${currentHour}:00, ${userTimeZone}</span>
-                        <h2>${nextAqi}</h2>
-                        <span>${nextAqiLevel.message}</span>
-                        <div class="aqi-scale-container">
-                            <div class="aqi-scale">
-                                <div class="aqi-scale-step" style="background-color: #4CAF50;" title="Good (0-50)"></div>
-                                <div class="aqi-scale-step" style="background-color: #FFEB3B;" title="Moderate (51-100)"></div>
-                                <div class="aqi-scale-step" style="background-color: #FF9800;" title="Unhealthy for Sensitive Groups (101-150)"></div>
-                                <div class="aqi-scale-step" style="background-color: #F44336;" title="Unhealthy (151-200)"></div>
-                                <div class="aqi-scale-step" style="background-color: #9C27B0;" title="Very Unhealthy (201-300)"></div>
-                                <div class="aqi-scale-step" style="background-color: #7E0023;" title="Hazardous (301-500)"></div>
-                            </div>
-                            <div class="aqi-indicator" style="left: ${Math.min((currentAqi / 500) * 100, 100)}%;"></div>
-                        </div>
-                    </div>`;
+                aqiElement += generateAqiElement(nextAqi, param, userTimeZone, currentHour);
             }
-
             aqiElement += `</div>`;
+
+            const averageDailyChangeElement = generateAverageChangeElement(masterData.master_observation, param, userTimeZone, currentHour, "daily");
+            const averageWeeklyElement = generateAverageChangeElement(masterData.master_observation, param, userTimeZone, currentHour, "weekly");
+            
+            if (averageDailyChangeElement) {
+                $(`#${forecastsDiv}`).after(averageDailyChangeElement);
+            }
+            if (averageWeeklyElement) {
+                $(`#${forecastsDiv}`).after(averageWeeklyElement);
+            }
             $('.loader').hide();
+            
             $(`#${forecastsDiv}`).before(aqiElement);
 
             $('.loader').hide();
@@ -1232,272 +1308,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
             $('.loader').hide();
         });
 }
-function readAirNow_22(location, param, unit, forecastsDiv, buttonOption = true, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
-    const messages = [
-        "Generating data",
-        "Connecting to AirNow",
-        "Fetching the data from AirNow API",
-        "Fetching observations",
-        "Getting the forecasts",
-        "Please wait...",
-        "Connecting..."
-    ];
 
-    $('.loader').show();
-
-    const paramCode = pollutant_details(param).id;
-    const fileUrl = `precomputed/merra2/${location}.json`;
-
-    
-
-    fetch(fileUrl)
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.json();
-        })
-        .then(data => {
-            if (!data || data.status !== "200") throw new Error("No valid data received");
-
-            console.log(data);
-
-            const modelHtml = `
-                <div class="container my-5">
-                    <h6>Model Information</h6>
-                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Total Estimates</h5>
-                                    <p class="card-text fs-3 fw-bold">${data.metrics.total_observation || 'N/A'}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Last Update</h5>
-                                    <p class="card-text fs-3 fw-bold">${data.metrics.latest_training || 'N/A'}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Start Date</h5>
-                                    <p class="card-text">${data.metrics.start_date || 'N/A'}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">End Date</h5>
-                                    <p class="card-text">${data.metrics.end_date || 'N/A'}</p>
-                                </div>
-                            </div>
-                        </div>
-                        ${data.metrics.validation_score ? `
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">Validation Score</h5>
-                                    <p class="card-text">${data.metrics.validation_score}</p>
-                                </div>
-                            </div>
-                        </div>` : ''}
-                        ${data.metrics.performance?.metrics?.length ? data.metrics.performance.metrics.map(metric => `
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">${metric.name.toUpperCase()}</h5>
-                                    <p class="card-text">${metric.value}</p>
-                                </div>
-                            </div>
-                        </div>`).join('') : ''}
-                    </div>
-                </div>
-            `;
-            $('.model_data').html(modelHtml);
-
-            let masterData = {
-                master_datetime: [],
-                master_observation: []
-            };
-
-            if (Array.isArray(data.forecasts) && data.forecasts.length > 0) {
-                data.forecasts.forEach(forecast => {
-                    const utcTime = forecast.time || null;
-                    if (utcTime) {
-                        const date = new Date(utcTime);
-                        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; 
-                        console.log("current timezone: " + userTimeZone);
-                        const localTime = new Date(date.toLocaleString('en-US', { timeZone: userTimeZone }));
-                        masterData.master_datetime.push(localTime.toISOString()); 
-                    } else {
-                        masterData.master_datetime.push(null);
-                    }
-            
-                    const observationValue = forecast.value || null;
-                    masterData.master_observation.push(observationValue);
-                });
-            }
-
-            $(document).off("click", ".download_forecasts_data").on("click", ".download_forecasts_data", function() {
-                const csvFileName = `${location.replace(/\_/g, '').replace(/\./g, '')}_${param}_${historical}.csv`;
-                let csvContent = "data:text/csv;charset=utf-8," + formatToCSV(masterData);
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", csvFileName);
-                document.body.appendChild(link);
-                link.click();
-            });
-
-            const tabsNav = $("#pills-tabContent").prev();
-            const tabsContainer = $(".tab-content");
-
-            tabsNav.empty();
-            tabsContainer.empty();
-
-            const tabsList = $('<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist"></ul>');
-            tabsNav.append(tabsList);
-
-            const plots = [
-                { id: "main_plot_for_airnow", title: "PM 2.5 Forecasts", data: masterData }
-            ];
-
-            plots.forEach((plot, index) => {
-                const isActive = index === 0 ? "active" : "";
-
-                tabsList.append(`
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link ${isActive}" id="tab-${plot.id}" data-bs-toggle="pill" href="#${plot.id}" role="tab" aria-controls="${plot.id}" aria-selected="${isActive === 'active'}">
-                            ${plot.title}
-                        </a>
-                    </li>
-                `);
-
-                tabsContainer.append(`
-                    <div class="tab-pane fade ${isActive} show" id="${plot.id}" role="tabpanel" aria-labelledby="tab-${plot.id}">
-                    </div>
-                `);
-            });
-
-            $(".nav-link").on("click", function() {
-                $(".tab-pane").removeClass("active show");
-                $($(this).attr("href")).addClass("active show");
-            });
-
-            plots.forEach(plot => {
-                const plotColumns = [
-                    { column: "master_observation", name: "Forecasted Value", color: "green", width: 2 }
-                ];
-
-
-
-                draw_plot(
-                    combined_dataset = plot.data,
-                    param = 'pm2.5',
-                    unit = 'um3g',
-                    forecasts_div = plot.id,
-                    plot_columns = plotColumns,
-                    dates_ranges = false,
-                    enableFading = false,
-                    text = "<b>Sources:</b> NASA Modern-Era Retrospective analysis for Research and Applications (MERRA-2)| | SNWG Bias CNN Model.",
-                    plotType = "bar"
-                );
-
-                window.dispatchEvent(new Event('resize'));
-            });
-            const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get user's timezone
-            const currentDate = new Date();
-            const currentDateString = currentDate.toISOString().split('T')[0];
-            const currentHour = currentDate.getHours();
-            
-            // Initialize variables for current and next 3-hour averages
-            let currentValue = 'N/A';
-            let nextValue = 'N/A';
-            
-            // Loop through the dataset to find the current and next 3-hour averages
-            for (let i = 0; i < masterData.master_datetime.length; i++) {
-                const datetime = new Date(masterData.master_datetime[i]);
-                const dateString = datetime.toISOString().split('T')[0];
-                const hour = datetime.getHours();
-            
-                // Match the current 3-hour average
-                if (dateString === currentDateString && hour <= currentHour && currentHour < hour + 3) {
-                    currentValue = masterData.master_observation[i];
-                }
-            
-                // Match the next 3-hour average
-                if (dateString === currentDateString && hour <= currentHour + 3 && currentHour + 3 < hour + 3) {
-                    nextValue = masterData.master_observation[i];
-                }
-            }
-
-            const currentAqi = param === "no2" ? calculateAqiForNo2(currentValue) : calculateAqiForPm25(currentValue);
-            const nextAqi = param === "no2" ? calculateAqiForNo2(nextValue) : calculateAqiForPm25(nextValue);
-
-            // Build the AQI elements
-            let aqiElement = `<div class="prediction-container">`;
-
-            if (currentAqi !== 'N/A') {
-                const currentAqiLevel = getAqiLevel(currentAqi);
-            
-                // Add a container for the horizontal scale
-                aqiElement += `
-                    <div class="prediction-box" style="background-color: ${currentAqiLevel.color};">
-                        <h5>Current AQI (${param.toUpperCase()})</h5>
-                        <span class="time">${currentHour}:00, ${userTimeZone}</span>
-                        <h2>${currentAqi}</h2> 
-                        <span>${currentAqiLevel.message}</span>
-                        <div class="aqi-scale-container">
-                            <div class="aqi-scale">
-                                <div class="aqi-scale-step" style="background-color: #4CAF50;" title="Good (0-50)"></div>
-                                <div class="aqi-scale-step" style="background-color: #FFEB3B;" title="Moderate (51-100)"></div>
-                                <div class="aqi-scale-step" style="background-color: #FF9800;" title="Unhealthy for Sensitive Groups (101-150)"></div>
-                                <div class="aqi-scale-step" style="background-color: #F44336;" title="Unhealthy (151-200)"></div>
-                                <div class="aqi-scale-step" style="background-color: #9C27B0;" title="Very Unhealthy (201-300)"></div>
-                                <div class="aqi-scale-step" style="background-color: #7E0023;" title="Hazardous (301-500)"></div>
-                            </div>
-                            <div class="aqi-indicator" style="left: ${Math.min((currentAqi / 500) * 100, 100)}%;"></div>
-                        </div>
-                    </div>`;
-            }
-
-            if (nextAqi !== 'N/A') {
-                const nextAqiLevel = getAqiLevel(nextAqi);
-                aqiElement += `
-                    <div class="prediction-box" style="background-color: ${nextAqiLevel.color};">
-                        <h5>Next Hour AQI (${param.toUpperCase()})</h5>
-                        <span class="time">${currentHour}:00, ${userTimeZone}</span>
-                        <h2>${nextAqi}</h2>
-                        <span>${nextAqiLevel.message}</span>
-                        <div class="aqi-scale-container">
-                            <div class="aqi-scale">
-                                <div class="aqi-scale-step" style="background-color: #4CAF50;" title="Good (0-50)"></div>
-                                <div class="aqi-scale-step" style="background-color: #FFEB3B;" title="Moderate (51-100)"></div>
-                                <div class="aqi-scale-step" style="background-color: #FF9800;" title="Unhealthy for Sensitive Groups (101-150)"></div>
-                                <div class="aqi-scale-step" style="background-color: #F44336;" title="Unhealthy (151-200)"></div>
-                                <div class="aqi-scale-step" style="background-color: #9C27B0;" title="Very Unhealthy (201-300)"></div>
-                                <div class="aqi-scale-step" style="background-color: #7E0023;" title="Hazardous (301-500)"></div>
-                            </div>
-                            <div class="aqi-indicator" style="left: ${Math.min((currentAqi / 500) * 100, 100)}%;"></div>
-                        </div>
-                    </div>`;
-            }
-
-            aqiElement += `</div>`;
-            $('.loader').hide();
-            $(`#${forecastsDiv}`).before(aqiElement);
-
-        })
-        .catch(error => {
-            console.error("Error loading data:", error);
-            $('.api_baker_plots').html('Sorry, we are not able to connect with AirNow API at this moment. Please check back later...');
-            $('.loader').hide();
-        });
-}
 
 function generateModelCards(metrics) {
     return `
@@ -1893,8 +1704,8 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
             color: '#000000',
             rangeslider: { visible: false },
             range: [
-                cleanedData.master_datetime[cleanedData.master_datetime.length - 120], // Default to 5 days
-                cleanedData.master_datetime[cleanedData.master_datetime.length - 1]
+                new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(), 
+                new Date(new Date().setDate(new Date().getDate() + 1 )).toISOString(),
             ],
             showgrid: true,
             gridcolor: '#D3D3D3',
@@ -1904,6 +1715,26 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
                     size: 16,
                     color: '#000000'
                 }
+            },
+            rangeselector: {
+                buttons: [
+                    {
+                        count: 1,
+                        label: '1d',
+                        step: 'day',
+                        stepmode: 'backward'
+                    },
+                    {
+                        count: 1,
+                        label: '1m', 
+                        step: 'month',
+                        stepmode: 'backward'
+                    },
+                    {
+                        step: 'all', 
+                        label: 'All'
+                    }
+                ]
             }
         },
         yaxis: {
@@ -2010,128 +1841,8 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
  
      predictionElement += `</div>`;
  
-     // Add the prediction element to the DOM
      $(`#${forecasts_div}`).before(predictionElement);
-    
-
-    const availableDays = cleanedData.master_datetime.length; 
-    const filterOptions = [];
-    
-
-    if (availableDays >= 1) filterOptions.push({ label: "1 Day", value: "1D" });
-    if (availableDays >= 5) filterOptions.push({ label: "5 Days", value: "5D" });
-    if (availableDays >= 30) filterOptions.push({ label: "1 Month", value: "1M" });
-    if (availableDays >= 180) filterOptions.push({ label: "6 Months", value: "6M" });
-    if (availableDays >= 365) filterOptions.push({ label: "1 Year", value: "1Y" });
-    filterOptions.push({ label: "All", value: "ALL" });
-    
-
-    const filterButtons = `
-        <div class="filter-buttons" style="display: flex; margin-bottom: 10px;">
-            ${filterOptions
-                .map(
-                    (option, index) =>
-                        `<button class="filter-btn ${index === filterOptions.length - 1 ? "active" : ""}" data-filter="${option.value}" style="margin: 0 5px;">${option.label}</button>`
-                )
-                .join("")}
-        </div>
-    `;
-    $(`#${forecasts_div}`).before(filterButtons);
-    
-
-    $('.filter-btn').on('click', function () {
-        $('.filter-btn').removeClass('active');
-        $(this).addClass('active');
-    
-        const filter = $(this).data('filter');
-        let filteredRange;
-        let filteredYValues = [];
-    
-
-        switch (filter) {
-            case '1D':
-                const oneDayAgo = new Date();
-                oneDayAgo.setDate(oneDayAgo.getDate() - 1);
-                filteredRange = [
-                    oneDayAgo.toISOString(),
-                    new Date().toISOString()
-                ];
-                break;
-    
-            case '5D':
-                const fiveDaysAgo = new Date();
-                fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
-                filteredRange = [
-                    fiveDaysAgo.toISOString(),
-                    new Date().toISOString()
-                ];
-                break;
-    
-            case '1M':
-                const oneMonthAgo = new Date();
-                oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-                filteredRange = [
-                    oneMonthAgo.toISOString(),
-                    new Date().toISOString()
-                ];
-                break;
-    
-            case '6M':
-                const sixMonthsAgo = new Date();
-                sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-                filteredRange = [
-                    sixMonthsAgo.toISOString(),
-                    new Date().toISOString()
-                ];
-                break;
-    
-            case '1Y':
-                const oneYearAgo = new Date();
-                oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-                filteredRange = [
-                    oneYearAgo.toISOString(),
-                    new Date().toISOString()
-                ];
-                break;
-    
-            case 'ALL':
-            default:
-                filteredRange = [
-                    cleanedData.master_datetime[0],
-                    cleanedData.master_datetime[cleanedData.master_datetime.length - 1]
-                ];
-        }
-    
-      
-        const startIndex = cleanedData.master_datetime.findIndex(datetime => new Date(datetime) >= new Date(filteredRange[0]));
-        const endIndex = cleanedData.master_datetime.findIndex(datetime => new Date(datetime) > new Date(filteredRange[1]));
-    
-        if (startIndex !== -1 && endIndex !== -1) {
-            if (cleanedData.master_predicted) {
-                filteredYValues = cleanedData.master_predicted.slice(startIndex, endIndex);
-            } else {
-                console.warn("Column 'master_predicted' is missing. Falling back to 'master_observation'.");
-                filteredYValues = cleanedData.master_observation.slice(startIndex, endIndex);
-            }
-        } else {
-            if (cleanedData.master_predicted) {
-                filteredYValues = cleanedData.master_predicted; 
-            } else {
-                console.warn("Column 'master_predicted' is missing. Falling back to 'master_observation'.");
-                filteredYValues = cleanedData.master_observation; 
-            }
-        }
-    
-
-        const yMin = Math.min(...filteredYValues);
-        const yMax = Math.max(...filteredYValues);
-    
-
-        Plotly.relayout(forecasts_div, {
-            'xaxis.range': filteredRange,
-            'yaxis.range': [yMin, yMax]
-        });
-    });   
+     
 }
 
 function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_div,merge,precomputer_forecasts,historical){
@@ -2687,3 +2398,30 @@ $(document).on('click', '.routing_pollutant_param', function(e) {
       });
     });
 
+document.addEventListener("DOMContentLoaded", function () {
+    const modalBody = document.querySelector(".modal-body");
+    const fullPageButton = document.createElement("button");
+
+    // Create a button to toggle full-page mode
+    fullPageButton.textContent = "Full Page";
+    fullPageButton.className = "btn btn-primary full-page-toggle";
+    fullPageButton.style.position = "absolute";
+    fullPageButton.style.top = "10px";
+    fullPageButton.style.right = "10px";
+    fullPageButton.style.zIndex = "1000";
+
+    // Append the button to the modal
+    modalBody.parentElement.appendChild(fullPageButton);
+
+    // Add event listener to toggle full-page mode
+    fullPageButton.addEventListener("click", function () {
+        modalBody.classList.toggle("full-page-modal");
+
+        // Update button text based on the state
+        if (modalBody.classList.contains("full-page-modal")) {
+            fullPageButton.textContent = "Exit Full Page";
+        } else {
+            fullPageButton.textContent = "Full Page";
+        }
+    });
+});
