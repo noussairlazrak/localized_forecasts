@@ -814,8 +814,6 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             const plots = [
                 { id: "plot_no2", title: "Nitrogen Dioxide (NO2)", data: masterData, columns: [
                     { column: "master_predicted", name: "Prediction", color: "red", width: 2 },
-                    { column: "master_observation", name: "Pandora", color: "black", width: 2 },
-                    { column: "master_no2", name: "GEOS CF", color: "grey", width: 3, dash: "dot" }
                 ]}
             ];
 
@@ -1180,7 +1178,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
             let masterData = {
                 master_datetime: [],
                 master_observation: [],
-                master_aqi: [] // Add a new array to store AQI values
+                master_aqi: [] 
             };
 
             if (Array.isArray(data.forecasts) && data.forecasts.length > 0) {
