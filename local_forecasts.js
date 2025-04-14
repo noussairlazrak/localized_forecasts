@@ -550,14 +550,14 @@ function add_the_banner(site, param) {
     obs_options = $.parseJSON(site.obs_options);
 
     if (site.observation_source) {
-        // Generate random values for missing data
+
         const randomTemperature = Math.floor(Math.random() * 15 + 10); // Random temperature between 10°C and 25°C
         const randomHumidity = Math.floor(Math.random() * 50 + 30); // Random humidity between 30% and 80%
         const randomWindSpeed = Math.floor(Math.random() * 10 + 1); // Random wind speed between 1 and 10 mph
         const randomWindDirection = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.floor(Math.random() * 8)]; // Random wind direction
 
         // Calculate AQI
-        const aqiValue = calculateAqiForPm25(site.forecasted_value || Math.random() * 100); // Random AQI if not provided
+        const aqiValue = calculateAqiForPm25(Math.random() * 100); // Random AQI if not provided
         const aqiLevel = getAqiLevel(aqiValue);
 
         // Generate the banner HTML
@@ -581,20 +581,31 @@ function add_the_banner(site, param) {
                         <div class="banner-body compact">
                             <div class="weather-info">
                                 <div class="info-item">
-                                    <span class="info-icon">🌡️</span>
+                                    <!-- Temperature Icon -->
+                                    <span class="info-icon">
+                                        <i class="bi bi-thermometer-half"></i>
+                                    </span>
                                     <span class="info-value">${randomTemperature}°C</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="info-icon">💧</span>
+                                    <!-- Humidity Icon -->
+                                    <span class="info-icon">
+                                        <i class="bi bi-droplet-half"></i>
+                                    </span>
                                     <span class="info-value">${randomHumidity}%</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="info-icon">🌬️</span>
+                                    <!-- Wind Icon -->
+                                    <span class="info-icon">
+                                        <i class="bi bi-wind"></i>
+                                    </span>
                                     <span class="info-value">${randomWindSpeed}mph ${randomWindDirection}</span>
                                 </div>
                             </div>
                             <div class="details-link">
-                                <span>Details</span> ➡️
+                                <!-- Details Link Icon -->
+                                <span>Details</span>
+                                <i class="bi bi-arrow-right"></i>
                             </div>
                         </div>
                     </div>
@@ -703,6 +714,8 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
         })
         .then(data => {
             if (!data || data.status !== "200") throw new Error("No valid data received");
+            console.log("api baker data");
+            console.log(data);
 
             const modelHtml = `
                 <div class="container my-5">
@@ -827,8 +840,9 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                 $(".tab-pane").removeClass("active show");
                 $($(this).attr("href")).addClass("active show");
             });
-
+            
             plots.forEach(plot => {
+                console.log("this is the data");
                 draw_plot(
                     combined_dataset = plot.data,
                     param = param,
@@ -837,7 +851,8 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                     plot_columns = plot.columns,
                     dates_ranges = false,
                     enableFading = false,
-                    text = `<b>Source:</b> NASA GEOS Composition Forecasting (GEOS-CF) | NASA Pandora | SNWG Bias Corrected Model`
+                    text = `<b>Source:</b> NASA GEOS Composition Forecasting (GEOS-CF) | NASA Pandora | SNWG Bias Corrected Model`,
+                    plotType = "bar"
                 );
             });
 
@@ -1251,6 +1266,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
             const currentDate = new Date();
             const currentDateString = currentDate.toISOString().split('T')[0];
             const currentHour = currentDate.getHours();
+            const nexttHour = (currentDate.getHours() + 1)
             
             // Initialize variables for current and next 3-hour averages
             let currentValue = 'N/A';
@@ -1283,7 +1299,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
             }
             
             if (nextAqi !== 'N/A') {
-                aqiElement += generateAqiElement(nextAqi, param, userTimeZone, currentHour);
+                aqiElement += generateAqiElement(nextAqi, param, userTimeZone, nexttHour);
             }
             aqiElement += `</div>`;
 
@@ -1622,45 +1638,46 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get user's timezone
     const currentTimeInUserTimeZone = new Date().toLocaleString('en-US', { timeZone: userTimeZone });
 
+    // Validate plot_columns to ensure all required properties are defined
+    const traces = plot_columns
+        .filter(column => column && column.name && column.column) // Ensure column is defined and has required properties
+        .map(({ column, name, color, width, dash }, index) => {
+            const lineColor = color || 'rgba(7, 23, 16, 0.65)';
+            const rgbaMatch = lineColor.match(/\d+/g);
+            const fadingColor = rgbaMatch
+                ? `rgba(${rgbaMatch[0]}, ${rgbaMatch[1]}, ${rgbaMatch[2]}, 0.6)`
+                : 'rgba(0, 0, 0, 0.6)';
 
+            const currentDate = new Date();
 
-        const traces = plot_columns.map(({ column, name, color, width, dash }, index) => {
-        const lineColor = color || 'rgba(7, 23, 16, 0.65)';
-        const rgbaMatch = lineColor.match(/\d+/g);
-        const fadingColor = rgbaMatch
-            ? `rgba(${rgbaMatch[0]}, ${rgbaMatch[1]}, ${rgbaMatch[2]}, 0.6)`
-            : 'rgba(0, 0, 0, 0.6)';
-    
-        const currentDate = new Date();
-    
-        const barColors = cleanedData.master_datetime.map((datetime) => {
-            const dataTime = new Date(datetime);
-            return dataTime < currentDate ? 'green' : 'black'; 
+            const barColors = cleanedData.master_datetime.map((datetime) => {
+                const dataTime = new Date(datetime);
+                return dataTime < currentDate ? 'green' : 'black'; 
+            });
+
+            return {
+                type: plotType === "bar" ? "bar" : "scatter",
+                mode: plotType === "bar" ? undefined : "lines",
+                connectgaps: plotType === "bar" ? undefined : false,
+                x: cleanedData.master_datetime,
+                y: cleanedData[column],
+                line: plotType === "bar" ? undefined : {
+                    color: lineColor,
+                    width: width || 1,
+                    dash: dash || 'solid'
+                },
+                marker: plotType === "bar" ? { color: barColors } : undefined,
+                fill: plotType === "bar" ? undefined : enableFading && index === 0 ? 'tozeroy' : 'none',
+                fillcolor: plotType === "bar" ? undefined : enableFading && index === 0 ? fadingColor : 'none',
+                hoverinfo: 'x+y',
+                name: name
+            };
         });
-    
-        return {
-            type: plotType === "bar" ? "bar" : "scatter",
-            mode: plotType === "bar" ? undefined : "lines",
-            connectgaps: plotType === "bar" ? undefined : false,
-            x: cleanedData.master_datetime,
-            y: cleanedData[column],
-            line: plotType === "bar" ? undefined : {
-                color: lineColor,
-                width: width || 1,
-                dash: dash || 'solid'
-            },
-            marker: plotType === "bar" ? { color: barColors } : undefined,
-            fill: plotType === "bar" ? undefined : enableFading && index === 0 ? 'tozeroy' : 'none',
-            fillcolor: plotType === "bar" ? undefined : enableFading && index === 0 ? fadingColor : 'none',
-            hoverinfo: 'x+y',
-            name: name
-        };
-    });
+
     for (let i = 0; i < cleanedData.master_datetime.length; i++) {
         const datetime = new Date(cleanedData.master_datetime[i]);
         const dateString = datetime.toISOString().split('T')[0];
         const hour = datetime.getHours();
-    
 
         if (dateString === currentDateString && hour === currentHour) {
             currentX = cleanedData.master_datetime[i];
@@ -1668,7 +1685,7 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
             break;
         }
     }
-    
+
     const layout = {
         title: {
             text: text,
@@ -1782,66 +1799,6 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
     };
 
     Plotly.newPlot(forecasts_div, traces, layout);
-
-    const currentValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 1] || 'N/A';
-    const previousValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 2] || 'N/A';
-    const nextValue = cleanedData.master_predicted?.[cleanedData.master_predicted.length - 1] || 'N/A'; // Assuming next hour is the last value
- 
-     let percentageChange = 'N/A';
-     if (currentValue !== 'N/A' && previousValue !== 'N/A') {
-         percentageChange = ((currentValue - previousValue) / previousValue) * 100;
-     }
- 
-  
-     let previousDayAverage = 'N/A';
-     let previousDayChange = 'N/A';
-     if (cleanedData.master_predicted?.length >= 24) {
-         const previousDayValues = cleanedData.master_predicted.slice(-24); // Assuming 24 data points per day
-         previousDayAverage = previousDayValues.reduce((a, b) => a + b, 0) / previousDayValues.length;
- 
-         if (currentValue !== 'N/A') {
-             previousDayChange = ((currentValue - previousDayAverage) / previousDayAverage) * 100;
-         }
-     }
- 
-
-     let predictionElement = `<div class="prediction-container">`;
- 
-     if (currentValue !== 'N/A') {
-         predictionElement += `
-             <div class="prediction-box">
-                 <h5>Current Prediction</h5>
-                 <h2>${currentValue.toFixed(2)}</h2>
-                 ${percentageChange !== 'N/A' ? `
-                     <span class="${percentageChange >= 0 ? 'positive' : 'negative'}">
-                         ${percentageChange >= 0 ? '+' : ''}${percentageChange.toFixed(2)}%
-                     </span>` : ''}
-             </div>`;
-     }
- 
-     if (nextValue !== 'N/A') {
-         predictionElement += `
-             <div class="prediction-box">
-                 <h5>Next Hour Prediction</h5>
-                 <h2>${nextValue.toFixed(2)}</h2>
-             </div>`;
-     }
- 
-     if (previousDayAverage !== 'N/A') {
-         predictionElement += `
-             <div class="prediction-box">
-                 <h5>Previous Day Average</h5>
-                 <h2>${previousDayAverage.toFixed(2)}</h2>
-                 ${previousDayChange !== 'N/A' ? `
-                     <span class="${previousDayChange >= 0 ? 'positive' : 'negative'}">
-                         ${previousDayChange >= 0 ? '+' : ''}${previousDayChange.toFixed(2)}%
-                     </span>` : ''}
-             </div>`;
-     }
- 
-     predictionElement += `</div>`;
- 
-     $(`#${forecasts_div}`).before(predictionElement);
      
 }
 
