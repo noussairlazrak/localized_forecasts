@@ -1020,7 +1020,7 @@ function generateAqiElement(aqiValue, pollutant, userTimeZone, currentHour) {
     return `
         <div class="prediction-box" style="background: #80808017;">
             <h5>Current AQI (${pollutant.toUpperCase()})</h5>
-            <span class="time">${currentHour}:00, ${userTimeZone}</span>
+            <span class="time">${currentHour}:00</span>
             <h2>${aqiValue}</h2> 
             <span>${matchingLevel.level}</span>
             <div class="aqi-scale-container">

@@ -3,7 +3,7 @@
     "species": "no2",
     "message": "200",
     "status": "200",
-    "latest_update": "2025-04-14 10:00:00",
+    "latest_update": "2025-04-15 18:00:00",
     "metrics": {
         "validation_score": "N/A",
         "total_observation": 8761,
@@ -46656,7 +46656,7 @@
             "no2": 20.372709741423023,
             "corrected": 23.895004272460938,
             "pandora": NaN,
-            "o3": 7.2190764477397815,
+            "o3": 7.21907644773978,
             "pm25": 21.25232315063477
         },
         {
