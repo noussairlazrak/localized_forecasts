@@ -802,24 +802,66 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                 });
             }
 
-            const tabsNav = $("#pills-tabContent").prev();
+                        const tabsNav = $("#pills-tabContent").prev();
             const tabsContainer = $(".tab-content");
-
+            
             tabsNav.empty();
             tabsContainer.empty();
-
+            
             const tabsList = $('<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist"></ul>');
             tabsNav.append(tabsList);
-
+            
             const plots = [
-                { id: "plot_no2", title: "Nitrogen Dioxide (NO2)", data: masterData, columns: [
-                    { column: "master_predicted", name: "Prediction", color: "red", width: 2 },
-                ]}
+                {
+                    id: "plot_corrected",
+                    title: "SNWG NO2 Forecasts",
+                    data: masterData,
+                    param:"no2",
+                    columns: [
+                        { column: "master_predicted", name: "Corrected", color: "blue", width: 2 }
+                    ]
+                },
+                {
+                    id: "plot_pm25",
+                    title: "Particulate Matter (PM2.5)",
+                    data: masterData,
+                    param:"pm25",
+                    columns: [
+                        { column: "master_pm25", name: "PM2.5", color: "green", width: 2}
+                    ]
+                },
+                {
+                    id: "plot_pandora",
+                    title: "Pandora Observations",
+                    data: masterData,
+                    param:"no2",
+                    columns: [
+                        { column: "master_observation", name: "Pandora", color: "black", width: 2 }
+                    ]
+                },
+                {
+                    id: "plot_o3",
+                    title: "Ozone (O3)",
+                    data: masterData,
+                    param:"o3",
+                    columns: [
+                        { column: "master_o3", name: "O3", color: "orange", width: 2 }
+                    ]
+                },
+                {
+                    id: "plot_no2",
+                    title: "Nitrogen Dioxide (NO2)",
+                    data: masterData,
+                    param:"no2",
+                    columns: [
+                        { column: "master_no2", name: "NO2", color: "red", width: 2}
+                    ]
+                }
             ];
-
+            
             plots.forEach((plot, index) => {
                 const isActive = index === 0 ? "active" : "";
-
+            
                 tabsList.append(`
                     <li class="nav-item" role="presentation">
                         <a class="nav-link ${isActive}" id="tab-${plot.id}" data-bs-toggle="pill" href="#${plot.id}" role="tab" aria-controls="${plot.id}" aria-selected="${isActive === 'active'}">
@@ -827,90 +869,75 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                         </a>
                     </li>
                 `);
-
+            
                 tabsContainer.append(`
                     <div class="tab-pane fade ${isActive} show" id="${plot.id}" role="tabpanel" aria-labelledby="tab-${plot.id}">
                     </div>
                 `);
             });
+            
+            // Add click event for tabs
+            $(".nav-link").on("click", function () {
+                const targetTabId = $(this).attr("href").replace("#", "");
+            
 
-            $(".nav-link").on("click", function() {
+                $(".prediction-container").hide();
+            
+
+                $(`#aqi-${targetTabId}`).show();
+            
+
                 $(".tab-pane").removeClass("active show");
                 $($(this).attr("href")).addClass("active show");
             });
             
+
             plots.forEach(plot => {
-                console.log("this is the data");
+
                 draw_plot(
                     combined_dataset = plot.data,
-                    param = param,
+                    param = plot.param,
                     unit = unit,
                     forecasts_div = plot.id,
                     plot_columns = plot.columns,
                     dates_ranges = false,
                     enableFading = false,
-                    text = `<b>Source:</b> NASA GEOS Composition Forecasting (GEOS-CF) | NASA Pandora | SNWG Bias Corrected Model`,
+                    text = `<b>Source:</b> NASA GEOS Composition Forecasting (GEOS-CF) | NASA Pandora | SNWG Bias Corrected Model`,
                     plotType = "bar"
                 );
-            });
-
-            const currentValue = masterData.master_observation[masterData.master_observation.length - 1] || 'N/A';
-            const nextValue = masterData.master_observation[masterData.master_observation.length - 2] || 'N/A'; 
-            const currentAqi = param === "no2" ? calculateAqiForNo2(currentValue) : calculateAqiForPm25(currentValue);
-            const nextAqi = param === "no2" ? calculateAqiForNo2(nextValue) : calculateAqiForPm25(nextValue);
-    
-
-            let aqiElement = `<div class="prediction-container">`;
-    
-            if (currentAqi !== 'N/A') {
-                const currentAqiLevel = getAqiLevel(currentAqi);
             
 
-                aqiElement += `
-                    <div class="prediction-box" >
-                        <h5>Current AQI (${param.toUpperCase()})</h5>
-                        <h2>${currentAqi}</h2> 
-                        <span>${currentAqiLevel.message}</span>
-                        <div class="aqi-scale-container">
-                            <div class="aqi-scale">
-                                <div class="aqi-scale-step" style="background-color: #4CAF50;" title="Good (0-50)"></div>
-                                <div class="aqi-scale-step" style="background-color: #FFEB3B;" title="Moderate (51-100)"></div>
-                                <div class="aqi-scale-step" style="background-color: #FF9800;" title="Unhealthy for Sensitive Groups (101-150)"></div>
-                                <div class="aqi-scale-step" style="background-color: #F44336;" title="Unhealthy (151-200)"></div>
-                                <div class="aqi-scale-step" style="background-color: #9C27B0;" title="Very Unhealthy (201-300)"></div>
-                                <div class="aqi-scale-step" style="background-color: #7E0023;" title="Hazardous (301-500)"></div>
-                            </div>
-                            <div class="aqi-indicator" style="left: ${Math.min((currentAqi / 500) * 100, 100)+10}%;"></div>
-                        </div>
-                    </div>`;
-            }
+                const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get user's timezone
+                const currentDate = new Date();
+                const currentHour = currentDate.getHours();
+                const nextHour = (currentHour + 1) % 24;
+            
+
+                const currentValue = plot.data.master_predicted?.[currentHour] || 'N/A';
+                const nextValue = plot.data.master_predicted?.[nextHour] || 'N/A';
+            
+                const currentAqi = param === "no2" ? calculateAqiForNo2(currentValue) : calculateAqiForPm25(currentValue);
+                const nextAqi = param === "no2" ? calculateAqiForNo2(nextValue) : calculateAqiForPm25(nextValue);
+            
+                let aqiElement = `<div class="prediction-container" id="aqi-${plot.id}" style="display: ${plot.id === "plot_corrected" ? "block" : "none"};">`;
+            
+                if (currentAqi !== 'N/A') {
+                    aqiElement += generateAqiElement(currentAqi, param, userTimeZone, currentHour);
+                }
+            
+                if (nextAqi !== 'N/A') {
+                    aqiElement += generateAqiElement(nextAqi, param, userTimeZone, nextHour);
+                }
+            
+                aqiElement += `</div>`;
+            
+
+                $(`#${plot.id}`).before(aqiElement);
+            });
     
-            if (nextAqi !== 'N/A') {
-                const nextAqiLevel = getAqiLevel(nextAqi);
-                aqiElement += `
-                    <div class="prediction-box">
-                        <h5>Next Hour AQI (${param.toUpperCase()})</h5>
-                        <h2>${nextAqi}</h2>
-                        <span>${nextAqiLevel.message}</span>
-                        <div class="aqi-scale-container">
-                            <div class="aqi-scale">
-                                <div class="aqi-scale-step" style="background-color: #4CAF50;" title="Good (0-50)"></div>
-                                <div class="aqi-scale-step" style="background-color: #FFEB3B;" title="Moderate (51-100)"></div>
-                                <div class="aqi-scale-step" style="background-color: #FF9800;" title="Unhealthy for Sensitive Groups (101-150)"></div>
-                                <div class="aqi-scale-step" style="background-color: #F44336;" title="Unhealthy (151-200)"></div>
-                                <div class="aqi-scale-step" style="background-color: #9C27B0;" title="Very Unhealthy (201-300)"></div>
-                                <div class="aqi-scale-step" style="background-color: #7E0023;" title="Hazardous (301-500)"></div>
-                            </div>
-                            <div class="aqi-indicator" style="left: ${Math.min((currentAqi / 500) * 100, 100)}%;"></div>
-                        </div>
-                    </div>`;
-            }
-    
-            aqiElement += `</div>`;
-            $('.loader').hide();
-            $(`#${forecastsDiv}`).before(aqiElement);
 
             $('.loader').hide();
+
         })
         .catch(error => {
             console.error("Error loading data:", error);
