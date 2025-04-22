@@ -1677,7 +1677,7 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
 
             const barColors = cleanedData.master_datetime.map((datetime) => {
                 const dataTime = new Date(datetime);
-                return dataTime < currentDate ? 'green' : 'black'; 
+                return dataTime < currentDate ? '#2196f3' : '#2196f3c2'; 
             });
 
             return {
