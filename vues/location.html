@@ -1147,30 +1147,80 @@ span.time {
     margin-top: 0 !important;
 }
 
+.forecasts-box.fullscreen {
+    position: relative;
+    top: 10px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: white;
+    overflow: auto;
+    padding: 20px;
+    box-shadow: none;
+}
 
+.forecasts-box.fullscreen .modal-dialog {
+    margin: 0;
+    max-width: 100%;
+    height: 100%;
+}
+
+.forecasts-box.fullscreen .modal-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.forecasts-box.fullscreen .modal-body {
+    flex: 1;
+    overflow: auto;
+}
 
 </style>
-<div class="container forecasts-box">
-    <div class="modal-dialog modal-dialog-centered modal-md">
-        <div class="modal-content text-center">
-            <div class="modal-body">
-              
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-                <div class="forecasts-view row text-center">
-                    <h3 class="module_title location_parameter_name"></h3>
-                    <h1 class="sub-title site-name"><span class="current_location_name"></span></h1>
-                    <div class="thewindow">
-                    <div class="row local_forecats_window"></div>
-                    <div class="tab-content" id="pills-tabContent"></div>
-                   </div>
-                </div>
-                <div class="model_data"></div>
+<div class="forecasts-box">
+  <div class="container">
+      <div class="modal-dialog modal-dialog-centered modal-md">
+          <div class="modal-content text-center">
+              <div class="modal-body">
+                  <button class="btn-close" data-bs-dismiss="modal"></button>
 
-            </div>
-        </div>
-    </div>
+                  <button class="btn btn-outline-primary toggle-fullscreen" style="position: absolute; top: 10px; right: 50px; z-index: 1000;">
+                      <i class="bi bi-arrows-fullscreen"></i> 
+                  </button>
+                  <div class="forecasts-view row text-center">
+                      <h3 class="module_title location_parameter_name"></h3>
+                      <h1 class="sub-title site-name"><span class="current_location_name"></span></h1>
+                      <div class="thewindow">
+                          <div class="row local_forecats_window"></div>
+                          <div class="tab-content" id="pills-tabContent"></div>
+                      </div>
+                  </div>
+                  <div class="model_data"></div>
+              </div>
+          </div>
+      </div>
+  </div>
 </div>
     
 <script src='parametres/plotly-2.12.1.min.js'></script>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+const forecastsBox = document.querySelector(".forecasts-box");
+const fullscreenButton = document.querySelector(".toggle-fullscreen");
+const fullscreenIcon = fullscreenButton.querySelector("i");
 
+fullscreenButton.addEventListener("click", function () {
+    forecastsBox.classList.toggle("fullscreen");
+
+    // Update the icon based on the state
+    if (forecastsBox.classList.contains("fullscreen")) {
+        fullscreenIcon.classList.remove("bi-arrows-fullscreen");
+        fullscreenIcon.classList.add("bi-arrows-collapse"); // Exit Full Screen Icon
+    } else {
+        fullscreenIcon.classList.remove("bi-arrows-collapse");
+        fullscreenIcon.classList.add("bi-arrows-fullscreen"); // Full Screen Icon
+    }
+});
+
+</script>

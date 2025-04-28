@@ -483,7 +483,7 @@ function create_map(sites, param) {
                     var l_id =site.properties.location_id;
                     if (!~$.inArray(l_id,list_in))  {
                         console.log(site)
-                        add_the_banner(site.properties, site.properties.parameter);
+                        //add_the_banner(site.properties, site.properties.parameter);
                         list_in.push(l_id);
                        
                     }
@@ -545,31 +545,108 @@ function create_map(sites, param) {
     return map;
 }
 
+function readCompressedJsonAndAddBanners(fileUrl) {
+    // Fetch the compressed JSON file
+    fetch(fileUrl)
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch the compressed JSON file');
+            return response.arrayBuffer(); // Read the response as an ArrayBuffer
+        })
+        .then(buffer => {
+            // Decompress the gzipped file
+            const decompressedData = pako.inflate(new Uint8Array(buffer), { to: 'string' });
+
+            // Replace all occurrences of NaN with null
+            const sanitizedData = decompressedData.replace(/NaN/g, "null");
+
+            return JSON.parse(sanitizedData); // Parse the sanitized JSON
+        })
+        .then(data => {
+            if (!Array.isArray(data)) {
+                console.error("Invalid JSON structure: Expected an array of sites.");
+                return;
+            }
+        
+            console.log(data);
+            data.forEach(site => {
+                const firstForecast = site.forecasts?.[0] || {}; // Get the first forecast object or an empty object
+                const obsOptions = {};
+        
+                // Dynamically extract units and values for each parameter
+                Object.keys(firstForecast).forEach(key => {
+                    if (key !== "time") { // Exclude the "time" field
+                        obsOptions[key] = {
+                            unit: getUnitForParameter(key), // Function to determine the unit for each parameter
+                            value: firstForecast[key] || "N/A" // Use the value or "N/A" if it's missing
+                        };
+                    }
+                });
+        
+                const siteData = {
+                    location_name: site.location || "Unknown Location",
+                    observation_source: "NASA",
+                    forecasted_value: firstForecast.corrected || "N/A",
+                    status: "active",
+                    latitude: site.latitude || 0,
+                    longitude: site.longitude || 0,
+                    precomputed_forecasts: JSON.stringify(site.forecasts || []),
+                    obs_options: JSON.stringify(obsOptions)
+                };
+        
+                // Call add_the_banner for each site
+                add_the_banner(siteData, "no2");
+            });
+        })
+        .catch(error => {
+            console.error("Error processing the compressed JSON file:", error);
+        });
+}
+
+function getUnitForParameter(parameter) {
+    const units = {
+        no2: "μg/m³",
+        corrected: "μg/m³",
+        pandora: "N/A",
+        o3: "μg/m³",
+        openaq: "N/A",
+        pm25: "μg/m³",
+        rh: "%",
+        t10m: "K", 
+        tprec: "mm", 
+        hcho: "ppb"
+    };
+
+    return units[parameter] || "N/A";
+}
+
+readCompressedJsonAndAddBanners("precomputed/combined_forecasts.json.gz");
+
+
+
 function add_the_banner(site, param) {
-    precomputed_forecasts = $.parseJSON(site.precomputed_forecasts);
-    obs_options = $.parseJSON(site.obs_options);
+    const precomputed_forecasts = $.parseJSON(site.precomputed_forecasts);
+    const obs_options = $.parseJSON(site.obs_options);
 
     if (site.observation_source) {
-
-        const randomTemperature = Math.floor(Math.random() * 15 + 10); // Random temperature between 10°C and 25°C
-        const randomHumidity = Math.floor(Math.random() * 50 + 30); // Random humidity between 30% and 80%
-        const randomWindSpeed = Math.floor(Math.random() * 10 + 1); // Random wind speed between 1 and 10 mph
-        const randomWindDirection = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.floor(Math.random() * 8)]; // Random wind direction
+        // Extract values from site data
+        const temperature = precomputed_forecasts?.[0]?.t10m ? (precomputed_forecasts[0].t10m - 273.15).toFixed(1) : "N/A"; // Convert Kelvin to Celsius
+        const humidity = precomputed_forecasts?.[0]?.rh ? (precomputed_forecasts[0].rh * 100).toFixed(0) : "N/A"; // Convert to percentage
+        const windSpeed = precomputed_forecasts?.[0]?.wind_speed || "N/A"; // Assuming wind_speed exists in the data
+        const windDirection = precomputed_forecasts?.[0]?.wind_direction || "N/A"; // Assuming wind_direction exists in the data
 
         // Calculate AQI
-        const aqiValue = calculateAqiForPm25(Math.random() * 100); // Random AQI if not provided
+        const aqiValue = calculateAqiForPm25(precomputed_forecasts?.[0]?.pm25 || "N/A");
         const aqiLevel = getAqiLevel(aqiValue);
 
         // Generate the banner HTML
         const html = `
             <div class="col-3 single-pollutant-card">
-                <a class="launch-local-forecasts" obs_src="${site.observation_source}" parameter="${param}" station_id="${site.location_id}" location_name="${site.location_name.replace(/ /g, "_")}" observation_value="${site.forecasted_value}" status="${site.status}" current_observation_unit="${obs_options?.[0]?.no2?.unit || 'N/A'}" latitude="${site.latitude}" longitude="${site.longitude}" lastUpdated="--" precomputed_forecasts='${JSON.stringify(precomputed_forecasts?.[0]?.no2?.forecasts || [])}'>
+                <a class="launch-local-forecasts" obs_src="${site.observation_source}" parameter="${param}" station_id="${site.location_id}" location_name="${site.location_name.replace(/ /g, "_")}" observation_value="${site.forecasted_value}" status="${site.status}" current_observation_unit="${obs_options?.[param]?.unit || 'N/A'}" latitude="${site.latitude}" longitude="${site.longitude}" lastUpdated="--" precomputed_forecasts='${JSON.stringify(precomputed_forecasts)}'>
                     <div class="pollutant-banner">
                         <div class="banner-header">
                             <div class="location-info">
                                 <h5 class="location-name">${site.location_name.replace(/_/g, ' ').replace(/\./g, ' ')}</h5>
                                 <p class="source">${site.observation_source}</p>
-                               
                             </div>
                             <div class="aqi-info">
                                 <div class="aqi-circle" style="background-color: ${aqiLevel.color};">
@@ -585,21 +662,21 @@ function add_the_banner(site, param) {
                                     <span class="info-icon">
                                         <i class="bi bi-thermometer-half"></i>
                                     </span>
-                                    <span class="info-value">${randomTemperature}°C</span>
+                                    <span class="info-value">${temperature}°C</span>
                                 </div>
                                 <div class="info-item">
                                     <!-- Humidity Icon -->
                                     <span class="info-icon">
                                         <i class="bi bi-droplet-half"></i>
                                     </span>
-                                    <span class="info-value">${randomHumidity}%</span>
+                                    <span class="info-value">${humidity}%</span>
                                 </div>
                                 <div class="info-item">
                                     <!-- Wind Icon -->
                                     <span class="info-icon">
                                         <i class="bi bi-wind"></i>
                                     </span>
-                                    <span class="info-value">${randomWindSpeed}mph ${randomWindDirection}</span>
+                                    <span class="info-value">${windSpeed} mph ${windDirection}</span>
                                 </div>
                             </div>
                             <div class="details-link">
@@ -2221,6 +2298,49 @@ $(document).on("click", ".launch-local-forecasts", function() {
     openForecastsWindow(["Loading", "Please hold"], location_id, param || 'no2', location_name, observation_value, current_observation_unit, obs_src, precomputed_forecasts);
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    // Function to get query parameters from the URL
+    function getQueryParams() {
+        const params = {};
+        const queryString = window.location.search;
+        if (queryString) {
+            const urlParams = new URLSearchParams(queryString);
+            for (const [key, value] of urlParams.entries()) {
+                params[key] = value;
+            }
+        }
+        return params;
+    }
+
+
+    const queryParams = getQueryParams();
+    const locationName = queryParams["location_name"];
+    const param = queryParams["param"];
+
+
+    if (locationName && param) {
+        console.log(`Opening forecasts for location: ${locationName}, parameter: ${param}`);
+
+
+        const locationId = queryParams["st"] || "default_station_id";
+        const observationValue = queryParams["observation_value"] || "N/A";
+        const currentObservationUnit = queryParams["current_observation_unit"] || "N/A";
+        const observationSource = queryParams["obs_src"] || "N/A";
+        const precomputedForecasts = queryParams["precomputed_forecasts"] || "[]";
+
+
+        openForecastsWindow(
+            ["Loading", "Please hold"],
+            locationId,
+            param,
+            locationName,
+            observationValue,
+            currentObservationUnit,
+            observationSource,
+            precomputedForecasts
+        );
+    }
+});
 $(document).on("click", ".upload-your-data", function() {
     $(".loading_div").fadeIn(10);
     var messages = ["Connecting to OpenAQ", "Connecting to GMAO", "fetching data from OpenAQ", "fetching data from GMAO FTP", "fetching observations", "getting the forecasts", "please wait...", "connecting...."];
