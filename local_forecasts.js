@@ -619,7 +619,7 @@ function getUnitForParameter(parameter) {
     return units[parameter] || "N/A";
 }
 
-readCompressedJsonAndAddBanners("precomputed/combined_forecasts.json.gz");
+
 
 
 
@@ -2223,7 +2223,7 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
 }
 
 
-function openForecastsWindow(messages, st_id, param, location_name, observation_value, current_observation_unit, obs_src, precomputed_forecasts) {
+function openForecastsWindow(messages, st_id, param, location_name, observation_value, current_observation_unit, obs_src, precomputed_forecasts, isModal = true) {
     const $loadingDiv = $(".loading_div");
     const $forecastsContainer = $(".forecasts_container");
     const $loadingScreen = $('#loading-screen');
@@ -2233,47 +2233,52 @@ function openForecastsWindow(messages, st_id, param, location_name, observation_
     }
 
     $loadingDiv.fadeIn(10);
-    $forecastsContainer.load(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`, function() {
-        
-        console.log(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`);
-        $loadingScreen.show();
-        
-        $(this).fadeOut(10).fadeIn(10);
 
-        const intervalId = setInterval(() => {
-            const message = messages[Math.floor(Math.random() * messages.length)];
-            $(".messages").html(message);
-        }, 100);
+    // Determine the file to load based on `isModal`
+    const fileToLoad = isModal ? `vues/location.html` : `vues/site.html`;
 
-        const cleanLocationName = cleanText(location_name);
-        $('.current_location_name').html(location_name.replace(/[_\W]+/g, " "));
-        $('.current_param').html(pollutant_details(param).name);
-        $('.current_param_1').html(pollutant_details(param).name);
-        $('.current_observation_value').html(observation_value);
-        $('.current_observation_unit_span').html(current_observation_unit);
-        
-        $forecastsContainer.addClass("noussair_animations zoom_in");
-        $loadingDiv.fadeOut(10);
-        
-        $("button").css({
-            "animation": "intro 2s cubic-bezier(0.03, 1.08, 0.56, 1)",
-            "animation-delay": "2s"
-        });
+    $forecastsContainer.load(`${fileToLoad}?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`, function () {
+        if (isModal) {
+            $loadingScreen.show();
+            $(this).fadeOut(10).fadeIn(10);
 
+            const intervalId = setInterval(() => {
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                $(".messages").html(message);
+            }, 100);
 
-        if (obs_src === 'AirNow') {
-            console.log("Calling readAirNow");
-            readAirNow(location_name, param, current_observation_unit, 'main_plot_for_airnow', true, 2, 2, 2, false, 2);
+            const cleanLocationName = cleanText(location_name);
+            $('.current_location_name').html(location_name.replace(/[_\W]+/g, " "));
+            $('.current_param').html(pollutant_details(param).name);
+            $('.current_param_1').html(pollutant_details(param).name);
+            $('.current_observation_value').html(observation_value);
+            $('.current_observation_unit_span').html(current_observation_unit);
+
+            $forecastsContainer.addClass("noussair_animations zoom_in");
+            $loadingDiv.fadeOut(10);
+
+            $("button").css({
+                "animation": "intro 2s cubic-bezier(0.03, 1.08, 0.56, 1)",
+                "animation-delay": "2s"
+            });
+
+            if (obs_src === 'AirNow') {
+                console.log("Calling readAirNow");
+                readAirNow(location_name, param, current_observation_unit, 'main_plot_for_airnow', true, 2, 2, 2, false, 2);
+            } else {
+                console.log("Calling readApiBaker with obs_src:", obs_src);
+                readApiBaker(location_name, 'no2', 'ppbv', 'main_plot_for_api_baker', true, 2, 2, 2, false, 2);
+            }
+
+            $loadingScreen.hide();
+            clearInterval(intervalId);
         } else {
-            console.log("Calling readApiBaker with obs_src:", obs_src);
-            readApiBaker(location_name, 'no2', 'ppbv', 'main_plot_for_api_baker', true, 2, 2, 2, false, 2);
+            // For full-page mode, skip animations and additional modal-specific logic
+            console.log("Loaded site.html for full-page mode.");
+            $loadingDiv.fadeOut(10);
         }
-        
-        $loadingScreen.hide();
-        clearInterval(intervalId); 
     });
 }
-
 $(document).on("click", ".launch-local-forecasts", function() {
     const messages = [
         "Connecting to OpenAQ", 
@@ -2298,49 +2303,7 @@ $(document).on("click", ".launch-local-forecasts", function() {
     openForecastsWindow(["Loading", "Please hold"], location_id, param || 'no2', location_name, observation_value, current_observation_unit, obs_src, precomputed_forecasts);
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-    // Function to get query parameters from the URL
-    function getQueryParams() {
-        const params = {};
-        const queryString = window.location.search;
-        if (queryString) {
-            const urlParams = new URLSearchParams(queryString);
-            for (const [key, value] of urlParams.entries()) {
-                params[key] = value;
-            }
-        }
-        return params;
-    }
 
-
-    const queryParams = getQueryParams();
-    const locationName = queryParams["location_name"];
-    const param = queryParams["param"];
-
-
-    if (locationName && param) {
-        console.log(`Opening forecasts for location: ${locationName}, parameter: ${param}`);
-
-
-        const locationId = queryParams["st"] || "default_station_id";
-        const observationValue = queryParams["observation_value"] || "N/A";
-        const currentObservationUnit = queryParams["current_observation_unit"] || "N/A";
-        const observationSource = queryParams["obs_src"] || "N/A";
-        const precomputedForecasts = queryParams["precomputed_forecasts"] || "[]";
-
-
-        openForecastsWindow(
-            ["Loading", "Please hold"],
-            locationId,
-            param,
-            locationName,
-            observationValue,
-            currentObservationUnit,
-            observationSource,
-            precomputedForecasts
-        );
-    }
-});
 $(document).on("click", ".upload-your-data", function() {
     $(".loading_div").fadeIn(10);
     var messages = ["Connecting to OpenAQ", "Connecting to GMAO", "fetching data from OpenAQ", "fetching data from GMAO FTP", "fetching observations", "getting the forecasts", "please wait...", "connecting...."];
@@ -2438,10 +2401,67 @@ $.ajax({
     }
 });
 
-create_map('test','no2')
-//const sites = ["3995", "8645", "739", "5282"];
+document.addEventListener("DOMContentLoaded", function () {
+    // Function to get query parameters from the URL
+    function getQueryParams() {
+        const params = {};
+        const queryString = window.location.search;
+        if (queryString) {
+            const urlParams = new URLSearchParams(queryString);
+            for (const [key, value] of urlParams.entries()) {
+                params[key] = value;
+            }
+        }
+        return params;
+    }
 
-//get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param));
+    // Extract query parameters
+    const queryParams = getQueryParams();
+    const locationName = queryParams["location_name"];
+    const param = queryParams["param"] || "no2"; // Default to "no2" if param is not provided
+
+    // If location_name is set, skip creating the map
+    if (locationName) {
+        console.log(`Skipping map creation. Opening forecasts for location: ${locationName}, parameter: ${param}`);
+
+        // Default values for other parameters
+        const observationValue = queryParams["observation_value"] || "N/A";
+        const currentObservationUnit = queryParams["current_observation_unit"] || "N/A";
+        const observationSource = queryParams["obs_src"] || "N/A";
+        const precomputedForecasts = queryParams["precomputed_forecasts"] || "[]";
+
+        // Open the forecasts window
+        openForecastsWindow(
+            ["Loading", "Please hold"],
+            -112, 
+            param,
+            locationName,
+            observationValue,
+            currentObservationUnit,
+            observationSource,
+            precomputedForecasts,
+            true
+        );
+    } else {
+        // If location_name is not set, create the map
+        console.log("Creating map...");
+        create_map("test", "no2");
+        readCompressedJsonAndAddBanners("precomputed/combined_forecasts.json.gz");
+    }
+});
+
+// Update the URL without refreshing the page
+function updateUrlWithLocation(locationName) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("location_name", locationName);
+    window.history.pushState({}, "", url);
+}
+
+// Example usage: Call this function when a location is selected
+$(document).on("click", ".launch-local-forecasts", function () {
+    const locationName = $(this).attr("location_name");
+    updateUrlWithLocation(locationName);
+});
 $('.modal-dialog').on('show.bs.modal', function () {
     $('#loading-screen').show();
   });
