@@ -483,7 +483,7 @@ function create_map(sites, param) {
                     var l_id =site.properties.location_id;
                     if (!~$.inArray(l_id,list_in))  {
                         console.log(site)
-                        //add_the_banner(site.properties, site.properties.parameter);
+                        add_the_banner(site.properties, site.properties.parameter);
                         list_in.push(l_id);
                        
                     }
@@ -791,61 +791,7 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
         })
         .then(data => {
             if (!data || data.status !== "200") throw new Error("No valid data received");
-            console.log("api baker data");
-            console.log(data);
 
-            const modelHtml = `
-                <div class="container my-5">
-                    <h5 class="mb-4">Machine learning model information</h5>
-                    <div class="table-responsive">
-                        <table class="table table-hover table-striped model_info">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Metric</th>
-                                    <th>Value</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Total Observations</td>
-                                    <td>${data.metrics.total_observation || 'N/A'}</td>
-                                </tr>
-                                <tr>
-                                    <td>Last Model Update</td>
-                                    <td>${data.latest_update || 'N/A'}</td>
-                                </tr>
-                                <tr>
-                                    <td>Start Date</td>
-                                    <td>${data.metrics.start_date || 'N/A'}</td>
-                                </tr>
-                                <tr>
-                                    <td>End Date</td>
-                                    <td>${data.metrics.end_date || 'N/A'}</td>
-                                </tr>
-                                <tr>
-                                    <td>R² (R-squared)</td>
-                                    <td>${data.metrics.performance?.metrics?.find(metric => metric.name === 'rmse')?.value || 'N/A'} (Compared to actual Pandora observation)</td>
-                                </tr>
-                                <tr>
-                                    <td>RMSE (Root Mean Squared Error)</td>
-                                    <td>${data.metrics.performance?.metrics?.find(metric => metric.name === 'r2')?.value || 'N/A'}</td>
-                                </tr>
-                                
-                                <tr>
-                                    <td>MAE (Mean Absolute Error) </td>
-                                    <td>${data.metrics.performance?.metrics?.find(metric => metric.name === 'mae')?.value || 'N/A'}</td>
-                                </tr>
-
-                                <tr>
-                                    <td>Validation</td>
-                                    <td>Predictions not validated. Interpret with caution.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-            $('.model_data').html(modelHtml);
 
             let masterData = {
                 master_datetime: [],
@@ -879,9 +825,9 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
                 });
             }
 
-                        const tabsNav = $("#pills-tabContent").prev();
+            const tabsNav = $("#pills-tabContent").prev();
             const tabsContainer = $(".tab-content");
-            
+                
             tabsNav.empty();
             tabsContainer.empty();
             
@@ -889,131 +835,211 @@ function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, 
             tabsNav.append(tabsList);
             
             const plots = [
-                {
-                    id: "plot_corrected",
-                    title: "SNWG NO2 Forecasts",
-                    data: masterData,
-                    param:"no2",
-                    columns: [
-                        { column: "master_predicted", name: "Corrected", color: "blue", width: 2 }
-                    ]
-                },
-                {
-                    id: "plot_pm25",
-                    title: "Particulate Matter (PM2.5)",
-                    data: masterData,
-                    param:"pm25",
-                    columns: [
-                        { column: "master_pm25", name: "PM2.5", color: "green", width: 2}
-                    ]
-                },
-                {
-                    id: "plot_pandora",
-                    title: "Pandora Observations",
-                    data: masterData,
-                    param:"no2",
-                    columns: [
-                        { column: "master_observation", name: "Pandora", color: "black", width: 2 }
-                    ]
-                },
-                {
-                    id: "plot_o3",
-                    title: "Ozone (O3)",
-                    data: masterData,
-                    param:"o3",
-                    columns: [
-                        { column: "master_o3", name: "O3", color: "orange", width: 2 }
-                    ]
-                },
-                {
-                    id: "plot_no2",
-                    title: "Nitrogen Dioxide (NO2)",
-                    data: masterData,
-                    param:"no2",
-                    columns: [
-                        { column: "master_no2", name: "NO2", color: "red", width: 2}
-                    ]
-                }
-            ];
-            
-            plots.forEach((plot, index) => {
-                const isActive = index === 0 ? "active" : "";
-            
+            {
+                id: "plot_corrected",
+                title: "SNWG NO<sub>2</sub> Forecasts",
+                unit: "ppbv",
+                data: masterData,
+                param: "no2",
+                tabName: "Nitrogen Dioxide (NO<sub>2</sub>)", 
+                tabId: "tab_no2", 
+                description: "Source: SNWG bias-corrected model",
+                columns: [
+                    { column: "master_predicted", name: "Corrected", color: "blue", width: 2 }
+                ],
+                displayAQI: true // Enable AQI display for SNWG NO2
+            },
+            {
+                id: "plot_pm25",
+                title: "Particulate Matter (PM<sub>2.5</sub>)",
+                unit: "μg/m³",
+                data: masterData,
+                param: "pm25",
+                tabName: "Fine Particulate Matter (PM<sub>2.5</sub>)",
+                tabId: "tab_pm25",
+                description: "Source: GEOS-CF",
+                columns: [
+                    { column: "master_pm25", name: "PM2.5", color: "green", width: 2 }
+                ],
+                displayAQI: true // Enable AQI display for PM2.5
+            },
+            {
+                id: "plot_o3",
+                title: "Ozone (O<sub>3</sub>)",
+                unit: "ppbv",
+                data: masterData,
+                param: "o3",
+                tabName: "Ozone (O<sub>3</sub>)", 
+                tabId: "tab_o3", 
+                description: "Source: GEOS-CF",
+                columns: [
+                    { column: "master_o3", name: "O3", color: "orange", width: 2 }
+                ],
+                displayAQI: true // Enable AQI display for O3
+            },
+            {
+                id: "plot_pandora",
+                title: "Pandora NO<sub>2</sub> Observations",
+                unit: "ppbv",
+                data: masterData,
+                param: "no2",
+                tabName: "Nitrogen dioxide (NO<sub>2</sub>) ", 
+                tabId: "tab_no2",
+                description: "Source: NASA Pandora",
+                columns: [
+                    { column: "master_observation", name: "Pandora", color: "black", width: 2 }
+                ],
+                displayAQI: false // Disable AQI display for Pandora
+            },
+            {
+                id: "plot_no2",
+                title: "Supporting Data: model-based NO<sub>2</sub> forecast",
+                unit: "ppbv",
+                data: masterData,
+                param: "no2",
+                tabName: "Nitrogen dioxide (NO<sub>2</sub>)", 
+                tabId: "tab_no2", 
+                description: "Source: GEOS-CF",
+                columns: [
+                    { column: "master_no2", name: "NO2", color: "red", width: 2 }
+                ],
+                displayAQI: false // Disable AQI display for model-based NO2
+            }
+        ];
+        
+
+        const tabMap = {};
+        
+        plots.forEach((plot, index) => {
+            const tabId = plot.tabId; 
+        
+            if (!tabMap[tabId]) {
+                const isActive = Object.keys(tabMap).length === 0 ? "active" : ""; 
+        
                 tabsList.append(`
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link ${isActive}" id="tab-${plot.id}" data-bs-toggle="pill" href="#${plot.id}" role="tab" aria-controls="${plot.id}" aria-selected="${isActive === 'active'}">
-                            ${plot.title}
+                        <a class="nav-link ${isActive}" id="tab-${tabId}" data-bs-toggle="pill" href="#${tabId}" role="tab" aria-controls="${tabId}" aria-selected="${isActive === 'active'}">
+                            ${plot.tabName}
                         </a>
                     </li>
                 `);
-            
+        
                 tabsContainer.append(`
-                    <div class="tab-pane fade ${isActive} show" id="${plot.id}" role="tabpanel" aria-labelledby="tab-${plot.id}">
+                    <div class="tab-pane fade ${isActive} show" id="${plot.tabId}" role="tabpanel" aria-labelledby="tab-${plot.tabId}">
+                        <h5 class='plot_title'>${plot.title}</h5>
+                        <p class='plot_source'>${plot.description}</p>
+                        <div class="aqi-container" id="aqi-${plot.id}"></div> <!-- Ensure this exists -->
+                        <div class="plot-container" id="${plot.id}"></div>
                     </div>
                 `);
-            });
-            
-            // Add click event for tabs
-            $(".nav-link").on("click", function () {
-                const targetTabId = $(this).attr("href").replace("#", "");
-            
+        
+                tabMap[tabId] = true;
+            }
 
-                $(".prediction-container").hide();
+            else{
+            $(`#${tabId}`).append(` <h5 class='plot_title'>${plot.title}</h5><p class= 'plot_source'>${plot.description}</p>
+                <div class="plot-container" id="${plot.id}"> 
+                </div>
+            `);
+            }
+        
+
             
+        });
+        
 
-                $(`#aqi-${targetTabId}`).show();
-            
+        $(".nav-link").on("click", function () {
+            const targetTabId = $(this).attr("href").replace("#", "");
+        
+            $(".tab-pane").removeClass("active show");
+            $(`#${targetTabId}`).addClass("active show");
+        });
+        
+                plots.forEach((plot, index) => {
+            const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get user's timezone
+            const currentDate = new Date();
+            const currentHour = currentDate.getHours();
+            const nextHour = currentHour + 1;
+        
+            let currentValue = 'N/A';
+            let nextValue = 'N/A';
+        
+            // Find the current and next hour values
+            for (let i = 0; i < masterData.master_datetime.length; i++) {
+                const datetime = new Date(masterData.master_datetime[i]);
+                const hour = datetime.getHours();
+        
+                if (hour === currentHour) {
+                    currentValue = masterData[plot.columns[0].column][i];
+                }
+        
+                if (hour === nextHour) {
+                    nextValue = masterData[plot.columns[0].column][i];
+                }
+            }
+        
+            console.log("Plot ID:", plot.id);
+            console.log("Current Value:", currentValue);
+            console.log("Next Value:", nextValue);
+        
+            // Check if AQI should be displayed for this plot
+            if (plot.displayAQI) {
+                const currentAqi = plot.param === "no2"
+                    ? calculateAqiForNo2(currentValue)
+                    : plot.param === "pm25"
+                    ? calculateAqiForPm25(currentValue)
+                    : calculateAqiForO3(currentValue);
+        
+                const nextAqi = plot.param === "no2"
+                    ? calculateAqiForNo2(nextValue)
+                    : plot.param === "pm25"
+                    ? calculateAqiForPm25(nextValue)
+                    : calculateAqiForO3(nextValue);
+        
+                console.log("Current AQI:", currentAqi);
+                console.log("Next AQI:", nextAqi);
+        
+                const currentAqiElement = generateAqiElement(currentAqi, plot.param, userTimeZone, currentHour);
+                const nextAqiElement = generateAqiElement(nextAqi, plot.param, userTimeZone, nextHour);
+        
+                console.log("Generated Current AQI Element:", currentAqiElement);
+                console.log("Generated Next AQI Element:", nextAqiElement);
+        
+                console.log("Checking AQI container for plot ID:", plot.id);
+                if ($(`#aqi-${plot.id}`).length > 0) {
+                    console.log("AQI container found for plot ID:", plot.id);
+                    $(`#aqi-${plot.id}`).append(currentAqiElement);
+                    $(`#aqi-${plot.id}`).append(nextAqiElement);
+                } else {
+                    console.error(`AQI container not found for plot ID: ${plot.id}`);
+                }
+            } else {
+                console.log(`AQI display is disabled for plot ID: ${plot.id}`);
+            }
+        });
 
-                $(".tab-pane").removeClass("active show");
-                $($(this).attr("href")).addClass("active show");
-            });
-            
 
-            plots.forEach(plot => {
-
+        plots.forEach(plot => {
+            const plotContainer = $(`#${plot.id}`);
+            if (plotContainer.length > 0) {
                 draw_plot(
                     combined_dataset = plot.data,
                     param = plot.param,
-                    unit = unit,
+                    unit = plot.unit, 
                     forecasts_div = plot.id,
                     plot_columns = plot.columns,
                     dates_ranges = false,
                     enableFading = false,
-                    text = `<b>Source:</b> NASA GEOS Composition Forecasting (GEOS-CF) | NASA Pandora | SNWG Bias Corrected Model`,
+                    text = "", 
                     plotType = "bar"
                 );
-            
+            } else {
+                console.error(`No DOM element with id '${plot.id}' exists on the page.`);
+            }
 
-                const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get user's timezone
-                const currentDate = new Date();
-                const currentHour = currentDate.getHours();
-                const nextHour = (currentHour + 1) % 24;
-            
-
-                const currentValue = plot.data.master_predicted?.[currentHour] || 'N/A';
-                const nextValue = plot.data.master_predicted?.[nextHour] || 'N/A';
-            
-                const currentAqi = param === "no2" ? calculateAqiForNo2(currentValue) : calculateAqiForPm25(currentValue);
-                const nextAqi = param === "no2" ? calculateAqiForNo2(nextValue) : calculateAqiForPm25(nextValue);
-            
-                let aqiElement = `<div class="prediction-container" id="aqi-${plot.id}" style="display: ${plot.id === "plot_corrected" ? "block" : "none"};">`;
-            
-                if (currentAqi !== 'N/A') {
-                    aqiElement += generateAqiElement(currentAqi, param, userTimeZone, currentHour);
-                }
-            
-                if (nextAqi !== 'N/A') {
-                    aqiElement += generateAqiElement(nextAqi, param, userTimeZone, nextHour);
-                }
-            
-                aqiElement += `</div>`;
-            
-
-                $(`#${plot.id}`).before(aqiElement);
             });
-    
 
-            $('.loader').hide();
+            
 
         })
         .catch(error => {
@@ -1053,6 +1079,31 @@ function calculateAqiForNo2(concentration) {
     }
 
     return 'N/A'; 
+}
+
+function calculateAqiForO3(concentration) {
+    if (concentration === null || concentration === undefined || isNaN(concentration)) {
+        return 'N/A';
+    }
+
+    const breakpoints = [
+        { concentration: [0.0, 0.054], aqi: [0, 50] },
+        { concentration: [0.055, 0.070], aqi: [51, 100] },
+        { concentration: [0.071, 0.085], aqi: [101, 150] },
+        { concentration: [0.086, 0.105], aqi: [151, 200] },
+        { concentration: [0.106, 0.200], aqi: [201, 300] }
+    ];
+
+    for (const breakpoint of breakpoints) {
+        const [cLow, cHigh] = breakpoint.concentration;
+        const [aqiLow, aqiHigh] = breakpoint.aqi;
+
+        if (concentration >= cLow && concentration <= cHigh) {
+            return Math.round(((aqiHigh - aqiLow) / (cHigh - cLow)) * (concentration - cLow) + aqiLow);
+        }
+    }
+
+    return 'N/A';
 }
 
 function calculateAqiForPm25(concentration) {
@@ -1364,28 +1415,28 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
                 window.dispatchEvent(new Event('resize'));
             });
 
-            const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get user's timezone
+            const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; 
             const currentDate = new Date();
             const currentDateString = currentDate.toISOString().split('T')[0];
             const currentHour = currentDate.getHours();
             const nexttHour = (currentDate.getHours() + 1)
             
-            // Initialize variables for current and next 3-hour averages
+
             let currentValue = 'N/A';
             let nextValue = 'N/A';
             
-            // Loop through the dataset to find the current and next 3-hour averages
+ 
             for (let i = 0; i < masterData.master_datetime.length; i++) {
                 const datetime = new Date(masterData.master_datetime[i]);
                 const dateString = datetime.toISOString().split('T')[0];
                 const hour = datetime.getHours();
             
-                // Match the current 3-hour average
+
                 if (dateString === currentDateString && hour <= currentHour && currentHour < hour + 3) {
                     currentValue = masterData.master_observation[i];
                 }
             
-                // Match the next 3-hour average
+
                 if (dateString === currentDateString && hour <= currentHour + 3 && currentHour + 3 < hour + 3) {
                     nextValue = masterData.master_observation[i];
                 }
@@ -1789,16 +1840,21 @@ function draw_plot(combined_dataset, param, unit, forecasts_div, plot_columns, d
     }
 
     const layout = {
-        title: {
-            text: text,
-            font: {
-                family: 'Manrope, sans-serif',
-                size: 10,
-                color: '#000000'
-            },
-            x: 0.00,
-            xanchor: 'left'
-        },
+        annotations: [
+            {
+                x: 0,
+                y: 1.2,
+                xref: 'paper',
+                yref: 'paper',
+                text: text,
+                showarrow: false,
+                font: {
+                    size: 20,
+                    color: '#000000'
+                },
+                align: 'center'
+            }
+        ],
         autosize: true,
         width: 1000,
         height: 500,
@@ -2433,14 +2489,13 @@ document.addEventListener("DOMContentLoaded", function () {
         // Open the forecasts window
         openForecastsWindow(
             ["Loading", "Please hold"],
-            -112, 
+            "default_station_id", // Default station ID
             param,
             locationName,
             observationValue,
             currentObservationUnit,
             observationSource,
-            precomputedForecasts,
-            true
+            precomputedForecasts
         );
     } else {
         // If location_name is not set, create the map
