@@ -274,7 +274,6 @@ a#global-view {
 .locations-box {
     position: relative;
     bottom: 37px;
-    background: #000000bf;
 }
 
 @media (max-width: 600px) {
@@ -354,14 +353,15 @@ a#global-view {
 
 button#toggle-locations-box {
     bottom: 25px;
-    background: #ffffff;
-    color: #000000;
+    background: none;
+    color: #ffffff;
     display: flex;
     justify-content: flex-start;
     flex-wrap: nowrap;
     padding: 1px;
     border-radius: 0px !important;
     padding-left: 1%;
+    width: 100%;
 }
 
 input#filter-input {
@@ -388,7 +388,7 @@ span.aqi-level {
 
 
 .pollutant-banner-o{
-    background: white;
+    background: none;
 }
 
 
@@ -405,6 +405,54 @@ span.aqi-level {
 }
 input#filter-input {
     margin-bottom: 9px;
+}
+
+@media (max-width: 600px) {
+  .locations-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 9999;
+    background: #000000f2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    transition: transform 0.3s;
+  }
+  .locations-box {
+    width: 100vw !important;
+    height: 100vh !important;
+    overflow-y: auto;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding-bottom: 60px;
+  }
+  #toggle-locations-box {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    width: auto !important;
+    z-index: 10001;
+    background: #fff;
+    color: #000;
+    border-radius: 8px !important;
+    min-width: 140px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  #map {
+    width: 100vw !important;
+    height: 100vh !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    transition: filter 0.3s;
+  }
+ 
 }
 </style>
 </head>
@@ -497,7 +545,7 @@ input#filter-input {
     <div class="locations-container">
 
     <button id="toggle-locations-box" class="btn btn-soft-ash btn-sm rounded" style=" position: relative;">
-        <i class="bi bi-chevron-up" id="toggle-locations-icon" style="margin-right: 6px;"></i>
+        <i class="bi bi-chevron-down" id="toggle-locations-icon" style="margin-right: 6px;"></i>
         <span>Hide Locations</span>
         </button>
         <div class="locations-box" data-margin="0" data-dots="true"
@@ -550,22 +598,22 @@ input#filter-input {
         $('.forecasts_container').css('display', 'none');
     });
 
-
-   $(function() {
+$(function() {
     let isVisible = true;
     $('#toggle-locations-box').on('click', function() {
         if (isVisible) {
             $('.locations-box').slideUp(300);
             $(this).find('span').text('Show Locations');
-            $('#toggle-locations-icon').removeClass('bi-chevron-up').addClass('bi-chevron-down');
-        } else {
-            $('.locations-box').slideDown(400);
-            $(this).find('span').text('Hide Locations');
             $('#toggle-locations-icon').removeClass('bi-chevron-down').addClass('bi-chevron-up');
+        } else {
+            $('.locations-box').slideDown(300);
+            $(this).find('span').text('Hide Locations');
+            $('#toggle-locations-icon').removeClass('bi-chevron-up').addClass('bi-chevron-down');
         }
         isVisible = !isVisible;
     });
 });
+  
     </script>
 </body>
 

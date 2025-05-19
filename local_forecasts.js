@@ -414,46 +414,7 @@ function create_map(sites, param) {
     
     
    
-    const legend = document.createElement('div');
-    legend.id = 'map-legend';
-    legend.style.position = 'absolute';
-    legend.style.top = '30px';
-    legend.style.left = '10px';
-    legend.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-    legend.style.padding = '10px';
-    legend.style.borderRadius = '5px';
-    legend.style.fontSize = '12px';
-    legend.style.boxShadow = '0 0 5px rgba(0, 0, 0, 0.3)';
-
-    const legendItems = [
-        { color: '#4C4B63', label: 'NASA PM2.5 Forecast' },
-        { color: '#5386E4', label: 'NASA NO2 Forecast (beta)' },
-        { color: 'white', label: 'Other' }
-    ];
-
-    legendItems.forEach(item => {
-        const legendItem = document.createElement('div');
-        legendItem.style.display = 'flex';
-        legendItem.style.alignItems = 'center';
-        legendItem.style.marginBottom = '5px';
-
-        const colorBox = document.createElement('span');
-        colorBox.style.width = '12px';
-        colorBox.style.height = '12px';
-        colorBox.style.backgroundColor = item.color;
-        colorBox.style.display = 'inline-block';
-        colorBox.style.marginRight = '8px';
-        colorBox.style.border = '1px solid #000';
-
-        const label = document.createElement('span');
-        label.textContent = item.label;
-
-        legendItem.appendChild(colorBox);
-        legendItem.appendChild(label);
-        legend.appendChild(legendItem);
-    });
-
-    document.body.appendChild(legend);
+   
           
     
     map.addLayer({
