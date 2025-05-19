@@ -27,7 +27,7 @@
 
 
 <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js?v=1.0.0'></script>
-<link href='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css?v=1.0.0' rel='stylesheet' />
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css?v=1.0.0' rel='stylesheet' />
 
 
 
@@ -267,7 +267,103 @@ a#global-view {
 
 .pollutants-banner {
     margin-left: 18px;
-    max-height: 170px;
+}
+
+.locations-box {
+    position: relative;
+    bottom: 26px;
+    background: #000000bf;
+}
+
+@media (max-width: 600px) {
+
+    body {
+    background: black;
+}
+
+.banner-header {
+    height: max-content !important;
+}
+
+.location-info > p {
+    padding: 0px !important;
+    margin: 0 !important;
+}
+  .col-3,
+  .single-pollutant-card,
+  .pollutant-banner {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    box-sizing: border-box;
+    display: block !important;
+    margin-bottom: 16px;
+  }
+
+    .banner-header, .weather-info {
+        flex-direction: row;
+        align-items: stretch !important;
+        width: 100% !important;
+        gap: 8px !important;
+    }
+
+  .aqi-info {
+        margin-top: 8px;
+        margin-left: 0 !important;
+        align-items: flex-start;
+        width: 100% !important;
+        display: flex
+;
+        justify-content: center;
+        align-content: center;
+        flex-wrap: nowrap;
+        flex-direction: column;
+  }
+
+  .info-item {
+    width: 100% !important;
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .details-link {
+    margin-top: 10px;
+    width: 100%;
+    justify-content: flex-start !important;
+  }
+
+  .aqi-circle,
+  .aqi-value,
+  .aqi-level {
+    margin: 0 auto !important;
+    display: block !important;
+    text-align: center !important;
+  }
+
+  .row,
+  .row-cols-1,
+  .row-cols-md-2,
+  .row-cols-lg-3 {
+    flex-direction: column !important;
+    display: flex !important;
+  }
+}
+
+button#toggle-locations-box {
+    bottom: 26px;
+    background: #ffffff;
+    color: #000000;
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    padding: 1px;
+    border-radius: 0px !important;
+    padding-left: 1%;
+}
+
+input#filter-input {
+    padding-left: 2%;
 }
 </style>
 </head>
@@ -344,8 +440,10 @@ a#global-view {
                 </div>
             </nav>
         </header>
+
         <section class="wrapper image-wrapper bg-image bg-overlay bg-overlay-300">
             <div id='map'></div>
+            <div id="map-hover-info" style="display:none; position:absolute; z-index:99999; pointer-events:none; background:#fff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.2); padding:8px; font-size:14px; min-width:120px;"></div>
             <div id='replay-animation'>
                 <img src="geos-cf.gif"/>
             </div>
@@ -355,16 +453,14 @@ a#global-view {
     <div class="forecasts_container">
       
     </div>
-    <footer class="bg-dark text-inverse">
-        
-
-        <div class="swiper-container-desc dots-closer blog grid-view mb-1" data-margin="0" data-dots="true"
+    <button id="toggle-locations-box" class="btn btn-soft-ash btn-sm rounded" style="z-index: 1000; position: relative;">
+      <i class="bi bi-chevron-up" id="toggle-locations-icon" style="margin-right: 6px;"></i>
+      <span>Hide Locations</span>
+    </button>
+    <div class="locations-box" data-margin="0" data-dots="true"
             data-items-md="5" data-items-xs="1">
             <ul class="pollutant_param list-inline mb-0">
                 
-                <li class="list-inline-item"><a href="#" lf-param="no2" class="routing_pollutant_param"
-                        class="btn btn-soft-ash btn-sm rounded ">Monitoring Stations </a>
-                </li>
             </ul>
             <input type="text" id="filter-input" placeholder="Enter location name" />
             <div class="pollutants-banner">
@@ -372,8 +468,9 @@ a#global-view {
             </div>
     
     
-        </div>
-    
+    </div>
+    <footer class="bg-dark text-inverse">
+        
                 <div class="container">
             <div class="d-md-flex align-items-center justify-content-between">
                 <div class="footer-left">
@@ -409,6 +506,23 @@ a#global-view {
     $(document).on('click', '.btn-close', function(e) {
         $('.forecasts_container').css('display', 'none');
     });
+
+
+   $(function() {
+    let isVisible = true;
+    $('#toggle-locations-box').on('click', function() {
+        if (isVisible) {
+            $('.locations-box').slideUp(300);
+            $(this).find('span').text('Show Locations');
+            $('#toggle-locations-icon').removeClass('bi-chevron-up').addClass('bi-chevron-down');
+        } else {
+            $('.locations-box').slideDown(400);
+            $(this).find('span').text('Hide Locations');
+            $('#toggle-locations-icon').removeClass('bi-chevron-down').addClass('bi-chevron-up');
+        }
+        isVisible = !isVisible;
+    });
+});
     </script>
 </body>
 
