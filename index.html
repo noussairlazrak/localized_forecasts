@@ -18,440 +18,46 @@
     <link rel="mask-icon" href="./parametres/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
-        <link rel="stylesheet" href="./parametres/style.css?v=1.0.0">
-
-    <link rel="preload" href="./parametres/local-forecasts.css?v=1.0.0" as="style" onload="this.rel='stylesheet'">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="preload" href="./parametres/lf-style.css?v=1.0.0" as="style" onload="this.rel='stylesheet'">
+     <link rel="preload" href="./parametres/wave.css?v=1.0.0" as="style" onload="this.rel='stylesheet'">
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
-<script src='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js?v=1.0.0'></script>
-<link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css?v=1.0.0' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js?v=1.0.0'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css?v=1.0.0' rel='stylesheet' />
 
-
-
-
-    
     <script type="text/javascript" src="https://d3js.org/d3.v7.min.js?v=2.2.3"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js?v=1.2.2"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
  
-
-
-
 <style>
-    .model_plots {
+    .locations-container {
+    width: 100%;
+    position: absolute;
+    margin-bottom: 0;
+    bottom: 0;
+    background: #02020252;
+    z-index: 1000;
+}
+a.launch-local-forecasts {
+    text-decoration: none;
+}
+
+div#map {
     position: absolute;
     width: 100%;
-    left:0;
-}
-
-.plots_container {
-    width: 100%;
-    min-height: 450px;
-}
-
-a.modebar-btn.resample {
-    top: 5px;
-    font-size: 14px !important;
-    text-transform: unset;
-}
-
-.plot_additional_features button {
-    font-size: 10px !important;
-    padding: 7px !important;
-    margin: 0;
-}
-
-
-button.btn.btn-outline-primary {
-    text-transform: capitalize;
-}
-
-input#filter-input {
-    width: 100%;
-    background: none;
-    border: none;
-    color:white;
-}
-
-input#filter-input:focus{
-    outline: none;
-}
-
-
-.loader {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    position: absolute;
-    width: 100%;
-    top: 0;
-    z-index: 1;
-    pointer-events: none;
-}
-.loader__dot {
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
-  border-radius: 50%;
-  background-color: #4285f4;
-  animation-name: loader__dot;
-  animation-duration: 1.5s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-}
-
-.loader__dot:nth-child(2) {
-  animation-delay: -1.0s;
-}
-
-.loader__dot:nth-child(3) {
-  animation-delay: -0.5s;
-}
-
-@keyframes loader__dot {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(0.1);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-div#call_messages {
-    position: absolute;
-    margin-top: 55px;
-    
-}
-
-div#replay-animation {
-    position: absolute;
-    width: 100%;
-    height: 100vh;
-    opacity: 0.5;
-    top: -2vh;
-    display:none;
-}
-
-div#replay-animation img {
-    width: 100%;
-    height: auto;
-}
-
-a#global-view {
-    background: #ca4e00;
-    border: #ca4e00;
-    margin-right: 15px;
-    margin-top: 15px;
-}
-
-.pollutant-banner {
-    display: flex;
-    flex-direction: column;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
-    margin-bottom: 8px;
     height: 100%;
+    z-index: 0 !important;
 }
 
-.pollutant-banner.compact {
-    padding: 8px;
-    font-size: 12px;
-}
-
-.banner-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px;
-    color: #333333;
-    background: black;
-}
-
-.location-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.location-name {
-    font-weight: bold;
-    margin: 0;
-    color: white !important;
-    font-size: large;
-}
-
-.source {
-    font-size: 10px;
-    opacity: 0.8;
-}
-
-.aqi-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.aqi-circle {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 12px;
-    font-weight: bold;
-    color: #ffffff;
-}
-
-.aqi-level {
-    font-size: 12px;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-.banner-body {
-    display: flex;
-    flex-direction: column;
-    padding: 8px;
-    background-color: #1f1f1f;
-    height: 100%;
-}
-
-.banner-body.compact {
-    padding: 4px;
-}
-
-.weather-info {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 4px;
-}
-
-.info-item {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    color: #ffffff;
-}
-
-.info-icon {
-    font-size: 12px;
-}
-
-.details-link {
-    font-size: 12px;
-    font-weight: bold;
-    color: #007bff;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.details-link:hover {
-    text-decoration: underline;
-}
-
-
-.col-3.single-pollutant-card {
-    height: fit-content;
-}
-
-.pollutants-banner {
-    margin-left: 18px;
-}
-
-.locations-box {
+header.p-3.bg-dark.text-white {
     position: relative;
-    bottom: 37px;
-}
-
-@media (max-width: 600px) {
-
-    body {
-    background: black;
-}
-
-.banner-header {
-    height: max-content !important;
-}
-
-.location-info > p {
-    padding: 0px !important;
-    margin: 0 !important;
-}
-  .col-3,
-  .single-pollutant-card,
-  .pollutant-banner {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 100% !important;
-    box-sizing: border-box;
-    display: block !important;
-    margin-bottom: 16px;
-  }
-
-    .banner-header, .weather-info {
-        flex-direction: row;
-        align-items: stretch !important;
-        width: 100% !important;
-        gap: 8px !important;
-    }
-
-  .aqi-info {
-        margin-top: 8px;
-        margin-left: 0 !important;
-        align-items: flex-start;
-        width: 100% !important;
-        display: flex
-;
-        justify-content: center;
-        align-content: center;
-        flex-wrap: nowrap;
-        flex-direction: column;
-  }
-
-  .info-item {
-    width: 100% !important;
-    display: flex;
-    align-items: center;
-    margin-bottom: 4px;
-  }
-
-  .details-link {
-    margin-top: 10px;
-    width: 100%;
-    justify-content: flex-start !important;
-  }
-
-  .aqi-circle,
-  .aqi-value,
-  .aqi-level {
-    margin: 0 auto !important;
-    display: block !important;
-    text-align: center !important;
-  }
-
-  .row,
-  .row-cols-1,
-  .row-cols-md-2,
-  .row-cols-lg-3 {
-    flex-direction: column !important;
-    display: flex !important;
-  }
-}
-
-button#toggle-locations-box {
-    bottom: 25px;
-    background: none;
-    color: #ffffff;
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    padding: 1px;
-    border-radius: 0px !important;
-    padding-left: 1%;
-    width: 100%;
-}
-
-input#filter-input {
-    padding-left: 2%;
-}
-
-
-
-.location-info > p {
-    padding: 0 !important;
-    margin: 0 !important;
-    color: white;
-    font-size: revert;
-}
-
-
-.info-item > span {
-    font-size: initial;
-}
-
-span.aqi-level {
-    color: white;
-}
-
-
-.pollutant-banner-o{
-    background: none;
-}
-
-
-
-.col-3.single-pollutant-card {
-    padding: 7px;
-    margin-top: auto;
-    width: 23%;
-    margin: 0;
-}
-
-.locations-box {
-    margin-top: 14px;
-}
-input#filter-input {
-    margin-bottom: 9px;
-}
-
-@media (max-width: 600px) {
-  .locations-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw !important;
-    height: 100vh !important;
-    z-index: 9999;
-    background: #000000f2;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
-    transition: transform 0.3s;
-  }
-  .locations-box {
-    width: 100vw !important;
-    height: 100vh !important;
-    overflow-y: auto;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    padding-bottom: 60px;
-  }
-  #toggle-locations-box {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    width: auto !important;
-    z-index: 10001;
-    background: #fff;
-    color: #000;
-    border-radius: 8px !important;
-    min-width: 140px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  }
-  #map {
-    width: 100vw !important;
-    height: 100vh !important;
-    position: fixed !important;
-    top: 0;
-    left: 0;
     z-index: 1;
-    transition: filter 0.3s;
-  }
- 
+}
+body {
+    background: black;
 }
 </style>
 </head>
@@ -467,106 +73,67 @@ input#filter-input {
         <div class="ball"></div>
         <div class="messages"> Connecting....</div>
     </div>
-    <div class="content-wrapper">
-        <div class="g-lf-params" param="no2"></div>
-        <header class="wrapper bg-soft-primary">
-            <nav class="navbar navbar-expand-lg center-logo transparent position-absolute navbar-dark">
-                <div class="container justify-content-between align-items-center">
-                    <div class="d-flex flex-row w-100 justify-content-between align-items-center d-lg-none">
-                        <div class="navbar-brand-title"><a href="index">
-                                GEOS CF Localised Forecasts
-                            </a></div>
-                        <div class="navbar-other ms-auto">
-                            <ul class="navbar-nav flex-row align-items-center">
-                                <li class="nav-item d-lg-none">
-                                    <button class="hamburger offcanvas-nav-btn"><span></span></button>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="navbar-collapse-wrapper d-flex flex-row align-items-center w-100">
-                        <div class="navbar-collapse offcanvas offcanvas-nav offcanvas-start">
-                            <div class="offcanvas-header mx-lg-auto order-0 order-lg-1 d-lg-flex px-lg-15">
-                                <a href="#" class="transition-none d-none d-lg-flex"><img class="logo-dark"
-                                        src="parametres/haqast_logo.png" srcset="parametres/haqast_logo.png 2x" alt="" />
-                                    <img class="logo-light" src="parametres/haqast_logo.png"
-                                        srcset="parametres/haqast_logo.png 2x" alt="" /></a>
-                                <h3 class="text-white fs-30 mb-0 d-lg-none"></h3>
-                                <button type="button" class="btn-close btn-close-white d-lg-none" data-bs-dismiss="offcanvas"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="w-100 order-1 order-lg-0 d-lg-flex offcanvas-body">
-                                <ul class="navbar-nav ms-lg-auto">
-                                    <li class="nav-item">
-                                        <a class="nav-link nl_wave_routing" href="about.html">About</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="https://gmao.gsfc.nasa.gov/weather_prediction/GEOS-CF/">Data</a>
-                                    </li>
-        
-                                </ul>
-                            </div>
-                            <div class="w-100 order-3 order-lg-2 d-lg-flex offcanvas-body">
-                                <ul class="navbar-nav me-lg-auto">
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="https://gmao.gsfc.nasa.gov/weather_prediction/GEOS-CF/pubs/">Publications</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="https://github.com/GEOS-CF/MLpred">Documentation</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a id="global-view" class="nav-link btn btn-primary replay_model" href="#">Replay</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link btn btn-primary upload-your-data">Upload Your Local Data</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-        
+
+
+        <header class="p-3 bg-dark text-white">
+            <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="#" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="home" class="nav-link nl_wave_routing px-2 text-secondary">Home</a></li>
+                <li><a href="about" class="nav-link nl_wave_routing px-2 text-white">About</a></li>
+                <li><a href="data" class="nav-link nl_wave_routing px-2 text-white">Data</a></li>   
+                </ul>
+
+                <div class="text-end">
+                <a id="global-view" href="#" class="nav-link px-2 text-white replay_model">24 hours replay</a>
                 </div>
-            </nav>
+            </div>
+            </div>
         </header>
 
-        <section class="wrapper image-wrapper bg-image bg-overlay bg-overlay-300">
-            <div id='map'></div>
-            <div id="map-hover-info" style="display:none; position:absolute; z-index:99999; pointer-events:none; background:#fff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.2); padding:8px; font-size:14px; min-width:120px;"></div>
-            <div id='replay-animation'>
-                <img src="geos-cf.gif"/>
-            </div>
-        </section>
-
+        <div class="wavejs">
+           
+<section class="wrapper image-wrapper bg-image bg-overlay bg-overlay-300">
+    <div id='map'></div>
+    <div id="map-hover-info" style="display:none; position:absolute; z-index:99999; pointer-events:none; background:#fff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.2); padding:8px; font-size:14px; min-width:120px;"></div>
+    <div id='replay-animation'>
+        <img src="geos-cf.gif"/>
     </div>
-    <div class="forecasts_container">
-      
-    </div>
-    <div class="locations-container">
+</section>
 
-    <button id="toggle-locations-box" class="btn btn-soft-ash btn-sm rounded" style=" position: relative;">
+
+<div class="forecasts_container">
+
+</div>
+
+<div class="locations-container">
+    <button id="toggle-locations-box" class="btn btn-soft-ash btn-sm rounded" style="position: relative;">
         <i class="bi bi-chevron-down" id="toggle-locations-icon" style="margin-right: 6px;"></i>
         <span>Hide Locations</span>
-        </button>
-        <div class="locations-box" data-margin="0" data-dots="true"
-                data-items-md="5" data-items-xs="1">
-                <ul class="pollutant_param list-inline mb-0">
-                
-                </ul>
-                <input type="text" id="filter-input" placeholder="Search" />
-                <div class="pollutants-banner">
-                    <div class="pollutant-banner-o row gx-md-8 gy-8  swiper-desactivated"> </div>
-                </div>
+    </button>
+    <div class="locations-box" data-margin="0" data-dots="true"
+        data-items-md="5" data-items-xs="1">
+        <ul class="pollutant_param list-inline mb-0"></ul>
+        <input type="text" id="filter-input" placeholder="Search" />
+        <div class="pollutants-banner">
+            <div class="pollutant-banner-o row gx-md-8 gy-8 swiper-desactivated"></div>
         </div>
     </div>
+</div>
+         </div>
+        
     
     <footer class="bg-dark text-inverse">
         
-                <div class="container">
+        <div class="container">
             <div class="d-md-flex align-items-center justify-content-between">
-                <div class="footer-left">
+                <div class="footer-left text-white">
                     <p class="mb-0">© 2025 SNWG Localized Forecasts.</p>
                 </div>
-                <div class="footer-right">
+                <div class="footer-right text-white">
                     <p class="mb-0">Version: 1.1</p>
                 </div>
             </div>
@@ -582,6 +149,7 @@ input#filter-input {
     
     <script src="local_forecasts.js?v=1.4.0"></script>
     <script src="local_forecasts_assets.js?v=1.4.0"></script>
+    <script src="parametres/wavejs.js?v=1.0"></script>
     
     <script src="https://unpkg.com/leaflet"></script>
     <script src="https://unpkg.com/mapbox-gl-leaflet"></script>
@@ -596,22 +164,22 @@ input#filter-input {
         $('.forecasts_container').css('display', 'none');
     });
 
-$(function() {
-    let isVisible = true;
-    $('#toggle-locations-box').on('click', function() {
-        if (isVisible) {
-            $('.locations-box').slideUp(300);
-            $(this).find('span').text('Show Locations');
-            $('#toggle-locations-icon').removeClass('bi-chevron-down').addClass('bi-chevron-up');
-        } else {
-            $('.locations-box').slideDown(300);
-            $(this).find('span').text('Hide Locations');
-            $('#toggle-locations-icon').removeClass('bi-chevron-up').addClass('bi-chevron-down');
-        }
-        isVisible = !isVisible;
+    $(function() {
+        let isVisible = true;
+        $('#toggle-locations-box').on('click', function() {
+            if (isVisible) {
+                $('.locations-box').slideUp(300);
+                $(this).find('span').text('Show Locations');
+                $('#toggle-locations-icon').removeClass('bi-chevron-down').addClass('bi-chevron-up');
+            } else {
+                $('.locations-box').slideDown(300);
+                $(this).find('span').text('Hide Locations');
+                $('#toggle-locations-icon').removeClass('bi-chevron-up').addClass('bi-chevron-down');
+            }
+            isVisible = !isVisible;
+        });
     });
-});
-  
+
     </script>
 </body>
 
