@@ -56,18 +56,7 @@ $(document).ready(function() {
     });
 });
 
-function showLoader(message) {
-    $('#wavejs-loader-message').html('<b>' + (message || 'Loading...') + '</b>');
-    $('#wavejs-loader').removeClass('hide').addClass('active');
-}
 
-
-function hideLoader() {
-    $('#wavejs-loader').removeClass('active').addClass('hide');
-    setTimeout(function() {
-        $('#wavejs-loader').removeClass('hide');
-    }, 700); 
-}
 
 
 function loadHashContent() {

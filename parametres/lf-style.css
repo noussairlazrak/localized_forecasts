@@ -314,7 +314,7 @@ header.wrapper.bg-soft-primary {
 
 .loading_div {
     position: absolute;
-    background: #0000009e;
+    background: #000000;
     left: 0;
     right: 0;
     width: 105%;
@@ -322,7 +322,8 @@ header.wrapper.bg-soft-primary {
     z-index: 1;
     padding-top: 18%;
     text-align: center;
-    display: none;
+    z-index: 12000;
+    color: white;
 }
 
 .ball {

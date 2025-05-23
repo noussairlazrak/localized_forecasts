@@ -657,6 +657,7 @@ function generateSmallAqiBox(aqiValue, pollutant) {
     `;
 }
 function readCompressedJsonAndAddBanners(fileUrl) {
+    showLoadingDiv()
 
     fetch(fileUrl)
         .then(response => {
@@ -743,13 +744,22 @@ function readCompressedJsonAndAddBanners(fileUrl) {
             });
             const geojson = sitesArrayToGeoJSON(data);
             create_map(geojson, "no2");
+            hideLoadingDiv();
         })
         .catch(error => {
             console.error("Error processing the compressed JSON file:", error);
         });
 }
 
-
+function showLoadingDiv() {
+    const $div = $(".loading_div");
+    $div.removeClass("slide-up-out").addClass("slide-up-in").show();
+}
+function hideLoadingDiv() {
+    const $div = $(".loading_div");
+    $div.removeClass("slide-up-in").addClass("slide-up-out");
+    setTimeout(() => $div.hide(), 700); 
+}
 
 function getUnitForParameter(parameter) {
     const units = {
@@ -2523,7 +2533,6 @@ $(document).on("click", ".launch-local-forecasts", function() {
     const obs_src = $(this).attr("obs_src");
     const timezone = $(this).attr("timezone");
 
-    console.log("timezone clicked: "+timezone);
 
     openForecastsWindow({
         messages: ["Loading", "Please hold"],
@@ -2643,31 +2652,8 @@ $(document).ready(function () {
     const param = queryParams["param"] || "no2"; 
 
 
-    if (locationName) {
-        console.log(`Skipping map creation. Opening forecasts for location: ${locationName}, parameter: ${param}`);
-
-
-        const observationValue = queryParams["observation_value"] || "N/A";
-        const currentObservationUnit = queryParams["current_observation_unit"] || "N/A";
-        const observationSource = queryParams["obs_src"] || "N/A";
-        const precomputedForecasts = queryParams["precomputed_forecasts"] || "[]";
-
-
-        openForecastsWindow(
-            ["Loading", "Please hold"],
-            "default_station_id", 
-            param,
-            locationName,
-            observationValue,
-            currentObservationUnit,
-            observationSource,
-            precomputedForecasts
-        );
-    } else {
-
-        //create_map("test", "no2");
-        readCompressedJsonAndAddBanners("precomputed/combined_forecasts.json.gz");
-    }
+    readCompressedJsonAndAddBanners("precomputed/combined_forecasts.json.gz");
+    
 });
 
 function updateUrlWithLocation(locationName) {
