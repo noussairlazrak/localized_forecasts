@@ -695,6 +695,10 @@ a#global-view {
     display: flex;
     align-items: center;
     gap: 8px;
+    justify-content: center;
+    flex-direction: column;
+    align-content: center;
+    flex-wrap: nowrap;
 }
 
 .aqi-circle {
@@ -710,6 +714,7 @@ a#global-view {
     align-content: center;
     flex-wrap: nowrap;
     flex-direction: row;
+    align-items: center;
 }
 
 .aqi-level {
