@@ -18,290 +18,222 @@
     <link rel="mask-icon" href="./parametres/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
-        <link rel="stylesheet" href="./parametres/style.css?v=1.0.0">
-
-    <link rel="preload" href="./parametres/local-forecasts.css?v=1.0.0" as="style" onload="this.rel='stylesheet'">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preload" href="./parametres/lf-style.css?v=1.0.0" as="style" onload="this.rel='stylesheet'">
+     <link rel="preload" href="./parametres/wave.css?v=1.0.0" as="style" onload="this.rel='stylesheet'">
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
-<script src='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js?v=1.0.0'></script>
-<link href='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css?v=1.0.0' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js?v=1.0.0'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css?v=1.0.0' rel='stylesheet' />
 
-
-
-
-    
     <script type="text/javascript" src="https://d3js.org/d3.v7.min.js?v=2.2.3"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js?v=1.2.2"></script>
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
  
-
-
-
 <style>
-    .model_plots {
+
+     body {
+      margin: 0;
+    }
+
+    header {
+      background-color: #000;
+      color: white;
+      animation: fadeIn ease-in 0.6s;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(-10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .nav-link {
+      color: white !important;
+    }
+
+    .btn-subscribe {
+      background-color: white;
+      color: black;
+    }
+
+    .live-indicator {
+      color: red;
+      font-weight: bold;
+    }
+
+    .dropdown-toggle::after {
+      margin-left: 0.4rem;
+    }
+
+
+
+    .locations-container {
+    width: 100%;
+    position: absolute;
+    margin-bottom: 0;
+    bottom: 0;
+    background: #02020252;
+    z-index: 1000;
+}
+a.launch-local-forecasts {
+    text-decoration: none;
+}
+
+div#map {
     position: absolute;
     width: 100%;
-    left:0;
+    height: 100%;
+    z-index: 0 !important;
 }
 
-.plots_container {
-    width: 100%;
-    min-height: 450px;
+header.p-3.bg-dark.text-white {
+    position: relative;
+    z-index: 1;
 }
-
-a.modebar-btn.resample {
-    top: 5px;
-    font-size: 14px !important;
-    text-transform: unset;
+.d-flex.align-items-center {
+    font-family: sans-serif;
 }
-
-.plot_additional_features button {
-    font-size: 10px !important;
-    padding: 7px !important;
-    margin: 0;
-}
-
-
-button.btn.btn-outline-primary {
-    text-transform: capitalize;
-}
-
-input#filter-input {
-    width: 100%;
-    background: none;
-    border: none;
-    color:white;
-}
-
-input#filter-input:focus{
-    outline: none;
-}
-
-.modal-body {
-    background: #161a1e;
-    color: white !important;
-}
-
-
-
-.modal-body h1, h2,h3,h4,h5 {
-    color: white !important;
-}
-
-.loader {
+#wavejs-loader {
     display: flex;
+    position: fixed;
+    z-index: 99999;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: linear-gradient(135deg,#0f2027,#2c5364 80%);
+    color: #fff;
+    font-family: 'Manrope',sans-serif;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    text-align: center;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    position: absolute;
-    width: 100%;
-    top: 0;
-    z-index: 1;
+    flex-direction: column;
+    opacity: 0;
     pointer-events: none;
+    transform: translateY(100%);
+    transition: transform 0.7s cubic-bezier(.77,0,.18,1), opacity 0.5s;
 }
-.loader__dot {
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
-  border-radius: 50%;
-  background-color: #4285f4;
-  animation-name: loader__dot;
-  animation-duration: 1.5s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
+#wavejs-loader.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
 }
-
-.loader__dot:nth-child(2) {
-  animation-delay: -1.0s;
+#wavejs-loader.hide {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-100%);
 }
-
-.loader__dot:nth-child(3) {
-  animation-delay: -0.5s;
+#wavejs-loader .loader-bars {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    justify-content: center;
+    align-items: flex-end;
+    height: 60px;
 }
-
-@keyframes loader__dot {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(0.1);
-    }
-    100% {
-        transform: scale(1);
-    }
+#wavejs-loader .bar {
+    width: 12px;
+    height: 40px;
+    border-radius: 6px;
+    background: #fff;
+    opacity: 0.8;
+    animation: barSlide 1.2s infinite;
 }
-
-div#call_messages {
-    position: absolute;
-    margin-top: 55px;
-    
+#wavejs-loader .bar1 { background: #e91e63; animation-delay: 0s; }
+#wavejs-loader .bar2 { background: #2196f3; animation-delay: 0.15s; }
+#wavejs-loader .bar3 { background: #4caf50; animation-delay: 0.3s; }
+#wavejs-loader .bar4 { background: #ffeb3b; animation-delay: 0.45s; }
+#wavejs-loader .bar5 { background: #ff9800; animation-delay: 0.6s; }
+@keyframes barSlide {
+    0%, 100% { height: 40px; opacity: 0.8; }
+    50% { height: 60px; opacity: 1; }
 }
-
-div#replay-animation {
-    position: absolute;
-    width: 100%;
-    height: 100vh;
-    opacity: 0.5;
-    top: -2vh;
-    display:none;
-}
-
-div#replay-animation img {
-    width: 100%;
-    height: auto;
-}
-
-a#global-view {
-    background: #ca4e00;
-    border: #ca4e00;
-    margin-right: 15px;
-    margin-top: 15px;
+#wavejs-loader-message {
+    font-weight: bold;
+    font-size: 2.2rem;
+    letter-spacing: 3px;
+    margin-top: 10px;
+    text-shadow: 0 2px 8px #000a;
 }
 </style>
 </head>
 
 <body>
-    <div class="loading_div">
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="messages"> Connecting....</div>
-    </div>
-    <div class="content-wrapper">
-        <div class="g-lf-params" param="no2"></div>
-        <header class="wrapper bg-soft-primary">
-            <nav class="navbar navbar-expand-lg center-logo transparent position-absolute navbar-dark">
-                <div class="container justify-content-between align-items-center">
-                    <div class="d-flex flex-row w-100 justify-content-between align-items-center d-lg-none">
-                        <div class="navbar-brand-title"><a href="index">
-                                GEOS CF Localised Forecasts
-                            </a></div>
-                        <div class="navbar-other ms-auto">
-                            <ul class="navbar-nav flex-row align-items-center">
-                                <li class="nav-item d-lg-none">
-                                    <button class="hamburger offcanvas-nav-btn"><span></span></button>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="navbar-collapse-wrapper d-flex flex-row align-items-center w-100">
-                        <div class="navbar-collapse offcanvas offcanvas-nav offcanvas-start">
-                            <div class="offcanvas-header mx-lg-auto order-0 order-lg-1 d-lg-flex px-lg-15">
-                                <a href="#" class="transition-none d-none d-lg-flex"><img class="logo-dark"
-                                        src="parametres/haqast_logo.png" srcset="parametres/haqast_logo.png 2x" alt="" />
-                                    <img class="logo-light" src="parametres/haqast_logo.png"
-                                        srcset="parametres/haqast_logo.png 2x" alt="" /></a>
-                                <h3 class="text-white fs-30 mb-0 d-lg-none"></h3>
-                                <button type="button" class="btn-close btn-close-white d-lg-none" data-bs-dismiss="offcanvas"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="w-100 order-1 order-lg-0 d-lg-flex offcanvas-body">
-                                <ul class="navbar-nav ms-lg-auto">
-                                    <li class="nav-item">
-                                        <a class="nav-link nl_wave_routing" href="about.html">About</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="https://gmao.gsfc.nasa.gov/weather_prediction/GEOS-CF/">Data</a>
-                                    </li>
-        
-                                </ul>
-                            </div>
-                            <div class="w-100 order-3 order-lg-2 d-lg-flex offcanvas-body">
-                                <ul class="navbar-nav me-lg-auto">
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="https://gmao.gsfc.nasa.gov/weather_prediction/GEOS-CF/pubs/">Publications</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="https://github.com/GEOS-CF/MLpred">Documentation</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a id="global-view" class="nav-link btn btn-primary replay_model" href="#">Replay</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link btn btn-primary upload-your-data">Upload Your Local Data</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-        
-                </div>
-            </nav>
-        </header>
-        <section class="wrapper image-wrapper bg-image bg-overlay bg-overlay-300">
-            <div id='map'></div>
-            <div id='replay-animation'>
-                <img src="geos-cf.gif"/>
-            </div>
-            
 
-            
-        </section>
 
+        <header class="p-2">
+  <div class="container-fluid">
+    <div class="d-flex flex-wrap align-items-center justify-content-between">
+
+      <div class="d-flex align-items-center">
+
+        <ul class="nav">
+          <li class="nav-item"><a href="home.html" class="nav-link nl_wave_routing">Home</a></li>
+          <li class="nav-item"><a href="about.html" class="nav-link nl_wave_routing">About</a></li>
+          <li class="nav-item"><a href="https://gmao.gsfc.nasa.gov/weather_prediction/GEOS-CF/" class="nav-link">NASA GEOS CF</a></li>
+          <li class="nav-item"><a href="https://pandora.gsfc.nasa.gov/" class="nav-link">NASA Pandora</a></li>
+          <li class="nav-item"><a href="https://www.earthdata.nasa.gov/about/nasa-support-snwg" class="nav-link">SNWG</a></li>
+          <li class="nav-item"><a href="" class="nav-link">Publications</a></li>
+        </ul>
+      </div>
+
+      <!-- Right side -->
+      <div class="d-flex align-items-center gap-2">
+        <a href="#" class="nav-link text-white">Sign In</a>
+        <a href="#" class="btn btn-subscribe btn-sm">Subscribe</a>
+        <a href="#" class="nav-link text-white"><i class="bi bi-search"></i></a>
+      </div>
     </div>
-    <div class="forecasts_container">
-      
+  </div>
+</header>
+<div id="wavejs-loader">
+    <div class="loader-bars">
+        <div class="bar bar1"></div>
+        <div class="bar bar2"></div>
+        <div class="bar bar3"></div>
+        <div class="bar bar4"></div>
+        <div class="bar bar5"></div>
     </div>
+    <div id="wavejs-loader-message"><b>Loading...</b></div>
+</div>
+<div class="main_wave_js wavejs">
+           
+       
+ </div>
+        
+    
     <footer class="bg-dark text-inverse">
         
-
-        <div class="swiper-container-desc dots-closer blog grid-view mb-1" data-margin="0" data-dots="true"
-            data-items-md="5" data-items-xs="1">
-            <ul class="pollutant_param list-inline mb-0">
-                
-                <li class="list-inline-item"><a href="#" lf-param="no2" class="routing_pollutant_param"
-                        class="btn btn-soft-ash btn-sm rounded ">Nitrogen Dioxide (NO<sub>2</sub>)</a>
-                </li>
-                <!--
-                <li class="list-inline-item"><a href="#" lf-param="o3" class="routing_pollutant_param"
-                        class="btn btn-soft-ash btn-sm rounded "><b>Ozone</b> (O<sub>3</sub>)</a>
-                </li>
-                
-                <li class="list-inline-item"><a href="#" lf-param="pm25" class="routing_pollutant_param"
-                        class="btn btn-soft-ash btn-sm rounded ">Fine Particles (PM <sub>2.5</sub>)</a>
-                </li>
-                -->
-            </ul>
-            <input type="text" id="filter-input" placeholder="Enter location name" />
-            <div class="pollutants-banner">
-                <div class="pollutant-banner-o row gx-md-8 gy-8  swiper-desactivated"> </div>
-            </div>
-    
-    
-        </div>
-    
         <div class="container">
             <div class="d-md-flex align-items-center justify-content-between">
-    
-                <p class="mb-2 mb-lg-0"></p>
-                <p class="mb-2 mb-lg-0">Version: 1.1</p>
+                <div class="footer-left text-white">
+                    <p class="mb-0">© 2025 SNWG Localized Forecasts.</p>
+                </div>
+                <div class="footer-right text-white">
+                    <p class="mb-0">Version: 1.1</p>
+                </div>
             </div>
         </div>
-
         
     </footer>
     
-    <script src="./assets/js/plugins.js?v=1.2.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.11/jquery.csv.min.js"></script>
-    <script src="./assets/js/theme.js?v=1.2.2"></script>
+    <script src='parametres/plotly-2.12.1.min.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.4/pako.min.js"></script>
 
     
-    <script src="local_forecasts.js?v=1.4.0"></script>
-    <script src="local_forecasts_assets.js?v=1.4.0"></script>
-    
 
-    <script>
-    $(document).on('click', '.btn-close', function(e) {
-        $('.forecasts_container').css('display', 'none');
-    });
-    </script>
+    <script src="parametres/wavejs.js?v=1.0"></script>
+    
+    <script src="https://unpkg.com/leaflet"></script>
+    <script src="https://unpkg.com/mapbox-gl-leaflet"></script>
+    <script src="https://unpkg.com/georaster"></script>
+    <script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
+
+    
 </body>
 
 </html>

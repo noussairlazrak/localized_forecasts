@@ -188,9 +188,10 @@ function add_marker(map, lat, long, open_aq_id, param, site) {
     var observation_value = document.createAttribute("observation_value");
     var current_observation_unit = document.createAttribute("current_observation_unit");
     var status = document.createAttribute("status");
+    var timezone = document.createAttribute("timezone");
 
     if(site.site_data.obs_source == 's3'){
-        location_name.value = site.site_data.location.replace(/[_\W]+/g, "_");
+        location_name.value = site.site_data.location.replace(/[_\W]+/g, "-");
         observation_value.value = 'PND';
         current_observation_unit.value = site.obs_options.no2.unit;
     }
@@ -198,18 +199,17 @@ function add_marker(map, lat, long, open_aq_id, param, site) {
         if ($.isArray(site.latest_measurments)){
             $.each(site.latest_measurments, function(key, value) {
                 if (value.parameter == param) {
-                    location_name.value = site.site_data.location.replace(/[_\W]+/g, "_");
+                    location_name.value = site.site_data.location.replace(/[_\W]+/g, "-");
                     location_name.status = site.site_data.location.status;
                     observation_value.value = value.value;
                     current_observation_unit.value = value.unit;
+                    timezone.value = value.timezone;
                 }
         
             });
         }
     }
    
-    
-
     station_id.value = open_aq_id;
     parameter.value = param;
 
@@ -224,9 +224,13 @@ function add_marker(map, lat, long, open_aq_id, param, site) {
     el_open_aq_id.setAttributeNode(location_name);
     el_open_aq_id.setAttributeNode(observation_value);
     el_open_aq_id.setAttributeNode(current_observation_unit);
+    el_open_aq_id.setAttributeNode(source);
+    el_open_aq_id.setAttributeNode(timezone);
     new mapboxgl.Marker(el_open_aq_id)
         .setLngLat(site)
         .addTo(map);
+
+    
 }
 
 
@@ -336,23 +340,20 @@ function create_map(sites, param) {
     
     mapVisible = !mapVisible;
     });
-
-        
-      
-   
-        
-  
     
-    map.on('load', () => {
+    
+    map.on('load', async () => {
+    
         map.addSource('locations_dst', {
             type: 'geojson',
-            data: 'https://www.noussair.com/get_data.php?type=location2&param=no2',
+            data: sites, 
             cluster: false,
             clusterMaxZoom: 2, 
             clusterRadius: 100 
         });
         map.on('click', 'clustered-point', function(e) {
             var features = map.queryRenderedFeatures(e.point, { layers: ['clustered-point'] });
+
             var clusterId = features[0].properties.cluster_id;
         
             map.getSource('locations_dst').getClusterExpansionZoom(clusterId, function(err, zoom) {
@@ -365,46 +366,58 @@ function create_map(sites, param) {
             });
           });
 
-       // Add background circle layer
         map.addLayer({
-            id: 'background-circle',
-            type: 'circle',
+            id: 'unclustered-point',
+            type: 'circle', 
             source: 'locations_dst',
             filter: ['!', ['has', 'point_count']],
             paint: {
-            'circle-color': [
-                'interpolate',
-                ['linear'],
-                ['get', 'status'],
-                1, '#009688',
-                40, '#d6d7d6'
-            ],
-            'circle-radius': 20
+                'circle-color': [
+                    'case',
+                    ['has', 'aqi_color'],
+                    ['get', 'aqi_color'],
+                    '#9e9e9e'
+                ],
+                'circle-radius': 18,
+                'circle-stroke-width': 0.4,
+                'circle-stroke-color': '#ffffff'
             }
         });
         
-        // Add label symbol layer
         map.addLayer({
-            id: 'unclustered-point',
+            id: 'pm25-value-label',
             type: 'symbol',
             source: 'locations_dst',
             filter: ['!', ['has', 'point_count']],
             layout: {
-            'text-field': ['to-string', ['get', 'status']],
-            'text-font': ['Manrope Bold'],
-            'text-size': 14,
-            'text-offset': [0, 0.5],
-            'text-anchor': 'bottom'
+                'text-field': [
+                    'case',
+                    ['==', ['get', 'aqi_value'], 'N/A'],
+                    '',
+                    ['to-string', ['get', 'aqi_value']]
+                ],
+                'text-font': ['Open Sans Bold'],
+                'text-size': 12,
+                'text-offset': [0, 0],
+                'text-anchor': 'center'
             },
             paint: {
-            'text-color': '#152c1c',
-            'text-halo-color': '#ffffff',
-            'text-halo-width': 1
+                'text-color': '#222',
+                'text-halo-color': '#fff',
+                'text-halo-width': 1.5
             }
         });
-  
-        
-          map.addLayer({
+    
+    
+
+
+    
+    
+   
+   
+          
+    
+    map.addLayer({
             id: 'clustered-point',
             type: 'circle',
             source: 'locations_dst',
@@ -447,7 +460,43 @@ function create_map(sites, param) {
             
     });
 
- 
+
+
+   const hoverDiv = document.getElementById('map-hover-info');
+
+        map.on('mouseenter', 'unclustered-point', (e) => {
+        map.getCanvas().style.cursor = 'pointer';
+        const feature = e.features[0];
+        const locationName = feature.properties.location_name || "Unknown";
+        const aqiValue = feature.properties.aqi_value || 'N/A';
+        const param = feature.properties.parameter || 'no2';
+    
+     
+        hoverDiv.innerHTML = `
+            <div style="font-weight:bold; margin-bottom:4px;">${locationName}</div>
+            ${generateSmallAqiBox(aqiValue, param)}
+        `;
+        hoverDiv.style.display = 'block';
+    
+     
+        map.on('mousemove', onMove);
+        function onMove(ev) {
+            hoverDiv.style.left = (ev.point.x + 15) + 'px';
+            hoverDiv.style.top = (ev.point.y + 15) + 'px';
+        }
+  
+        map.once('mouseleave', 'unclustered-point', () => {
+            map.getCanvas().style.cursor = '';
+            hoverDiv.style.display = 'none';
+            map.off('mousemove', onMove);
+        });
+        
+    });
+
+    
+
+
+
     var list_in = [];
     map.on("sourcedata", function(e) {
         if (map.getSource('locations_dst') && map.isSourceLoaded('locations_dst')) {
@@ -457,7 +506,6 @@ function create_map(sites, param) {
                 if(site.properties.location_id){
                     var l_id =site.properties.location_id;
                     if (!~$.inArray(l_id,list_in))  {
-                        add_the_banner(site.properties, 'no2')
                         list_in.push(l_id);
                        
                     }
@@ -479,7 +527,7 @@ function create_map(sites, param) {
       });
 
 
-      map.on('click', 'unclustered-point', (e) => {
+        map.on('click', 'unclustered-point', (e) => {
         const coordinates = e.features[0].geometry.coordinates.slice();
         const location_id = e.features[0].properties.location_id;
         const location_name = e.features[0].properties.location_name.replace(/[^a-z0-9\s]/gi, '_').replace(/[_\s]/g, '_');
@@ -487,11 +535,11 @@ function create_map(sites, param) {
         const observation_value = e.features[0].properties.forecasted_value;
         const precomputed_forecasts = e.features[0].properties.precomputed_forecasts ? $.parseJSON(e.features[0].properties.precomputed_forecasts) : [];
         const obs_option = e.features[0].properties.obs_options ? $.parseJSON(e.features[0].properties.obs_options) : [];
-        const observation_unit = obs_option.length > 0 ? obs_option[0].no2.unit : 'N/A'; // Default value if not available
-        
-        
-
-       const messages = [
+        const observation_unit = obs_option?.[0]?.no2?.unit || 'N/A'; 
+        const param = e.features[0].properties.parameter;
+        const timezone = e.features[0].properties.time_zone || "UTC";
+    
+        const messages = [
             "Connecting to OpenAQ", 
             "Connecting to GMAO", 
             "Fetching data from OpenAQ", 
@@ -501,10 +549,19 @@ function create_map(sites, param) {
             "Please wait...", 
             "Connecting..."
         ];
-
-        openForecastsWindow(messages, location_id, 'no2', location_name, observation_value, observation_unit, 's3', precomputed_forecasts);
     
-
+        openForecastsWindow({
+            messages: messages,
+            st_id: location_id,
+            param: param || 'no2',
+            location_name,
+            observation_value,
+            current_observation_unit: observation_unit,
+            obs_src: observation_source,
+            precomputed_forecasts,
+            isModal: true,
+            timezone
+        });
     });
 
     map.on('mouseenter', 'clusters', () => {
@@ -518,57 +575,266 @@ function create_map(sites, param) {
     return map;
 }
 
-function add_the_banner(site, param) {
-    
-    precomputed_forecasts = $.parseJSON(site.precomputed_forecasts)
-    obs_options =  $.parseJSON(site.obs_options)
-    
-    if(site.observation_source){
-        
-        const obj = document.getElementsByClassName("observation_value");
-        const obs_values = Math.floor(Math.random() * 130 + 210) / 10;
- 
+function sitesArrayToGeoJSON(sites) {
+    return {
+        type: "FeatureCollection",
+        features: sites.map(site => {
+     
+            const now = new Date();
+            const pad = n => n.toString().padStart(2, '0');
+            const siteLocalNow = new Date(now.toLocaleString("en-US", { timeZone: site.timezone }));
+            const localYear = siteLocalNow.getFullYear();
+            const localMonth = pad(siteLocalNow.getMonth() + 1);
+            const localDate = pad(siteLocalNow.getDate());
+            const localHour = pad(siteLocalNow.getHours());
+            const currentLocalStr = `${localYear}-${localMonth}-${localDate} ${localHour}`;
 
-        animateValue(obj, 100, 0, 5000);
-        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.location_id + '" location_name="' + site.location_name.replace(/ /g,"_") + '" observation_value= "' + site.forecasted_value + '" status= "' + site.status + '" current_observation_unit= "' + obs_options[0].no2.unit+ ' " latitude="' + site.location_name + '" longitude="' + site.location_name + '" lastUpdated="--" precomputed_forecasts = '+precomputed_forecasts[0].no2.forecasts+'> <div class="item-inner"> ' + site.location_name.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last model update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value"></span> </h1> <span class="source">Observation source: '+site.observation_source+'</span> </div> </div> </div> </a> </div>';
-        $(".pollutant-banner-o").prepend(html);
 
-        
+            const currentForecast = (site.forecasts || []).find(forecast => {
+                if (!forecast.local_time) return false;
+                const forecastHourStr = forecast.local_time.slice(0, 13);
+                return forecastHourStr === currentLocalStr;
+            }) || {};
 
-    }
+            const no2 = currentForecast.corrected ?? "N/A";
+            const aqi = (no2 !== "N/A" && !isNaN(no2)) ? calculateAqiForNo2(no2) : "N/A";
+            const aqiLevel = getAqiLevel(aqi);
 
+            return {
+                type: "Feature",
+                properties: {
+                    location_id: site.location_id || site.location || "unknown_id",
+                    location_name: site.location || "Unknown Location",
+                    time_zone: site.timezone,
+                    forecasted_value: currentForecast.corrected ?? "N/A",
+                    pm25_value: no2,
+                    aqi_value: aqi,
+                    aqi_color: aqiLevel.color,
+                    status: "active",
+                    observation_source: "NASA",
+                    obs_options: [currentForecast || null],
+                    precomputed_forecasts: [currentForecast || null]
+                },
+                geometry: {
+                    type: "Point",
+                    coordinates: [
+                        site.lon,
+                        site.lat
+                    ]
+                }
+            };
+        })
+    };
 }
 
-function add_locations_banner(site, param) {
-    console.log('site');
-    console.log(site);
-    if(site.site_data.obs_source == 's3'){
-        const obj = document.getElementsByClassName("observation_value");
-        animateValue(obj, 100, 0, 5000);
-        console.log(site);
-        var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="s3" parameter="' + param + '" station_id="' + site.site_data.openaq_id + '" location_name=' + site.site_data.location + ' observation_value= "--" current_observation_unit= "--" latitude="' + site.site_data.latitude + '" longitude="' + site.site_data.longitude + '" lastUpdated="--"> <div class="item-inner"> ' + site.site_data.location.replace(/\_/g, ' ').replace(/\./g, ' ')    + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last update: '+(new Date()).toISOString().split('T')[0]+' </span><h1 class="observation_value">--<span class="observation_unit">' + site.obs_options.no2.unit+ ' </span> </h1> <span class="source">Source: S3 Local Data</span> </div> </div> </div> </a> </div>';
+   
+function generateSmallAqiBox(aqiValue, pollutant) {
+    if (aqiValue === 'N/A') return '';
+    const aqiLevel = getAqiLevel(aqiValue);
+    return `
+        <div style="padding:6px 10px; min-width:120px; background:#fff; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.12); font-size:13px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:${aqiLevel.color};display:flex;align-items:center;justify-content:center;font-weight:bold;color:#222;">
+                    ${aqiValue}
+                </div>
+                <div>
+                    <div style="font-size:12px;font-weight:600;">AQI (${pollutant.toUpperCase()})</div>
+                    <div style="font-size:11px;">${aqiLevel.level}</div>
+                </div>
+            </div>
+            <div style="margin-top:6px;display:flex;height:6px;">
+                <div style="flex:1;background:#4CAF50;"></div>
+                <div style="flex:1;background:#FFEB3B;"></div>
+                <div style="flex:1;background:#FF9800;"></div>
+                <div style="flex:1;background:#F44336;"></div>
+                <div style="flex:1;background:#9C27B0;"></div>
+                <div style="flex:1;background:#7E0023;"></div>
+            </div>
+            <div style="position:relative;height:0;">
+                <div style="position:absolute;top:-8px;left:${Math.min(Math.max((aqiValue/500)*100,0),100)}%;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:7px solid #222;transform:translateX(-50%);"></div>
+            </div>
+        </div>
+    `;
+}
+function readCompressedJsonAndAddBanners(fileUrl) {
+
+    fetch(fileUrl)
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch the compressed JSON file');
+            return response.arrayBuffer();
+        })
+        .then(buffer => {
+
+            const decompressedData = pako.inflate(new Uint8Array(buffer), { to: 'string' });
+            const sanitizedData = decompressedData.replace(/NaN/g, "null");
+
+            return JSON.parse(sanitizedData); 
+        })
+        .then(data => {
+
+            data.sort((a, b) => {
+                const nameA = (a.location_name || a.location || '').toLowerCase();
+                const nameB = (b.location_name || b.location || '').toLowerCase();
+                if (nameA < nameB) return -1;
+                if (nameA > nameB) return 1;
+                return 0;
+            });
+
+            if (!Array.isArray(data)) {
+                console.error("Invalid JSON structure: Expected an array of sites.");
+                return;
+            }
+            data.forEach(site => {
+
+                if (!site.timezone || typeof site.timezone !== "string" || site.timezone === "null") {
+                    console.warn(`Skipping site due to invalid timezone:`, site);
+                    return;
+                }
+            
+
+                const now = new Date();
+                const pad = n => n.toString().padStart(2, '0');
+                const siteLocalNow = new Date(now.toLocaleString("en-US", { timeZone: site.timezone }));
+                const localYear = siteLocalNow.getFullYear();
+                const localMonth = pad(siteLocalNow.getMonth() + 1);
+                const localDate = pad(siteLocalNow.getDate());
+                const localHour = pad(siteLocalNow.getHours());
+                const currentLocalStr = `${localYear}-${localMonth}-${localDate} ${localHour}`;
+
+
+            
+
+                const filteredForecasts = (site.forecasts || []).filter(forecast => {
+                    if (!forecast.local_time) return false;
+
+                    const forecastHourStr = forecast.local_time.slice(0, 13);
+                    return forecastHourStr === currentLocalStr;
+                });
+            
+         
+                const matchingForecast = filteredForecasts[0] || {};
+            
+                const obsOptions = {};
+                Object.keys(matchingForecast).forEach(key => {
+                    if (key !== "time" && key !== "local_time") {
+                        obsOptions[key] = {
+                            unit: getUnitForParameter(key),
+                            value: matchingForecast[key] || "N/A"
+                        };
+                    }
+                });
+            
+                const siteData = {
+                    location_name: site.location,
+                    observation_source: "NASA",
+                    forecasted_value: matchingForecast.corrected || "N/A",
+                    status: "active",
+                    latitude: site.lat,
+                    longitude: site.lon,
+                    timezone: site.timezone,
+                    precomputed_forecasts: JSON.stringify(filteredForecasts),
+                    obs_options: JSON.stringify(obsOptions),
+                };
+
+                if (!isNaN(siteData.forecasted_value) && siteData.forecasted_value !== null && siteData.forecasted_value !== "N/A") {
+                    add_the_banner(siteData, "no2");
+                }
+               
+            });
+            const geojson = sitesArrayToGeoJSON(data);
+            create_map(geojson, "no2");
+        })
+        .catch(error => {
+            console.error("Error processing the compressed JSON file:", error);
+        });
+}
+
+
+
+function getUnitForParameter(parameter) {
+    const units = {
+        no2: "μg/m³",
+        corrected: "μg/m³",
+        pandora: "N/A",
+        o3: "μg/m³",
+        openaq: "N/A",
+        pm25: "μg/m³",
+        rh: "%",
+        t10m: "K", 
+        tprec: "mm", 
+        hcho: "ppb"
+    };
+
+    return units[parameter] || "N/A";
+}
+
+
+
+
+
+function add_the_banner(site, param) {
+    const precomputed_forecasts = $.parseJSON(site.precomputed_forecasts);
+    const obs_options = $.parseJSON(site.obs_options);
+
+    if (site.observation_source) {
+        const temperature = precomputed_forecasts?.[0]?.t10m ? (precomputed_forecasts[0].t10m - 273.15).toFixed(1) : "N/A";
+        const humidity = precomputed_forecasts?.[0]?.rh ? (precomputed_forecasts[0].rh * 100).toFixed(0) : "N/A";
+        const windSpeed = precomputed_forecasts?.[0]?.wind_speed || "--";
+        const local_time = precomputed_forecasts?.[0]?.local_time || "--";
+
+
+        const aqiValue = calculateAqiForNo2(precomputed_forecasts?.[0]?.corrected || "--");
+        const aqiLevel = getAqiLevel(aqiValue);
+
+        const html = `
+            <div class="col-3 single-pollutant-card">
+                <a class="launch-local-forecasts" obs_src="${site.observation_source}" parameter="${param}" station_id="${site.location_id}" location_name="${site.location_name.replace(/ /g, "-")}" observation_value="${site.forecasted_value}" status="${site.status}" current_observation_unit="${obs_options?.[param]?.unit || 'N/A'}" latitude="${site.latitude}" longitude="${site.longitude}" lastUpdated="--" precomputed_forecasts='${JSON.stringify(precomputed_forecasts)}', timezone="${site.timezone}" >
+                    <div class="pollutant-banner">
+                        <div class="banner-header">
+                            <div class="location-info">
+                                <h5 class="location-name">${
+                                  site.location_name.length > 10
+                                    ? site.location_name.replace(/_/g, ' ').replace(/\./g, ' ').slice(0, 10) + '...'
+                                    : site.location_name.replace(/_/g, ' ').replace(/\./g, ' ')
+                                }</h5>
+                                <p class="source">Source: ${site.observation_source}</p>
+                                <p class="source">${local_time ? local_time.slice(11, 16) : "--"} </p>
+                                <p class="timezone_text">(${site.timezone})</p>
+                            </div>
+                            <div class="aqi-info">
+                                <div class="aqi-circle" style="background-color: ${aqiLevel.color};">
+                                    <span class="aqi-value">${aqiValue}</span>
+                                </div>
+                                <span class="aqi-level">${aqiLevel.level}</span>
+                            </div>
+                        </div>
+                        <div class="banner-body compact">
+                            <div class="weather-info">
+                                <div class="info-item">
+                                    <!-- Temperature Icon -->
+                                    <span class="info-icon">
+                                        <i class="bi bi-thermometer-half"></i>
+                                    </span>
+                                    <span class="info-value">${temperature}°C</span>
+                                </div>
+                                <div class="info-item">
+                                    <!-- Humidity Icon -->
+                                    <span class="info-icon">
+                                        <i class="bi bi-droplet-half"></i>
+                                    </span>
+                                    <span class="info-value">${humidity}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        `;
+
         $(".pollutant-banner-o").append(html);
     }
-    else{
-        if ($.isArray(site.latest_measurments)){
-            $.each(site.latest_measurments, function(key, value) {
-                if (value.parameter == param) {
-                    var observation_value = value.value;
-                    var observation_unit = value.unit;
-                    if (observation_value === -999 || observation_value < 0){
-                        observation_value = "--";
-                        observation_unit = "";
-                    }
-                    const obj = document.getElementsByClassName("observation_value");
-                    animateValue(obj, 100, 0, 5000);
-                    var html = '<div class="col-md-3 single-pollutant-card swiper-slide-desactivates"> <a class="launch-local-forecasts" obs_src ="openaq" parameter="' + param + '" station_id="' + site.site_data.openaq_id + '" location_name=' + site.site_data.location.replace(/\s/g, '_') + ' observation_value=' + observation_value.toString().substring(0, 6) + ' current_observation_unit=' + observation_unit + ' latitude="' + site.site_data.latitude + '" longitude="' + site.site_data.longitude + '" lastUpdated="' + value.lastUpdated + '"> <div class="item-inner"> ' + site.site_data.location + ' <div class="card shadow-none forecasts-item text-white"> <div class="card-body-desactivated"> <h5 class="location_name"> ' + pollutant_details(param).name + '</h5> <span class="last_update_widget"> Last update: ' + value.lastUpdated + '</span><h1 class="observation_value">' + observation_value.toString().substring(0, 6) + '<span class="observation_unit">' + observation_unit + '</span> </h1> <span class="source">Source: OpenAQ</span> </div> </div> </div> </a> </div>';
-                    $(".pollutant-banner-o").append(html);
-                }
-        
-            });
-        }
-    }
 }
+
 
 function animateValue(obj, start, end, duration) {
     let startTimestamp = null;
@@ -637,177 +903,729 @@ function csvToArray(str, delimiter = ",") {
     return arr;
 }
 
+function readApiBaker(options = {}) {
+    const {
+        location = "",
+        timezone = "UTC"
+    } = options;
 
-/**
- * Fetches data from API Baker and updates the UI with forecasts.
- * 
- * @param {string} location - Location for which data is fetched.
- * @param {string} param - Parameter to fetch data for.
- * @param {string} unit - Unit of measurement for the parameter.
- * @param {string} forecastsDiv - ID of the div where forecasts are plotted.
- * @param {boolean} [buttonOption=true] - Whether button option is enabled.
- * @param {number} [historical=2] - Historical data range.
- * @param {number} [reinforceTraining=2] - Reinforce training value.
- * @param {number} [hpTunning=2] - Hyperparameter tuning value.
- * @param {boolean} [resample=false] - Whether to resample data.
- * @param {number} [update=2] - Update flag.
- */
-function readApiBaker(location, param, unit, forecastsDiv, buttonOption = true, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
+
     const messages = [
         "Generating data", 
-        "Connecting to SMCE", 
+        "Connecting to API Baker", 
         "Fetching the data from API Baker", 
-        "Fetching data from GMAO FTP", 
         "Fetching observations", 
         "Getting the forecasts", 
         "Please wait...", 
         "Connecting..."
     ];
-
-    // Show loader
     $('.loader').show();
 
-    // Get parameter code
-    const paramCode = pollutant_details(param).id;
+    const fileUrl = `precomputed/no2/${location.replace(/_/g, "-")}.json`;
 
-    // Construct file URL based on update flag
-    const fileUrl = update === 1 
-        ? `https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/ArlingtonTX_o3_output.json`
-        : `https://www.noussair.com/fetch.php?url=https://raw.githubusercontent.com/noussairlazrak/localized_forecasts/refs/heads/main/JSON_Responses/ArlingtonTX_o3_output.json`;
-
-    console.log(fileUrl);
-
-    // Fetch data from API
     fetch(fileUrl)
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.text(); 
+        })
+        .then(text => {
+
+            const sanitizedText = text.replace(/NaN/g, "null");
+            return JSON.parse(sanitizedText); 
+        })
+        .then(data => {
+            if (!data || data.status !== "200") throw new Error("No valid data received");
+
+
+            let masterData = {
+                master_datetime: [],
+                master_no2: [],
+                master_o3: [],
+                master_pm25: [],
+                master_predicted: [],
+                master_observation: []
+            };
+
+            if (Array.isArray(data.forecasts) && data.forecasts.length > 0) {
+                data.forecasts.forEach(forecast => {
+                    if (forecast.time) {
+                        masterData.master_datetime.push(forecast.local_time);
+                    }
+                    if (forecast.no2 >= 0) {
+                        masterData.master_no2.push(forecast.no2);
+                    }
+                    if (forecast.o3 >= 0) {
+                        masterData.master_o3.push(forecast.o3);
+                    }
+                    if (forecast.pm25 >= 0) {
+                        masterData.master_pm25.push(forecast.pm25);
+                    }
+                    if (forecast.corrected >= 0) {
+                        masterData.master_predicted.push(forecast.corrected);
+                    }
+                    if (forecast.pandora >= 0) {
+                        masterData.master_observation.push(forecast.pandora);
+                    }
+                });
             }
+
+            const tabsNav = $("#pills-tabContent").prev();
+            const tabsContainer = $(".tab-content");
+                
+            tabsNav.empty();
+            tabsContainer.empty();
+            
+            const tabsList = $('<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist"></ul>');
+            tabsNav.append(tabsList);
+            
+            const plots = [
+            {
+                id: "plot_corrected",
+                title: "SNWG NO<sub>2</sub> Forecasts",
+                unit: "ppbv",
+                data: masterData,
+                param: "no2",
+                tabName: "Nitrogen Dioxide (NO<sub>2</sub>)", 
+                tabId: "tab_no2", 
+                description: "Source: SNWG bias-corrected model",
+                columns: [
+                    { column: "master_predicted", name: "Corrected", color: "blue", width: 2 }
+                ],
+                displayAQI: true 
+            },
+            {
+                id: "plot_pm25",
+                title: "Particulate Matter (PM<sub>2.5</sub>)",
+                unit: "μg/m³",
+                data: masterData,
+                param: "pm25",
+                tabName: "Fine Particulate Matter (PM<sub>2.5</sub>)",
+                tabId: "tab_pm25",
+                description: "Source: GEOS-CF",
+                columns: [
+                    { column: "master_pm25", name: "PM2.5", color: "green", width: 2 }
+                ],
+                displayAQI: true
+            },
+            {
+                id: "plot_o3",
+                title: "Ozone (O<sub>3</sub>)",
+                unit: "ppbv",
+                data: masterData,
+                param: "o3",
+                tabName: "Ozone (O<sub>3</sub>)", 
+                tabId: "tab_o3", 
+                description: "Source: GEOS-CF",
+                columns: [
+                    { column: "master_o3", name: "O3", color: "orange", width: 2 }
+                ],
+                displayAQI: true 
+            },
+            {
+                id: "plot_pandora",
+                title: "Pandora NO<sub>2</sub> Observations",
+                unit: "ppbv",
+                data: masterData,
+                param: "no2",
+                tabName: "Nitrogen dioxide (NO<sub>2</sub>) ", 
+                tabId: "tab_no2",
+                description: "Source: NASA Pandora",
+                columns: [
+                    { column: "master_observation", name: "Pandora", color: "black", width: 2 }
+                ],
+                displayAQI: false 
+            },
+            {
+                id: "plot_no2",
+                title: "Supporting Data: model-based NO<sub>2</sub> forecast",
+                unit: "ppbv",
+                data: masterData,
+                param: "no2",
+                tabName: "Nitrogen dioxide (NO<sub>2</sub>)", 
+                tabId: "tab_no2", 
+                description: "Source: GEOS-CF",
+                columns: [
+                    { column: "master_no2", name: "NO2", color: "red", width: 2 }
+                ],
+                displayAQI: false 
+            }
+        ];
+        
+
+        const tabMap = {};
+        
+        plots.forEach((plot, index) => {
+            const tabId = plot.tabId; 
+        
+            if (!tabMap[tabId]) {
+                const isActive = Object.keys(tabMap).length === 0 ? "active" : ""; 
+        
+                tabsList.append(`
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link ${isActive}" id="tab-${tabId}" data-bs-toggle="pill" href="#${tabId}" role="tab" aria-controls="${tabId}" aria-selected="${isActive === 'active'}">
+                            ${plot.tabName}
+                        </a>
+                    </li>
+                `);
+        
+                tabsContainer.append(`
+                    <div class="tab-pane fade ${isActive} show" id="${plot.tabId}" role="tabpanel" aria-labelledby="tab-${plot.tabId}">
+                        <h5 class='plot_title'>${plot.title}</h5>
+                        <p class='plot_source'>${plot.description}</p>
+                        <div class="aqi-container" id="aqi-${plot.id}"></div> <!-- Ensure this exists -->
+                        <div class="plot-container" id="${plot.id}"></div>
+                    </div>
+                `);
+        
+                tabMap[tabId] = true;
+            }
+
+            else{
+            $(`#${tabId}`).append(` <h5 class='plot_title'>${plot.title}</h5><p class= 'plot_source'>${plot.description}</p>
+                <div class="plot-container" id="${plot.id}"> 
+                </div>
+            `);
+            } 
+        });
+        
+
+        $(".nav-link").on("click", function () {
+            const targetTabId = $(this).attr("href").replace("#", "");
+        
+            $(".tab-pane").removeClass("active show");
+            $(`#${targetTabId}`).addClass("active show");
+        });
+        
+        plots.forEach((plot, index) => {
+
+            const siteTimeZone = timezone || "UTC";
+            const now = new Date();
+            const siteLocalNow = new Date(now.toLocaleString("en-US", { timeZone: siteTimeZone }));
+            const currentHour = siteLocalNow.getHours();
+            const nextHour = (currentHour + 1) % 24; // wrap around midnight if needed
+
+            let currentValue = 'N/A';
+            let nextValue = 'N/A';
+
+
+            for (let i = 0; i < masterData.master_datetime.length; i++) {
+
+                const dtStr = masterData.master_datetime[i];
+
+                const hour = parseInt(dtStr.slice(11, 13), 10);
+
+                if (hour === currentHour) {
+                    currentValue = masterData[plot.columns[0].column][i];
+                }
+                if (hour === nextHour) {
+                    nextValue = masterData[plot.columns[0].column][i];
+                }
+            }
+
+        
+
+            if (plot.displayAQI) {
+                const currentAqi = plot.param === "no2"
+                    ? calculateAqiForNo2(currentValue)
+                    : plot.param === "pm25"
+                    ? calculateAqiForPm25(currentValue)
+                    : calculateAqiForO3(currentValue);
+        
+                const nextAqi = plot.param === "no2"
+                    ? calculateAqiForNo2(nextValue)
+                    : plot.param === "pm25"
+                    ? calculateAqiForPm25(nextValue)
+                    : calculateAqiForO3(nextValue);
+        
+                console.log("Current AQI:", currentAqi);
+                console.log("Next AQI:", nextAqi);
+        
+                const currentAqiElement = generateAqiElement(currentAqi, plot.param, siteTimeZone, currentHour);
+                const nextAqiElement = generateAqiElement(nextAqi, plot.param, siteTimeZone, nextHour);
+        
+                if ($(`#aqi-${plot.id}`).length > 0) {
+                    console.log("AQI container found for plot ID:", plot.id);
+                    $(`#aqi-${plot.id}`).append(currentAqiElement);
+                    $(`#aqi-${plot.id}`).append(nextAqiElement);
+                } else {
+                    console.error(`AQI container not found for plot ID: ${plot.id}`);
+                }
+            } else {
+                console.log(`AQI display is disabled for plot ID: ${plot.id}`);
+            }
+        });
+
+
+        plots.forEach(plot => {
+            const plotContainer = $(`#${plot.id}`);
+            if (plotContainer.length > 0) {
+                draw_plot(
+                    plot.data,
+                    plot.param,
+                    plot.unit, 
+                    plot.id,
+                    plot.columns,
+                    false,   // dates_ranges
+                    false,   // enableFading
+                    "",      // text
+                    "bar",   // plotType
+                    timezone // timezone
+                );
+            } else {
+                console.error(`No DOM element with id '${plot.id}' exists on the page.`);
+            }
+
+            });
+
+            
+
+        })
+        .catch(error => {
+            console.error("Error loading data:", error);
+            $('.thewindow').html(`
+                <h3 style="text-align: center; color: red; margin-top: 20px;">Sorry :(</h3>
+                <p style="text-align: justify;">The forecasts for this location have not been updated recently. Please check back soon, or feel free to contact us at noussair.lazrak@nyu.edu</p>
+            `);
+            $('.model_data').html(``);
+
+            $('.loader').hide();
+        });
+}
+
+function calculateAqiForNo2(concentration) {
+    if (concentration === null || concentration === undefined || isNaN(concentration)) {
+        return 'N/A';
+    }
+
+    const breakpoints = [
+        { concentration: [0, 53], aqi: [0, 50] },
+        { concentration: [54, 100], aqi: [51, 100] },
+        { concentration: [101, 360], aqi: [101, 150] },
+        { concentration: [361, 649], aqi: [151, 200] },
+        { concentration: [650, 1249], aqi: [201, 300] },
+        { concentration: [1250, 2049], aqi: [301, 400] },
+        { concentration: [2050, 4049], aqi: [401, 500] }
+    ];
+
+    for (const breakpoint of breakpoints) {
+        const [cLow, cHigh] = breakpoint.concentration;
+        const [aqiLow, aqiHigh] = breakpoint.aqi;
+
+        if (concentration >= cLow && concentration <= cHigh) {
+            return Math.round(((aqiHigh - aqiLow) / (cHigh - cLow)) * (concentration - cLow) + aqiLow);
+        }
+    }
+
+    return 'N/A'; 
+}
+
+function calculateAqiForO3(concentration) {
+    if (concentration === null || concentration === undefined || isNaN(concentration)) {
+        return 'N/A';
+    }
+
+    const breakpoints = [
+        { concentration: [0.0, 0.054], aqi: [0, 50] },
+        { concentration: [0.055, 0.070], aqi: [51, 100] },
+        { concentration: [0.071, 0.085], aqi: [101, 150] },
+        { concentration: [0.086, 0.105], aqi: [151, 200] },
+        { concentration: [0.106, 0.200], aqi: [201, 300] }
+    ];
+
+    for (const breakpoint of breakpoints) {
+        const [cLow, cHigh] = breakpoint.concentration;
+        const [aqiLow, aqiHigh] = breakpoint.aqi;
+
+        if (concentration >= cLow && concentration <= cHigh) {
+            return Math.round(((aqiHigh - aqiLow) / (cHigh - cLow)) * (concentration - cLow) + aqiLow);
+        }
+    }
+
+    return 'N/A';
+}
+
+function calculateAqiForPm25(concentration) {
+
+    if (concentration === null || concentration === undefined || isNaN(concentration)) {
+        return 'N/A';
+    }
+
+    const breakpoints = [
+        { concentration: [0.0, 12.0], aqi: [0, 50] },
+        { concentration: [12.1, 35.4], aqi: [51, 100] },
+        { concentration: [35.5, 55.4], aqi: [101, 150] },
+        { concentration: [55.5, 150.4], aqi: [151, 200] },
+        { concentration: [150.5, 250.4], aqi: [201, 300] },
+        { concentration: [250.5, 350.4], aqi: [301, 400] },
+        { concentration: [350.5, 500.4], aqi: [401, 500] }
+    ];
+
+    for (const breakpoint of breakpoints) {
+        const [cLow, cHigh] = breakpoint.concentration;
+        const [aqiLow, aqiHigh] = breakpoint.aqi;
+
+        if (concentration >= cLow && concentration <= cHigh) {
+            return Math.round(((aqiHigh - aqiLow) / (cHigh - cLow)) * (concentration - cLow) + aqiLow);
+        }
+    }
+
+    return 'N/A';
+}
+
+function getAqiLevel(aqi) {
+    if (aqi <= 50) {
+        return { level: "Good", color: "#4CAF50", message: "Air quality is considered satisfactory." };
+    } else if (aqi <= 100) {
+        return { level: "Moderate", color: "#FFEB3B", message: "Air quality is acceptable." };
+    } else if (aqi <= 150) {
+        return { level: "Unhealthy for Sensitive Groups", color: "#FF9800", message: "Members of sensitive groups may experience health effects." };
+    } else if (aqi <= 200) {
+        return { level: "Unhealthy", color: "#F44336", message: "Everyone may begin to experience health effects." };
+    } else if (aqi <= 300) {
+        return { level: "Very Unhealthy", color: "#9C27B0", message: "Health alert: everyone may experience serious health effects." };
+    } else {
+        return { level: "Hazardous", color: "#7E0023", message: "Health warnings of emergency conditions." };
+    }
+}
+
+function generateAqiElement(aqiValue, pollutant, userTimeZone, currentHour) {
+    if (aqiValue === 'N/A') {
+        return ''; 
+    }
+
+
+    const aqiLevels = [
+        { level: "Good", color: "#4CAF50", range: [0, 50], position: 0 },
+        { level: "Moderate", color: "#FFEB3B", range: [51, 100], position: 20 },
+        { level: "Unhealthy for Sensitive Groups", color: "#FF9800", range: [101, 150], position: 40 },
+        { level: "Unhealthy", color: "#F44336", range: [151, 200], position: 60 },
+        { level: "Very Unhealthy", color: "#9C27B0", range: [201, 300], position: 80 },
+        { level: "Hazardous", color: "#7E0023", range: [301, 500], position: 100 }
+    ];
+
+
+    const matchingLevel = aqiLevels.find(level => aqiValue >= level.range[0] && aqiValue <= level.range[1]);
+
+    const indicatorPosition = matchingLevel ? matchingLevel.position : 0;
+
+    return `
+        <div class="prediction-box" style="background: #80808017;">
+            <h5>AQI (${pollutant.toUpperCase()}) at ${currentHour}:00</h5>
+            <span class="time">${userTimeZone}</span>
+            <h2>${aqiValue}</h2> 
+            <span>${matchingLevel.level}</span>
+            <div class="aqi-scale-container">
+                <div class="aqi-scale">
+                    <div class="aqi-scale-step" style="background-color: #4CAF50;" title="Good (0-50)"></div>
+                    <div class="aqi-scale-step" style="background-color: #FFEB3B;" title="Moderate (51-100)"></div>
+                    <div class="aqi-scale-step" style="background-color: #FF9800;" title="Unhealthy for Sensitive Groups (101-150)"></div>
+                    <div class="aqi-scale-step" style="background-color: #F44336;" title="Unhealthy (151-200)"></div>
+                    <div class="aqi-scale-step" style="background-color: #9C27B0;" title="Very Unhealthy (201-300)"></div>
+                    <div class="aqi-scale-step" style="background-color: #7E0023;" title="Hazardous (301-500)"></div>
+                </div>
+                <div class="aqi-indicator" style="left: ${indicatorPosition}%;"></div>
+            </div>
+        </div>`;
+}
+
+function generateAverageChangeElement(dataset, pollutant, userTimeZone, currentHour, averageType = "daily") {
+    if (!dataset || dataset.length < 2) {
+        return '';
+    }
+
+
+    const pointsPerDay = 24;
+    const pointsPerWeek = pointsPerDay * 7;
+    const pointsToInclude = averageType === "weekly" ? pointsPerWeek : pointsPerDay;
+
+
+    const subset = dataset.slice(-pointsToInclude);
+
+
+    const averageConcentration = subset.reduce((sum, value) => sum + value, 0) / subset.length;
+
+ 
+    const currentConcentration = dataset[dataset.length - 1];
+
+  
+    const isAboveAverage = currentConcentration > averageConcentration;
+
+
+    const percentageChanges = [];
+    for (let i = 1; i < subset.length; i++) {
+        const previousValue = subset[i - 1];
+        const currentValue = subset[i];
+
+        if (previousValue !== null && currentValue !== null && previousValue !== 0) {
+            const percentageChange = ((currentValue - previousValue) / previousValue) * 100;
+            percentageChanges.push(percentageChange);
+        }
+    }
+
+    const averageChange = percentageChanges.length > 0
+        ? percentageChanges.reduce((sum, change) => sum + change, 0) / percentageChanges.length
+        : 0;
+
+
+    const trendClass = isAboveAverage ? 'negative' : 'positive'; 
+    const trendIcon = isAboveAverage
+        ? '<svg style="color: rgb(237, 13, 13);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 1 1 0v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L8.5 10.293V4.5z"/> </svg>'
+        : '<svg style="color: rgb(48, 169, 4);" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16"> <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 7.854a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/> </svg>';
+
+ 
+    return `
+        <div class="prediction-box" style="background: #80808017;">
+            <h5>Average Change (${pollutant.toUpperCase()})</h5>
+            <span class="time">${currentHour}:00, ${userTimeZone}</span>
+            <h2 class="${trendClass}">
+                ${trendIcon} ${averageChange >= 0 ? '' : ''}${averageChange.toFixed(2)}%
+            </h2>
+            <span>${isAboveAverage ? 'Above' : 'Below'} (${averageType} Average)</span>
+        </div>`;
+}
+function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, historical = 2, reinforceTraining = 2, hpTunning = 2, resample = false, update = 2) {
+    const messages = [
+        "Generating data",
+        "Connecting to AirNow",
+        "Fetching the data from AirNow API",
+        "Fetching observations",
+        "Getting the forecasts",
+        "Please wait...",
+        "Connecting..."
+    ];
+
+    $('.loader').show();
+
+    const paramCode = pollutant_details(param).id;
+    const fileUrl = `precomputed/merra2/${location}.json`;
+
+    fetch(fileUrl)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
             return response.json();
         })
         .then(data => {
-            if (!data) {
-                throw new Error("No data received");
-            }
+            if (!data || data.status !== "200") throw new Error("No valid data received");
 
-            console.log(data);
-
-            // Update UI with model data
             const modelHtml = `
                 <div class="container my-5">
-                    <h1>Bias Corrected Model Information</h1>
+                    <h6>Model Information</h6>
                     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                         <div class="col">
                             <div class="card shadow-sm">
                                 <div class="card-body">
-                                    <h5 class="card-title">Total Observations</h5>
-                                    <p class="card-text fs-3 fw-bold">${data.metrics.total_observation}</p>
+                                    <h5 class="card-title">Total Estimates</h5>
+                                    <p class="card-text fs-3 fw-bold">${data.metrics.total_observation || 'N/A'}</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col">
                             <div class="card shadow-sm">
                                 <div class="card-body">
-                                    <h5 class="card-title">Last Model Update</h5>
-                                    <p class="card-text fs-3 fw-bold">${data.metrics.latest_training.substring(0, 19)}</p>
+                                    <h5 class="card-title">Last Update</h5>
+                                    <p class="card-text fs-3 fw-bold">${data.metrics.latest_training || 'N/A'}</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col">
                             <div class="card shadow-sm">
                                 <div class="card-body">
-                                    <h5 class="card-title">Mean Square Error</h5>
-                                    <p class="card-text">${data.metrics["rmse"]}<br></p>
+                                    <h5 class="card-title">Start Date</h5>
+                                    <p class="card-text">${data.metrics.start_date || 'N/A'}</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col">
                             <div class="card shadow-sm">
                                 <div class="card-body">
-                                    <h5 class="card-title">Mean Absolute Error</h5>
-                                    <p class="card-text">${data.metrics["mae"]}</p>
+                                    <h5 class="card-title">End Date</h5>
+                                    <p class="card-text">${data.metrics.end_date || 'N/A'}</p>
                                 </div>
                             </div>
                         </div>
+                        ${data.metrics.validation_score ? `
                         <div class="col">
                             <div class="card shadow-sm">
                                 <div class="card-body">
-                                    <h5 class="card-title">R2 Score</h5>
-                                    <p class="card-text">${data.metrics["r2"]}</p>
+                                    <h5 class="card-title">Validation Score</h5>
+                                    <p class="card-text">${data.metrics.validation_score}</p>
                                 </div>
                             </div>
-                        </div>
+                        </div>` : ''}
+                        ${data.metrics.performance?.metrics?.length ? data.metrics.performance.metrics.map(metric => `
                         <div class="col">
                             <div class="card shadow-sm">
                                 <div class="card-body">
-                                    <h5 class="card-title">Observation Dates</h5>
-                                    <p class="card-text">${data.metrics.start_date.substring(0, 10)} to ${data.metrics.end_date.substring(0, 10)}</p>
+                                    <h5 class="card-title">${metric.name.toUpperCase()}</h5>
+                                    <p class="card-text">${metric.value}</p>
                                 </div>
                             </div>
-                        </div>
+                        </div>`).join('') : ''}
                     </div>
                 </div>
             `;
             $('.model_data').html(modelHtml);
 
-            // Prepare master data
             let masterData = {
                 master_datetime: [],
                 master_observation: [],
-                master_localized: [],
-                master_uncorrected: [],
-                master_pandora_no2_l1col: []
+                master_aqi: [] 
             };
 
-            data.forecasts.forEach(forecast => {
-                masterData.master_datetime.push(forecast.time);
-                masterData.master_observation.push(forecast.value);
-                masterData.master_localized.push(forecast.predicted);
-                masterData.master_uncorrected.push(forecast.no2);
-                masterData.master_pandora_no2_l1col.push(forecast.pandora_no2_l1col);
-            });
+            if (Array.isArray(data.forecasts) && data.forecasts.length > 0) {
+                data.forecasts.forEach(forecast => {
+                    const utcTime = forecast.time || null;
+                    if (utcTime) {
+                        const date = new Date(utcTime);
+                        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                        const localTime = new Date(date.toLocaleString('en-US', { timeZone: userTimeZone }));
+                        masterData.master_datetime.push(localTime.toISOString());
+                    } else {
+                        masterData.master_datetime.push(null);
+                    }
 
-            // Add event listener for downloading forecasts data
-            $(document).off("click", ".download_forecasts_data").on("click", ".download_forecasts_data", function() {
-                const csvFileName = location.replace(/\_/g, '').replace(/\./g, '') + '_' + param + '_' + historical + '.csv';
-                let csvContent = "data:text/csv;charset=utf-8," + formatToCSV(masterData); // Ensure you format this correctly for CSV
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", csvFileName);
-                document.body.appendChild(link);
-                link.click();
-            });
-
-            // Get current hour forecasts
-            const currentData = get_current_hour_forecasts(masterData);
+                    const observationValue = forecast.value || null;
+                    masterData.master_observation.push(observationValue);
 
 
-            // Filter master data by date
-            var filteredMasterData = filter_data_set_by_date(masterData, 2, -5);
-            var historicalMasterData = filter_data_set_by_date(masterData, 365, 20);
-
-            // Plot historical data
-            const plotElementId = forecastsDiv;
-            const plotElement = document.getElementById(plotElementId);
-            
-            if (plotElement) {
-                draw_plot(historicalMasterData, param, unit, plotElementId, "Bias Corrected NO2", false, true, true);
-            } else {
-                console.error(`No DOM element with id '${plotElementId}' exists on the page.`);
+                    const aqiValue = calculateAqiForPm25(observationValue);
+                    masterData.master_aqi.push(aqiValue);
+                });
             }
 
-            // Hide loader
+            const tabsNav = $("#pills-tabContent").prev();
+            const tabsContainer = $(".tab-content");
+
+            tabsNav.empty();
+            tabsContainer.empty();
+
+            const tabsList = $('<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist"></ul>');
+            tabsNav.append(tabsList);
+
+            const plots = [
+                { id: "main_plot_for_airnow", title: "PM 2.5 Forecasts", data: masterData },
+                { id: "aqi_plot_for_airnow", title: "PM 2.5 AQI", data: masterData } // Add a new tab for AQI
+            ];
+
+            plots.forEach((plot, index) => {
+                const isActive = index === 0 ? "active" : "";
+
+                tabsList.append(`
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link ${isActive}" id="tab-${plot.id}" data-bs-toggle="pill" href="#${plot.id}" role="tab" aria-controls="${plot.id}" aria-selected="${isActive === 'active'}">
+                            ${plot.title}
+                        </a>
+                    </li>
+                `);
+
+                tabsContainer.append(`
+                    <div class="tab-pane fade ${isActive} show" id="${plot.id}" role="tabpanel" aria-labelledby="tab-${plot.id}">
+                    </div>
+                `);
+            });
+
+            $(".nav-link").on("click", function () {
+                $(".tab-pane").removeClass("active show");
+                $($(this).attr("href")).addClass("active show");
+            });
+
+            plots.forEach(plot => {
+                const plotColumns = plot.id === "aqi_plot_for_airnow"
+                    ? [{ column: "master_aqi", name: "AQI", color: "blue", width: 2 }] // Use AQI for the new tab
+                    : [{ column: "master_observation", name: "Forecasted Value", color: "green", width: 2 }];
+
+                draw_plot(
+                    combined_dataset = plot.data,
+                    param = 'pm2.5',
+                    unit = plot.id === "aqi_plot_for_airnow" ? "AQI" : "μg/m³",
+                    forecasts_div = plot.id,
+                    plot_columns = plotColumns,
+                    dates_ranges = false,
+                    enableFading = false,
+                    text = plot.id === "aqi_plot_for_airnow"
+                        ? "<b>PM 2.5 AQI</b> | Calculated from PM 2.5 concentrations"
+                        : "<b>Sources:</b> NASA Modern-Era Retrospective analysis for Research and Applications (MERRA-2)| | SNWG Bias CNN Model.",
+                    plotType = "bar"
+                );
+
+                window.dispatchEvent(new Event('resize'));
+            });
+
+            const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; 
+            const currentDate = new Date();
+            const currentDateString = currentDate.toISOString().split('T')[0];
+            const currentHour = currentDate.getHours();
+            const nexttHour = (currentDate.getHours() + 1)
+            
+
+            let currentValue = 'N/A';
+            let nextValue = 'N/A';
+            
+ 
+            for (let i = 0; i < masterData.master_datetime.length; i++) {
+                const datetime = new Date(masterData.master_datetime[i]);
+                const dateString = datetime.toISOString().split('T')[0];
+                const hour = datetime.getHours();
+            
+
+                if (dateString === currentDateString && hour <= currentHour && currentHour < hour + 3) {
+                    currentValue = masterData.master_observation[i];
+                }
+            
+
+                if (dateString === currentDateString && hour <= currentHour + 3 && currentHour + 3 < hour + 3) {
+                    nextValue = masterData.master_observation[i];
+                }
+            }
+
+            const currentAqi = param === "no2" ? calculateAqiForNo2(currentValue) : calculateAqiForPm25(currentValue);
+            const nextAqi = param === "no2" ? calculateAqiForNo2(nextValue) : calculateAqiForPm25(nextValue);
+
+            let aqiElement = `<div class="prediction-container">`;
+            
+            if (currentAqi !== 'N/A') {
+                aqiElement += generateAqiElement(currentAqi, param, userTimeZone, currentHour);
+            }
+            
+            if (nextAqi !== 'N/A') {
+                aqiElement += generateAqiElement(nextAqi, param, userTimeZone, nexttHour);
+            }
+            aqiElement += `</div>`;
+
+            const averageDailyChangeElement = generateAverageChangeElement(masterData.master_observation, param, userTimeZone, currentHour, "daily");
+            const averageWeeklyElement = generateAverageChangeElement(masterData.master_observation, param, userTimeZone, currentHour, "weekly");
+            
+            if (averageDailyChangeElement) {
+                $(`#${forecastsDiv}`).after(averageDailyChangeElement);
+            }
+            if (averageWeeklyElement) {
+                $(`#${forecastsDiv}`).after(averageWeeklyElement);
+            }
+            $('.loader').hide();
+            
+            $(`#${forecastsDiv}`).before(aqiElement);
+
             $('.loader').hide();
         })
         .catch(error => {
             console.error("Error loading data:", error);
-            $('.api_baker_plots').html('Sorry, we are not able to connect with OpenAQ API at this moment. Please check back later...');
+            $('.api_baker_plots').html('Sorry, we are not able to connect with AirNow API at this moment. Please check back later...');
             $('.loader').hide();
         });
 }
 
 
+function generateModelCards(metrics) {
+    return `
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Total Observations</h5><p class="card-text fs-3 fw-bold">${metrics.total_observation}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Last Model Update</h5><p class="card-text fs-3 fw-bold">${metrics.latest_training.substring(0, 19)}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Mean Square Error</h5><p class="card-text">${metrics.rmse}</p></div></div></div>
+        <div class="col"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Mean Absolute Error</h5><p class="card-text">${metrics.preformance.metrics["Test MAE"]}</p></div></div></div>
+    `;
+}
+
+
+
 
 function formatToCSV(data) {
     let csvContent = '';
@@ -821,7 +1639,7 @@ function formatToCSV(data) {
     return csvContent;
 }
 
-// Helper function to format master data to CSV
+
 function formatToCSV(data) {
     let csvContent = '';
     const headers = ['Datetime', 'Observation', 'Localized', 'Uncorrected'];
@@ -834,7 +1652,7 @@ function formatToCSV(data) {
     return csvContent;
 }
 
-// Function to update UI based on differences
+
 function updateUIWithDifferences(differenceLastYear, lastYearForecast, label) {
     if (rewrite_number(lastYearForecast) !== 'N/A') {
         const trendClass = differenceLastYear[0] > 0 ? 'trend-up' : 'trend-down';
@@ -1048,444 +1866,246 @@ function getDates(startDate, stopDate) {
 }
 
 
-function draw_plot(combined_dataset, param, unit, forecasts_div, title, dates_ranges = false, button = false, historical = true) {
-    // Extract data from combined dataset
-    const localized_data = combined_dataset["master_localized"];
-    const uncorrected_data = combined_dataset["master_uncorrected"];
-    const observation_data = combined_dataset["master_observation"];
-    const datetime_data = combined_dataset["master_datetime"];
-    const pandora_no2_l1col = combined_dataset["master_pandora_no2_l1col"];
+function cleanAndSortData(datetime_data, combined_dataset) {
 
-    console.log(combined_dataset);
-
-    if (!historical) {
-        const currentDate = new Date();
-        const currentDateString = currentDate.toISOString().slice(0, 13) + ":00:00";
-        currentDateString = currentDateString.replace("T", " ");
-
-        const currentDateIndex = datetime_data.indexOf(currentDateString);
-        if (currentDateIndex === -1) {
-            console.error("Current date not found in dataset.");
-            return;
+    const pairedData = datetime_data.map((datetime, index) => {
+        const dataPoint = { datetime };
+        for (const key in combined_dataset) {
+            if (Array.isArray(combined_dataset[key])) {
+                dataPoint[key] = combined_dataset[key][index];
+            }
         }
-        const localizedValue = localized_data[currentDateIndex];
+        return dataPoint;
+    });
 
-        // Define shapes for non-historical plots
-        const shapes_layouts = {
-            shapes: [
-                {
-                    type: 'line',
-                    x0: datetime_data[currentDateIndex],
-                    y0: localizedValue,
-                    x1: datetime_data[currentDateIndex],
-                    y1: 0,
-                    line: {
-                        color: 'green',
-                        width: 5,
-                        dash: 'dot'
-                    }
-                }
-            ]
-        };
-    } else {
-        const shapes_layouts = {};
+   
+    const uniqueData = Array.from(new Map(pairedData.map(item => [item.datetime, item])).values());
+    uniqueData.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+
+
+    const cleanedData = {};
+    for (const key in combined_dataset) {
+        if (Array.isArray(combined_dataset[key])) {
+            cleanedData[key] = uniqueData.map(item => item[key]);
+        }
     }
 
-    // Define plot traces
-    const master_localized = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: localized_data,
-        line: {
-            color: 'green',
-            width: 3
-        },
-        name: 'ML + Model'
-    };
+    return cleanedData;
+}
 
-    const master_uncorrected = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: uncorrected_data,
-        line: {
-            color: 'rgba(142, 142, 142, 0.8)',
-            width: 3
-        },
-        name: 'Model'
-    };
 
-    const master_observation = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: observation_data,
-        line: {
-            color: 'rgba(255, 0, 0, 0.8)',
-            width: 3
-        },
-        name: 'Observation'
-    };
+function validateData(data, requiredKeys = [], minLength = 1) {
 
-    const master_pandora_no2_l1col = {
-        type: "scatter",
-        mode: "lines",
-        connectgaps: false,
-        x: datetime_data,
-        y: pandora_no2_l1col,
-        line: {
-            color: 'rgba(255, 0, 0, 0.8)',
-            width: 3
-        },
-        name: 'L1 Col'
-    };
+    if (!data || typeof data !== 'object') {
+        console.error("Data is not available or invalid.");
+        return false;
+    }
 
-    // Define plot layout
-    const whoPm25Limit = 10; // WHO PM2.5 concentration limit
+
+    for (const key of requiredKeys) {
+        if (!data[key] || !Array.isArray(data[key]) || data[key].length < minLength) {
+            console.error(`Data for key "${key}" is missing or insufficient.`);
+            return false;
+        }
+    }
+
+    return true;
+}
+function draw_plot(
+    combined_dataset,
+    param,
+    unit,
+    forecasts_div,
+    plot_columns,
+    dates_ranges = false,
+    enableFading = false,
+    text = "Forecasts",
+    plotType = "scatter",
+    timezone = "UTC" 
+) {
+
+    console.log("timezone at draw plot:" + timezone);
+    const datetime_data = combined_dataset["master_datetime"];
+    const cleanedData = cleanAndSortData(datetime_data, combined_dataset);
+    const maxValues = plot_columns.map(({ column }) => Math.max(...cleanedData[column]));
+    const maxValue = Math.max(...maxValues);
+
+ 
+    const now = new Date();
+    const pad = n => n.toString().padStart(2, '0');
+    const localNow = new Date(now.toLocaleString("en-US", { timeZone: timezone }));
+    const currentDateString = localNow.toISOString().split('T')[0];
+    const currentHour = localNow.getHours();
+    const currentTimeInUserTimeZone = localNow.toISOString();
+
+    const lastIndex = cleanedData.master_datetime.length - 1;
+    let currentX = null;
+    let currentY = null;
+
+
+    const traces = plot_columns
+        .filter(column => column && column.name && column.column)
+        .map(({ column, name, color, width, dash }, index) => {
+            const lineColor = color || 'rgba(7, 23, 16, 0.65)';
+            const rgbaMatch = lineColor.match(/\d+/g);
+            const fadingColor = rgbaMatch
+                ? `rgba(${rgbaMatch[0]}, ${rgbaMatch[1]}, ${rgbaMatch[2]}, 0.6)`
+                : 'rgba(0, 0, 0, 0.6)';
+
+            const barColors = cleanedData.master_datetime.map((datetime) => {
+                const dataTime = new Date(datetime);
+                return dataTime < localNow ? '#2196f3' : '#2196f3c2';
+            });
+
+            return {
+                type: plotType === "bar" ? "bar" : "scatter",
+                mode: plotType === "bar" ? undefined : "lines",
+                connectgaps: plotType === "bar" ? undefined : false,
+                x: cleanedData.master_datetime,
+                y: cleanedData[column],
+                line: plotType === "bar" ? undefined : {
+                    color: lineColor,
+                    width: width || 1,
+                    dash: dash || 'solid'
+                },
+                marker: plotType === "bar" ? { color: barColors } : undefined,
+                fill: plotType === "bar" ? undefined : enableFading && index === 0 ? 'tozeroy' : 'none',
+                fillcolor: plotType === "bar" ? undefined : enableFading && index === 0 ? fadingColor : 'none',
+                hoverinfo: 'x+y',
+                name: name
+            };
+        });
+
+    for (let i = 0; i < cleanedData.master_datetime.length; i++) {
+        const datetime = new Date(cleanedData.master_datetime[i]);
+        const dateString = datetime.toISOString().split('T')[0];
+        const hour = datetime.getHours();
+
+        if (dateString === currentDateString && hour === currentHour) {
+            currentX = cleanedData.master_datetime[i];
+            currentY = cleanedData.master_observation[i];
+            break;
+        }
+    }
+
     const layout = {
-        title: title,
-        plot_bgcolor: 'rgb(22 26 30)',
-        paper_bgcolor: 'rgb(22 26 30)',
+        annotations: [
+            {
+                x: 0,
+                y: 1.2,
+                xref: 'paper',
+                yref: 'paper',
+                text: text,
+                showarrow: false,
+                font: {
+                    size: 20,
+                    color: '#000000'
+                },
+                align: 'center'
+            }
+        ],
+        autosize: true,
+        width: 1000,
+        height: 500,
+        plot_bgcolor: '#F4F4F4',
+        paper_bgcolor: '#FFFFFF',
         legend: {
-            orientation: 'v',
-            x: 1.1,
-            y: 0.5,
+            orientation: 'h',
+            x: 0.5,
+            y: -0.2,
+            xanchor: 'center',
+            font: {
+                color: '#000000'
+            }
         },
         font: {
-            family: 'Roboto, sans-serif',
-            color: '#FFFFFF',
-            size: 16
+            family: 'Manrope, sans-serif',
+            color: '#000000',
+            size: 14
         },
         xaxis: {
             type: 'date',
-            color: '#FFFFFF',
-            rangeslider: {},
-            range: [datetime_data[0], datetime_data[datetime_data.length - 1]],
-            shapes: [{
-                type: 'line',
-                x0: datetime_data[0],
-                y0: whoPm25Limit,
-                x1: datetime_data[datetime_data.length - 1],
-                y1: whoPm25Limit,
-                line: {
-                    color: 'red',
-                    width: 2,
-                    dash: 'dash',
+            color: '#000000',
+            rangeslider: { visible: false },
+            range: [
+                new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
+                new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(),
+            ],
+            showgrid: true,
+            gridcolor: '#D3D3D3',
+            title: {
+                text: 'Time',
+                font: {
+                    size: 16,
+                    color: '#000000'
                 }
-            }]
+            },
+            rangeselector: {
+                buttons: [
+                    {
+                        count: 1,
+                        label: '1d',
+                        step: 'day',
+                        stepmode: 'backward'
+                    },
+                    {
+                        count: 1,
+                        label: '1m',
+                        step: 'month',
+                        stepmode: 'backward'
+                    },
+                    {
+                        step: 'all',
+                        label: 'All'
+                    }
+                ]
+            }
         },
         yaxis: {
             autorange: true,
             type: 'linear',
-            title: 'PPBV',
-            color: '#FFFFFF'
-        }
+            title: {
+                text: unit,
+                font: {
+                    size: 16,
+                    color: '#000000'
+                }
+            },
+            color: '#000000',
+            showgrid: true,
+            gridcolor: '#D3D3D3'
+        },
+        hovermode: 'x unified',
+        shapes: [
+            {
+                type: 'line',
+                x0: currentTimeInUserTimeZone,
+                x1: currentTimeInUserTimeZone,
+                y0: 0,
+                y1: 1,
+                yref: 'paper',
+                line: {
+                    color: 'grey',
+                    width: 2,
+                    dash: 'dot'
+                }
+            },
+            {
+                type: 'line',
+                x0: cleanedData.master_datetime[0],
+                x1: cleanedData.master_datetime[cleanedData.master_datetime.length - 1],
+                y0: maxValue,
+                y1: maxValue,
+                line: {
+                    color: 'red',
+                    width: 1,
+                    dash: 'dash'
+                }
+            }
+        ]
     };
 
-    // Add shapes for date ranges if specified
-    if (dates_ranges) {
-        layout.shapes = [
-            {
-                type: 'rect',
-                x0: dates_ranges[0],
-                y0: 0,
-                x1: dates_ranges[1],
-                y1: 1,
-                yref: 'paper',
-                fillcolor: '#00ffff2e',
-                line: {
-                    color: 'rgb(55, 128, 191)',
-                    width: 0.5
-                }
-            },
-            {
-                type: 'rect',
-                x0: dates_ranges[2],
-                y0: 0,
-                x1: dates_ranges[3],
-                y1: 1,
-                yref: 'paper',
-                fillcolor: '#00ffa973',
-                line: {
-                    color: 'green',
-                    width: 0.5
-                }
-            }
-        ];
-    }
-
-    // Render plot
-    Plotly.newPlot(forecasts_div, [master_localized, master_uncorrected, master_observation], layout);
-
-    // Add current value marker if not historical
-    if (!historical) {
-        Plotly.addTraces(forecasts_div, {
-            x: [datetime_data[currentDateIndex]],
-            y: [localizedValue],
-            mode: 'markers',
-            marker: {
-                color: 'green',
-                size: 20
-            },
-            name: 'Current Value'
-        });
-    }
-
-
-    if (button) {
-        $('.plot_additional_features').append('<button type="button" change_to="' + forecasts_div + '" class="btn btn-outline-primary change_plot ' + forecasts_div + '"  href="#">' + title + '</button>');
-    }
-
-
-    const downlaod_label_text = historical ? "download historical simulation data" : "download forecast data";
-    $('.lf-downloads').append('<a class="download_forecasts_data" href="#">| ' + downlaod_label_text + ' </a>');
-}
-
-
-function side_by_side_plots(param, unit, title, precomputer_forecasts, observation_unit){
-    $(document).ready(function() {
-
-        var year1_file = "https://www.noussair.com/fetch.php?url=https://gmao.gsfc.nasa.gov/gmaoftp/geoscf/forecasts/localized/00000000_latest/" + precomputer_forecasts;
-        var year2_file = year1_file.replace('.json', '_historical.json');
-        try {
-            
-        $.getJSON(year1_file, function(dataset1) {
-            var dataArray =  csvToArray(dataset1.latest_forecast.data);
-            var renamedArray_year1 = dataArray.map(function(forecast) {
-                var date = new Date(forecast.forecast_datetime);
-                var formattedDate = date.toLocaleString('en-US', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-                return {
-                  datetime: formattedDate.replace(/\d{4}/, '').trim(),
-                  uncorrected_pm25_2022: forecast.uncorrected_pm25,
-                  localized_pm25_2022: forecast.localized_pm25,
-                  observation_2022: forecast.observation,
-                  uncorrected_pm25_24H_2022: forecast.uncorrected_pm25_24H,
-                  observation_24H_2022: forecast.observation_24H,
-                  localized_pm25_24H_2022: forecast.localized_pm25_24H,
-                };
-              });
-
-            $.getJSON(year2_file, function(dataset2) {
-                
-                var dataArray_year2 =  csvToArray(dataset2.latest_forecast.data);
-                var renamedArray_year2 = dataArray_year2.map(function(forecast) {
-                    var date = new Date(forecast.forecast_datetime);
-                    var formattedDate = date.toLocaleString('en-US', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-                    return {
-                        datetime: formattedDate.replace(/\d{4}/, '').trim(),
-                        uncorrected_pm25_2023: forecast.uncorrected_pm25,
-                        localized_pm25_2023: forecast.localized_pm25,
-                        observation_2023: forecast.observation,
-                        uncorrected_pm25_24H_2023: forecast.uncorrected_pm25_24H,
-                        observation_24H_2023: forecast.observation_24H,
-                        localized_pm25_24H_2023: forecast.localized_pm25_24H,
-                    };
-                });
-
-              var mergedArray = [];
-
-
-            renamedArray_year1.forEach(function(item1) {
-
-
-            var item2 = renamedArray_year2.find(function(item) {
-                return item.datetime === item1.datetime;
-            });
-
-            
-
-            if (item2) {
-                mergedArray.push({
-                datetime: item1.datetime,
-                uncorrected_pm25_2022: item1.uncorrected_pm25_2022,
-                localized_pm25_2022: item1.localized_pm25_2022,
-                observation_2022: item1.observation_2022,
-                uncorrected_pm25_24H_2022: item1.uncorrected_pm25_24H_2022,
-                localized_pm25_24H_2022: item1.localized_pm25_24H_2022,
-                observation_24H_2022: item1.observation_24H_2022,
-                
-                
-                uncorrected_pm25_2023: item2.uncorrected_pm25_2023,
-                localized_pm25_2023: item2.localized_pm25_2023,
-                observation_2023: item2.observation_2023,
-                uncorrected_pm25_24H_2023: item2.uncorrected_pm25_24H_2023,
-                localized_pm25_24H_2023: item2.localized_pm25_24H_2023,
-                observation_24H_2023: item2.observation_24H_2023,
-
-
-                });
-            }
-            });
-
-
-            function formatDate(datetime) {
-                var date = new Date(datetime);
-                var day = date.getDate();
-                var month = date.getMonth() + 1;
-                var hour = date.getHours();
-                var minute = date.getMinutes();
-            
-                return day + '/' + month + ' ' + hour + ':' + minute;
-            }
-            
-            mergedArray.forEach(function(item, index) {
-                item.datetime = formatDate(item.datetime);
-                var changePercentage = ((item.localized_pm25_2023 - item.localized_pm25_2022) / item.localized_pm25_2022) * 100;
-                item.change_percentage = changePercentage;
-                if (index > 0) {
-                    var prevItem = mergedArray[index - 1];
-                    var changePercentage2022 = ((item.localized_pm25_2022 - prevItem.localized_pm25_2022) / prevItem.localized_pm25_2022) * 100;
-                    var change_prev_hour = prevItem.localized_pm25_2023
-                    item.change_percentage_prev_hour = changePercentage2022;
-                    item.change_prev_hour = change_prev_hour;
-                  } else {
-                    item.change_percentage_prev_hour = null;
-                  }
-            });
-
-            function findRowByDateTime(data, month, day, hour) {
-                for (var i = 0; i < data.length; i++) {
-                  var datetime = data[i].datetime;
-                  var datetimeParts = datetime.split(' ');
-                  var dateParts = datetimeParts[0].split('/');
-                  var rowMonth = parseInt(dateParts[1]);
-                  var rowDay = parseInt(dateParts[0]);
-                  var rowHour = parseInt(datetimeParts[1].split(':')[0]);
-                  
-                  if (rowMonth === month && rowDay === day && rowHour === hour) {
-                    return data[i];
-                  }
-                }
-                
-                return null;
-              }
-            var currentDate = new Date();
-            var currentDay = currentDate.getDate();
-            var currentMonth = currentDate.getMonth() + 1; 
-            var currentHour = currentDate.getHours();
-
-              var row = findRowByDateTime(mergedArray, currentMonth, currentDay, currentHour);
-              if (row !== null) {
-               
-                var localized_pm25_2022 = row.localized_pm25_2022;
-                var localized_pm25_2023 = row.localized_pm25_2023;
-                var observation_2022 = row.observation_2022;
-                var observation_2023 = row.observation_2023;
-                var uncorrected_pm25_2022 = row.uncorrected_pm25_2022;
-                var uncorrected_pm25_2023 = row.uncorrected_pm25_2023;
-               
-                var localized_pm25_24H_2022 = row.localized_pm25_24H_2022;
-                var localized_pm25_24H_2023 = row.localized_pm25_24H_2023;
-                var uncorrected_pm25_24H_2022 = row.uncorrected_pm25_24H_2022;
-                var uncorrected_pm25_24H_2023 = row.uncorrected_pm25_24H_2023;
-                var observation_24H_2022 = row.observation_24H_2022;
-                var observation_24H_2023 = row.observation_24H_2023;
-                
-                
-                var change_percentage = row.change_percentage;
-                var change_percentage_prev_hour = row.change_percentage_prev_hour;
-                var change_prev_hour = row.change_prev_hour;
-
-                var diffrence_last_year = calculateDifferenceAndPercentage(localized_pm25_2022,localized_pm25_2023)
-                var diffrence_last_hour = calculateDifferenceAndPercentage(change_prev_hour,localized_pm25_2023)
-               
-
-
-                $('.local_forecats_window').html('<div class="col-md-4"> <div class="lf-fcst-info"> <div class="lf-fcst-name">CURRENT</div> <div class="lf-fcst-value">'+localized_pm25_2023+'<span>'+rewriteUnits(observation_unit)+'</span></div> <div class="lf-fcst-change current_observation_unit_span"><i class="fas fa-arrow-up"></i> </div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info years_difference"> <div class="lf-fcst-name">SAME DAY/ LAST YEAR </div> <div class="lf-fcst-value">'+localized_pm25_2022+'<span>'+rewriteUnits(observation_unit)+'</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_year"></span> '+rewritePercentage(diffrence_last_year[1])+'</div> </div> </div> <div class="col-md-4"> <div class="lf-fcst-info days_difference"> <div class="lf-fcst-name">PREVIOUS HOUR</div> <div class="lf-fcst-value">'+change_prev_hour+'<span>'+rewriteUnits(observation_unit)+'</span></div> <div class="lf-fcst-change"><span class="trend_sign_diffrence_last_day"></span> '+rewritePercentage(diffrence_last_hour[1])+'</div> </div> </div>')
-                
-               
-            
-
-              } else {
-                console.log('Row not found');
-              }
-
-            var dates = mergedArray.map(function(item) { return item.datetime; });
-            var uncorrected_pm25_2022 = mergedArray.map(function(item) { return item.uncorrected_pm25_2022; });
-            var uncorrected_pm25_24H_2022 = mergedArray.map(function(item) { return item.uncorrected_pm25_24H_2022; });
-            var observation_2022 = mergedArray.map(function(item) { return item.observation_2022; });
-            var observation_24H_2022 = mergedArray.map(function(item) { return item.observation_24H_2022; });
-            var localized_pm25_2022 = mergedArray.map(function(item) { return item.localized_pm25_2022; });
-            var localized_pm25_24H_2022 = mergedArray.map(function(item) { return item.localized_pm25_24H_2022; });
-           
-
-            var uncorrected_pm25_2023 = mergedArray.map(function(item) { return item.uncorrected_pm25_2023; });
-            var uncorrected_pm25_24H_2023 = mergedArray.map(function(item) { return item.uncorrected_pm25_24H_2023; });
-            var observation_2023 = mergedArray.map(function(item) { return item.observation_2023; });
-            var observation_24H_2023 = mergedArray.map(function(item) { return item.observation_24H_2023; });
-            var localized_pm25_2023 = mergedArray.map(function(item) { return item.localized_pm25_2023; });
-            var localized_pm25_24H_2023 = mergedArray.map(function(item) { return item.localized_pm25_24H_2023; });
-
-
-            var trace_uncorrected_pm25_2022 = {
-            x: dates,
-            y: uncorrected_pm25_2022,
-            mode: 'lines',
-            name: 'uncorrected_pm25_2022'
-            };
-            
-            var trace_localized_pm25_2022 = {
-                x: dates,
-                y: localized_pm25_2022,
-                mode: 'lines',
-                name: 'localized_pm25_2022'
-                };
-
-            var trace_uncorrected_pm25_2023 = {
-            x: dates,
-            y: uncorrected_pm25_2023,
-            mode: 'lines',
-            name: 'uncorrected_pm25_2023'
-            };
-
-            var trace_localized_pm25_2023 = {
-                x: dates,
-                y: localized_pm25_2023,
-                mode: 'lines',
-                name: 'localized_pm25_2023'
-                };
-
-
-            var layout = {
-            title: 'PM2.5 Data for 2022 and 2023',
-            plot_bgcolor: 'rgb(22 26 30)',
-            paper_bgcolor: 'rgb(22 26 30)',
-
-            font: {
-                family: 'Roboto, sans-serif',
-                color: '#FFFFFF'
-            },
-                        
-            xaxis: {
-                title: 'Date',
-                color: '#FFFFFF'
-            },
-            yaxis: {
-                title: 'PM2.5',
-                color: '#FFFFFF'
-            },
-            };
-
-            if (mergedArray.length>0){
-                Plotly.newPlot('comparaison_plot_js', [trace_uncorrected_pm25_2022, trace_uncorrected_pm25_2023, trace_localized_pm25_2022,trace_localized_pm25_2023], layout);
-                $('.plot_additional_features').append('<button type="button" change_to="comparaison_plot_js" class="btn btn-outline-primary change_plot comparaison_plot_js"  href="#">'+title+'</button>');
-            }
-           
-        
-            });
-          });
-
-        
-
-        }catch (error) {
-            console.error('An error occurred while running the side_by_side_plots function:', error);
-          }
-      });
-      
+    Plotly.newPlot(forecasts_div, traces, layout);
 }
 
 function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_div,merge,precomputer_forecasts,historical){
@@ -1807,59 +2427,80 @@ function get_plot(location_name, param, unit, forecasts_div, forecasts_resample_
 }
 
 
-function openForecastsWindow(messages, st_id, param, location_name, observation_value, current_observation_unit, obs_src, precomputed_forecasts) {
+function openForecastsWindow(options = {}) {
+    const {
+        messages = ["Loading", "Please hold"],
+        st_id = "",
+        param = "no2",
+        location_name = "",
+        observation_value = "N/A",
+        current_observation_unit = "N/A",
+        obs_src = "N/A",
+        precomputed_forecasts = "[]",
+        isModal = true,
+        timezone = "UTC"
+    } = options;
+
+
     const $loadingDiv = $(".loading_div");
     const $forecastsContainer = $(".forecasts_container");
     const $loadingScreen = $('#loading-screen');
-    //alert("version 1.4")
+
+    let obsSrcFinal = obs_src;
+    if (obsSrcFinal === 'NASA Pandora') {
+        obsSrcFinal = 's3';
+    }
 
     $loadingDiv.fadeIn(10);
-    $forecastsContainer.load(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`, function() {
-        
-        console.log(`vues/location.html?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obs_src}`)
-        $loadingScreen.show();
-        
-        $(this).fadeOut(10).fadeIn(10);
 
-        const intervalId = setInterval(() => {
-            const message = messages[Math.floor(Math.random() * messages.length)];
-            $(".messages").html(message);
-        }, 100);
 
-        const cleanLocationName = cleanText(location_name);
-        $('.current_location_name').html(location_name.replace(/[_\W]+/g, " "));
-        $('.current_param').html(pollutant_details(param).name);
-        $('.current_param_1').html(pollutant_details(param).name);
-        $('.current_observation_value').html(observation_value);
-        $('.current_observation_unit_span').html(current_observation_unit);
-        
+    const fileToLoad = isModal ? `vues/location.html` : `vues/site.html`;
 
-        $forecastsContainer.addClass("noussair_animations zoom_in");
-        $loadingDiv.fadeOut(10);
-        
-        $("button").css({
-            "animation": "intro 2s cubic-bezier(0.03, 1.08, 0.56, 1)",
-            "animation-delay": "2s"
-        });
-        
-        readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker_historical', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
-        //readApiBaker(location_name, param, current_observation_unit, 'main_plot_for_api_baker_col', true, { historical: 2, reinforce_training: 2, hpTunning: 2 });
+    $forecastsContainer.load(`${fileToLoad}?st=${st_id}&param=${param}&location_name=${location_name}&obs_src=${obsSrcFinal}`, function () {
+        if (isModal) {
+            $loadingScreen.show();
+            $(this).fadeOut(10).fadeIn(10);
 
-        try {
-            // Uncomment if needed
-            //get_plot(location_name, param, current_observation_unit, 'plot_model_', 'plot_resample_', false, precomputed_forecasts, '');
-            //get_plot(location_name, param, current_observation_unit, 'plot_model_historical', 'plot_resample_historical', false, precomputed_forecasts, 'historical');
-            // side_by_side_plots(param, current_observation_unit, 'Historical Comparison', precomputed_forecasts, current_observation_unit);
-        } catch (error) {
-            console.error('An error occurred while running the get_plot function:', error);
+            const intervalId = setInterval(() => {
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                $(".messages").html(message);
+            }, 100);
+
+            const cleanLocationName = cleanText(location_name);
+            $('.current_location_name').html(location_name.replace(/[_\W]+/g, " "));
+            $('.current_param').html(pollutant_details(param).name);
+            $('.current_param_1').html(pollutant_details(param).name);
+            $('.current_observation_value').html(observation_value);
+            $('.current_observation_unit_span').html(current_observation_unit);
+
+            $forecastsContainer.addClass("noussair_animations zoom_in");
+            $loadingDiv.fadeOut(10);
+
+            $("button").css({
+                "animation": "intro 2s cubic-bezier(0.03, 1.08, 0.56, 1)",
+                "animation-delay": "2s"
+            });
+
+            if (obsSrcFinal === 'AirNow'){
+                console.log("Calling readAirNow");
+                readAirNow(location_name, param, current_observation_unit, 'main_plot_for_airnow', true, 2, 2, 2, false, 2);
+            } else {
+                console.log("Calling readApiBaker with obs_src:", obs_src);
+                readApiBaker({
+                    location: location_name,
+                    timezone: timezone
+                });
+            }
+
+            $loadingScreen.hide();
+            clearInterval(intervalId);
+        } else {
+ 
+            console.log("Loaded site.html for full-page mode.");
+            $loadingDiv.fadeOut(10);
         }
-        
-        
-        $loadingScreen.hide();
-        clearInterval(intervalId); 
     });
 }
-
 $(document).on("click", ".launch-local-forecasts", function() {
     const messages = [
         "Connecting to OpenAQ", 
@@ -1880,9 +2521,24 @@ $(document).on("click", ".launch-local-forecasts", function() {
     const observation_value = $(this).attr("observation_value");
     const current_observation_unit = $(this).attr("current_observation_unit");
     const obs_src = $(this).attr("obs_src");
+    const timezone = $(this).attr("timezone");
 
-    openForecastsWindow(["Loading", "Please hold"], location_id, param || 'no2', location_name, observation_value, current_observation_unit, observation_source, precomputed_forecasts);
+    console.log("timezone clicked: "+timezone);
+
+    openForecastsWindow({
+        messages: ["Loading", "Please hold"],
+        st_id: location_id,
+        param: param || 'no2',
+        location_name,
+        observation_value,
+        current_observation_unit,
+        obs_src,
+        precomputed_forecasts,
+        isModal: true,
+        timezone
+    });
 });
+
 
 $(document).on("click", ".upload-your-data", function() {
     $(".loading_div").fadeIn(10);
@@ -1965,26 +2621,66 @@ $(document).on("click", '.retrain_model', function() {
 
 // MAIN APP
 
-const location_modules = "https://www.noussair.com/get_data.php?type=ftp&url=https://www.noussair.com/global.json";
 
-$.ajax({
-    type: "Get",
-    url: location_modules,
-    dataType: "json",
-    success: function(sites) {
 
-        var param = "no2";
-        //get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param))
-    },
-    error: function(){
-        alert("WARNING: LOCATION FILE NOT CONNECTING");
+$(document).ready(function () {
+
+    function getQueryParams() {
+        const params = {};
+        const queryString = window.location.search;
+        if (queryString) {
+            const urlParams = new URLSearchParams(queryString);
+            for (const [key, value] of urlParams.entries()) {
+                params[key] = value;
+            }
+        }
+        return params;
+    }
+
+
+    const queryParams = getQueryParams();
+    const locationName = queryParams["location_name"];
+    const param = queryParams["param"] || "no2"; 
+
+
+    if (locationName) {
+        console.log(`Skipping map creation. Opening forecasts for location: ${locationName}, parameter: ${param}`);
+
+
+        const observationValue = queryParams["observation_value"] || "N/A";
+        const currentObservationUnit = queryParams["current_observation_unit"] || "N/A";
+        const observationSource = queryParams["obs_src"] || "N/A";
+        const precomputedForecasts = queryParams["precomputed_forecasts"] || "[]";
+
+
+        openForecastsWindow(
+            ["Loading", "Please hold"],
+            "default_station_id", 
+            param,
+            locationName,
+            observationValue,
+            currentObservationUnit,
+            observationSource,
+            precomputedForecasts
+        );
+    } else {
+
+        //create_map("test", "no2");
+        readCompressedJsonAndAddBanners("precomputed/combined_forecasts.json.gz");
     }
 });
 
-create_map('test','no2')
-//const sites = ["3995", "8645", "739", "5282"];
+function updateUrlWithLocation(locationName) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("location_name", locationName);
+    window.history.pushState({}, "", url);
+}
 
-//get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param));
+
+$(document).on("click", ".launch-local-forecasts", function () {
+    const locationName = $(this).attr("location_name");
+    updateUrlWithLocation(locationName);
+});
 $('.modal-dialog').on('show.bs.modal', function () {
     $('#loading-screen').show();
   });
@@ -2043,3 +2739,29 @@ $(document).on('click', '.routing_pollutant_param', function(e) {
       });
     });
 
+document.addEventListener("DOMContentLoaded", function () {
+    const modalBody = document.querySelector(".modal-body");
+    const fullPageButton = document.createElement("button");
+
+
+    fullPageButton.textContent = "Full Page";
+    fullPageButton.className = "btn btn-primary full-page-toggle";
+    fullPageButton.style.position = "absolute";
+    fullPageButton.style.top = "10px";
+    fullPageButton.style.right = "10px";
+    fullPageButton.style.zIndex = "1000";
+
+
+    modalBody.parentElement.appendChild(fullPageButton);
+
+
+    fullPageButton.addEventListener("click", function () {
+        modalBody.classList.toggle("full-page-modal");
+
+        if (modalBody.classList.contains("full-page-modal")) {
+            fullPageButton.textContent = "Exit Full Page";
+        } else {
+            fullPageButton.textContent = "Full Page";
+        }
+    });
+});
