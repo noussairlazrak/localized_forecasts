@@ -2656,17 +2656,10 @@ $(document).ready(function () {
     
 });
 
-function updateUrlWithLocation(locationName) {
-    const url = new URL(window.location.href);
-    url.searchParams.set("location_name", locationName);
-    window.history.pushState({}, "", url);
-}
 
 
-$(document).on("click", ".launch-local-forecasts", function () {
-    const locationName = $(this).attr("location_name");
-    updateUrlWithLocation(locationName);
-});
+
+
 $('.modal-dialog').on('show.bs.modal', function () {
     $('#loading-screen').show();
   });
