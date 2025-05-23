@@ -671,13 +671,21 @@ function readCompressedJsonAndAddBanners(fileUrl) {
             return JSON.parse(sanitizedData); 
         })
         .then(data => {
-            console.log(data);
+
+            data.sort((a, b) => {
+                const nameA = (a.location_name || a.location || '').toLowerCase();
+                const nameB = (b.location_name || b.location || '').toLowerCase();
+                if (nameA < nameB) return -1;
+                if (nameA > nameB) return 1;
+                return 0;
+            });
+
             if (!Array.isArray(data)) {
                 console.error("Invalid JSON structure: Expected an array of sites.");
                 return;
             }
             data.forEach(site => {
-                console.log(site);
+
                 if (!site.timezone || typeof site.timezone !== "string" || site.timezone === "null") {
                     console.warn(`Skipping site due to invalid timezone:`, site);
                     return;
@@ -693,7 +701,7 @@ function readCompressedJsonAndAddBanners(fileUrl) {
                 const localHour = pad(siteLocalNow.getHours());
                 const currentLocalStr = `${localYear}-${localMonth}-${localDate} ${localHour}`;
 
-                console.log(currentLocalStr);
+
             
 
                 const filteredForecasts = (site.forecasts || []).filter(forecast => {
@@ -727,7 +735,11 @@ function readCompressedJsonAndAddBanners(fileUrl) {
                     precomputed_forecasts: JSON.stringify(filteredForecasts),
                     obs_options: JSON.stringify(obsOptions),
                 };
-                add_the_banner(siteData, "no2");
+
+                if (!isNaN(siteData.forecasted_value) && siteData.forecasted_value !== null && siteData.forecasted_value !== "N/A") {
+                    add_the_banner(siteData, "no2");
+                }
+               
             });
             const geojson = sitesArrayToGeoJSON(data);
             create_map(geojson, "no2");
@@ -2609,23 +2621,9 @@ $(document).on("click", '.retrain_model', function() {
 
 // MAIN APP
 
-const location_modules = "https://www.noussair.com/get_data.php?type=ftp&url=https://www.noussair.com/global.json";
 
-$.ajax({
-    type: "Get",
-    url: location_modules,
-    dataType: "json",
-    success: function(sites) {
 
-        var param = "no2";
-        //get_all_sites_data(sites).then((all_sites) => map = create_map(all_sites, param))
-    },
-    error: function(){
-        alert("WARNING: LOCATION FILE NOT CONNECTING");
-    }
-});
-
-document.addEventListener("DOMContentLoaded", function () {
+$(document).ready(function () {
 
     function getQueryParams() {
         const params = {};

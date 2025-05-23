@@ -105,9 +105,14 @@ div#modal-02 {
 }
 
 .modal-dialog.modal-dialog-centered.modal-md {
-    max-width: 157vh;
+    max-width: 100%;
+    min-width: 200px;
     overflow: scroll;
+    padding: 41px;
+    width: 1000px;
+    background: white;
 }
+
 
 .modal-body h1,
 h2,
@@ -225,13 +230,6 @@ mark {
     z-index: 10 !important;
     position: absolute;
     bottom: 29px;
-}
-
-footer.bg-dark.text-inverse {
-    background: #1f1f1f !important;
-    width: 100%;
-    position: absolute;
-    bottom: 0;
 }
 
 
@@ -494,6 +492,7 @@ h1.observation_value.current_observation_value {
 button.btn-close {
     position: absolute;
     right: 16px;
+    top: 18px;
 }
 
 .forecasts-item {
@@ -951,4 +950,27 @@ input#filter-input {
     transition: filter 0.3s;
   }
  
+}
+
+.row.local_forecats_window a {
+    background: #d8d8d8 !important;
+    font-size: medium;
+    padding: 8px;
+    color: #000000;
+    margin-top: 11px;
+    border-radius: 0;
+    font-weight: 600;
+}
+
+.nav-link.active, .nav-link.text-secondary {
+    color: #dfb038 !important;
+}
+
+h5.plot_title {
+    font-size: x-large;
+    font-weight: 600;
+}
+
+.prediction-box h2 {
+    font-weight: 800 !important;
 }

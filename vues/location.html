@@ -968,7 +968,13 @@ span.d_source {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     max-width: 400px;
     float: left;
+    min-width: 46%;
 
+}
+
+.prediction-box .aq-status {
+    font-size: xxx-large;
+    font-weight: 600;
 }
 
 .prediction-box:hover {
@@ -1000,21 +1006,17 @@ span.d_source {
 }
 
 
-.row.local_forecats_window a {
-    background: #d8d8d8 !important;
-    font-size: small;
-    padding: 8px;
-    color: #000000;
-    margin-top: 11px;
-    border-radius: 0;
-}
+
 
 .row.local_forecats_window .active {
     background: #000000 !important;
     color: #ffffff;
     border-color: #00000069 !important;
 }
-span.current_location_name {font-size: xxx-large;}
+span.current_location_name {
+  font-size: xxx-large;
+  font-weight: 800;
+}
 
 button.filter-btn {
     font-size: 11px;
@@ -1196,7 +1198,6 @@ h5.plot_title {
 }
 </style>
 <div class="forecasts-box">
-  <div class="container">
       <div class="modal-dialog modal-dialog-centered modal-md">
           <div class="modal-content text-center">
               <div class="modal-body">
@@ -1217,7 +1218,6 @@ h5.plot_title {
               </div>
           </div>
       </div>
-  </div>
 </div>
     
 <script src='parametres/plotly-2.12.1.min.js'></script>
