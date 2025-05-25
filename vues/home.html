@@ -6,6 +6,14 @@
     </div>
 </section>
 
+<div id="species-filter-container" style="margin: 1rem 0;text-align: right;position: absolute;z-index: 100;color: white;">
+  <label for="species-filter" style="font-weight:600;margin-right:8px;">Species:</label>
+  <select id="species-filter" class="form-select" style="width:auto;display:inline-block;">
+    <option value="no2">NO₂</option>
+    <option value="pm25">PM2.5</option>
+  </select>
+</div>
+
 <div class="forecasts_container"></div>
 
 <div class="locations-container">
@@ -47,4 +55,11 @@
         });
     });
 
+$(document).on('change', '#species-filter', function() {
+    const selectedSpecies = $(this).val();
+    readCompressedJsonAndAddBanners("precomputed/combined_forecasts.json.gz", selectedSpecies);
+});
+$(document).ready(function () {
+    readCompressedJsonAndAddBanners("precomputed/combined_forecasts.json.gz", $("#species-filter").val() || "pm25");
+});
 </script>
