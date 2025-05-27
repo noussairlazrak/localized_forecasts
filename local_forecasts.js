@@ -308,6 +308,12 @@ function get_open_aq_observations(site_id, param) {
 }
 
 function create_map(sites, param) {
+
+    if (window.currentMap && window.currentMap.remove) {
+        window.currentMap.remove();
+        window.currentMap = null;
+    }
+    $('#map').html('');
     var deltaDistance = 100;
     var center_point = [30.1272444, -1.9297706];
     var map = new mapboxgl.Map({
@@ -317,8 +323,21 @@ function create_map(sites, param) {
         pitch: 0,
         bearing: 0,
         container: 'map',
+        minZoom: 1,
+        maxZoom: 10
        
     });
+    map.setRenderWorldCopies(false);
+    const bounds = [
+    [-180, -85], 
+    [180, 85]    
+    ];
+
+    map.setMaxBounds(bounds);
+    map.dragRotate.disable();
+    map.touchZoomRotate.disableRotation();
+
+
 
     var mapVisible = true;
 
@@ -340,10 +359,11 @@ function create_map(sites, param) {
     
     mapVisible = !mapVisible;
     });
-    
+
+
     
     map.on('load', async () => {
-    
+        map.resize(); // 
         map.addSource('locations_dst', {
             type: 'geojson',
             data: sites, 
@@ -600,6 +620,12 @@ function sitesArrayToGeoJSON(sites, param = "no2") {
             }
             const aqiLevel = getAqiLevel(aqi);
 
+            // Swap lat/lon for pm25
+            let coordinates = [site.lon, site.lat];
+            if (param === "pm25") {
+                coordinates = [site.lat, site.lon];
+            }
+
             return {
                 type: "Feature",
                 properties: {
@@ -617,10 +643,7 @@ function sitesArrayToGeoJSON(sites, param = "no2") {
                 },
                 geometry: {
                     type: "Point",
-                    coordinates: [
-                        site.lon,
-                        site.lat
-                    ]
+                    coordinates: coordinates
                 }
             };
         })
@@ -707,7 +730,6 @@ function readCompressedJsonAndAddBanners(fileUrl, selectedSpecies) {
             const filteredSites = [];
 
             data.forEach(site => {
-                console.log("site data", site);
                 if (!site.timezone || typeof site.timezone !== "string" || site.timezone === "null") {
                     return;
                 }
@@ -735,7 +757,7 @@ function readCompressedJsonAndAddBanners(fileUrl, selectedSpecies) {
                     forecasted_value = matchingForecast.value;
                 }
 
-                if (forecasted_value !== "N/A" && forecasted_value !== null && forecasted_value !== undefined && !isNaN(forecasted_value)) {
+                if (forecasted_value !== "N/A") {
                     const obsOptions = {};
                     Object.keys(matchingForecast).forEach(key => {
                         if (key !== "time" && key !== "local_time") {
@@ -745,6 +767,8 @@ function readCompressedJsonAndAddBanners(fileUrl, selectedSpecies) {
                             };
                         }
                     });
+
+                    
 
                     const siteData = {
                         location_name: site.location,
@@ -757,7 +781,7 @@ function readCompressedJsonAndAddBanners(fileUrl, selectedSpecies) {
                         precomputed_forecasts: JSON.stringify(filteredForecasts),
                         obs_options: JSON.stringify(obsOptions),
                     };
-                    console.log("siteData", siteData);
+
                     add_the_banner(siteData, selectedSpecies);
                     filteredSites.push({
                         ...site,
@@ -767,8 +791,7 @@ function readCompressedJsonAndAddBanners(fileUrl, selectedSpecies) {
             });
 
             const geojson = sitesArrayToGeoJSON(filteredSites, selectedSpecies);
-            console.log("selectedSpecies", selectedSpecies);
-            console.log("geojson", geojson);
+
             create_map(geojson, selectedSpecies);
 
             hideLoadingDiv();
@@ -811,6 +834,7 @@ function getUnitForParameter(parameter) {
 
 
 function add_the_banner(site, param) {
+    console.log("Adding banner for site:", site);
     const precomputed_forecasts = $.parseJSON(site.precomputed_forecasts);
     const obs_options = $.parseJSON(site.obs_options);
 

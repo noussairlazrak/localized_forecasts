@@ -996,3 +996,18 @@ h5.plot_title {
 .prediction-box h2 {
     font-weight: 800 !important;
 }
+
+section.wrapper.image-wrapper.bg-image.bg-overlay.bg-overlay-300 {
+    min-height: 80vh;
+}
+
+div#species-filter-container {
+    z-index: 1000;
+}
+
+.forecasts_container{
+    position: absolute;
+    top: 83px;
+    z-index: 100;
+    height: max-content;
+}
