@@ -1473,6 +1473,7 @@ function readAirNow(location, param, unit, forecastsDiv, buttonOption = true, hi
 
     fetch(fileUrl)
         .then(response => {
+            console.log("Fetching data from:", fileUrl);
             if (!response.ok) throw new Error('Network response was not ok');
             return response.json();
         })
@@ -2532,42 +2533,49 @@ function openForecastsWindow(options = {}) {
         if (isModal) {
             $loadingScreen.show();
             $(this).fadeOut(10).fadeIn(10);
-
+    
             const intervalId = setInterval(() => {
                 const message = messages[Math.floor(Math.random() * messages.length)];
                 $(".messages").html(message);
             }, 100);
-
+    
             const cleanLocationName = cleanText(location_name);
             $('.current_location_name').html(location_name.replace(/[_\W]+/g, " "));
             $('.current_param').html(pollutant_details(param).name);
             $('.current_param_1').html(pollutant_details(param).name);
             $('.current_observation_value').html(observation_value);
             $('.current_observation_unit_span').html(current_observation_unit);
-
+    
             $forecastsContainer.addClass("noussair_animations zoom_in");
             $loadingDiv.fadeOut(10);
-
+    
             $("button").css({
                 "animation": "intro 2s cubic-bezier(0.03, 1.08, 0.56, 1)",
                 "animation-delay": "2s"
             });
+    
 
-            if (obsSrcFinal === 'AirNow'){
-                console.log("Calling readAirNow");
+            if (param === 'pm25' || param === 'pm2.5') {
+                console.log("Calling readAirNow for PM2.5");
                 readAirNow(location_name, param, current_observation_unit, 'main_plot_for_airnow', true, 2, 2, 2, false, 2);
+            } else if (param === 'no2') {
+                console.log("Calling readApiBaker for NO2");
+                readApiBaker({
+                    location: location_name,
+                    timezone: timezone
+                });
             } else {
-                console.log("Calling readApiBaker with obs_src:", obs_src);
+
+                console.log("Unknown param, defaulting to readApiBaker");
                 readApiBaker({
                     location: location_name,
                     timezone: timezone
                 });
             }
-
+    
             $loadingScreen.hide();
             clearInterval(intervalId);
         } else {
- 
             console.log("Loaded site.html for full-page mode.");
             $loadingDiv.fadeOut(10);
         }

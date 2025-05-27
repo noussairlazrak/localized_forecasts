@@ -998,7 +998,7 @@ h5.plot_title {
 }
 
 section.wrapper.image-wrapper.bg-image.bg-overlay.bg-overlay-300 {
-    min-height: 80vh;
+    min-height: 100vh;
 }
 
 div#species-filter-container {
