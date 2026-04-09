@@ -4,303 +4,372 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="This tool focuses on generating localized forecasts for select locations based on NASA GMAO's GEOS Composition Forecasting (GEOS-CF). Some of the location data are provided by OpenAQ. Using this library, you can train and load models based on you location data online and measure the uncertainty of the forecast based on the data provided.">
-    <meta name="keywords" content="HAQAST">
-    <meta http-equiv="cache-control" content="nmax-age=0" />
-    <meta http-equiv="Content-Type" content="text/cache-manifest" />
-    <meta http-equiv="Content-Type" content="text/cache-manifest" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <title>Localized Forecasts</title>
+    <meta name="description" content="Localized Forecasts has moved to a new home. Now managed by GEOS-ESM - Goddard Earth Observing System.">
+    <meta name="keywords" content="GEOS-ESM, NASA, Localized Forecasts, GEOS-CF">
+    <title>Localized Forecasts - Redirecting</title>
     <link rel="apple-touch-icon" sizes="180x180" href="./parametres/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="./parametres/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="./parametres/favicon-16x16.png">
-    <link rel="manifest" href="./parametres/site.webmanifest">
-    <link rel="mask-icon" href="./parametres/safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
-        <link rel="stylesheet" href="./parametres/style.css?v=1.0.0">
+    <meta name="theme-color" content="#000000">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <link rel="preload" href="./parametres/local-forecasts.css?v=1.0.0" as="style" onload="this.rel='stylesheet'">
+        html, body {
+            height: 100%;
+        }
 
-    
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
 
+        .hero {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #000000;
+            overflow: hidden;
+        }
 
-<script src='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js?v=1.0.0'></script>
-<link href='https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css?v=1.0.0' rel='stylesheet' />
+        .earth-container {
+            position: absolute;
+            top: 50%;
+            right: -5%;
+            transform: translateY(-50%);
+            width: 70%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
 
+        #earth-canvas {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
 
+        .header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 3rem;
+            z-index: 100;
+        }
 
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
 
-    
-    <script type="text/javascript" src="https://d3js.org/d3.v7.min.js?v=2.2.3"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js?v=1.2.2"></script>
+        .logo svg {
+            width: 50px;
+            height: 50px;
+        }
 
- 
+        .logo span {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
 
+        .nav-icon {
+            width: 24px;
+            height: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+        }
 
+        .nav-icon span {
+            width: 100%;
+            height: 2px;
+            background: #ffffff;
+        }
 
-<style>
-    .model_plots {
-    position: absolute;
-    width: 100%;
-    left:0;
-}
+        .content {
+            position: absolute;
+            left: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            max-width: 550px;
+            z-index: 10;
+        }
 
-.plots_container {
-    width: 100%;
-    min-height: 450px;
-}
+        .main-title {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
 
-a.modebar-btn.resample {
-    top: 5px;
-    font-size: 14px !important;
-    text-transform: unset;
-}
+        .description {
+            font-size: 1rem;
+            font-weight: 300;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 2.5rem;
+            max-width: 480px;
+        }
 
-.plot_additional_features button {
-    font-size: 10px !important;
-    padding: 7px !important;
-    margin: 0;
-}
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: transparent;
+            color: white;
+            text-decoration: none;
+            padding: 1rem 1.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
 
+        .cta-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #ffffff;
+        }
 
-button.btn.btn-outline-primary {
-    text-transform: capitalize;
-}
+        .cta-button svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s ease;
+        }
 
-input#filter-input {
-    width: 100%;
-    background: none;
-    border: none;
-    color:white;
-}
+        .cta-button:hover svg {
+            transform: translateX(4px);
+        }
 
-input#filter-input:focus{
-    outline: none;
-}
+        .badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
 
-.modal-body {
-    background: #161a1e;
-    color: white !important;
-}
+        .footer-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            z-index: 100;
+        }
 
+        .footer-nav a {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+        }
 
+        .footer-nav a:hover {
+            color: #ffffff;
+        }
 
-.modal-body h1, h2,h3,h4,h5 {
-    color: white !important;
-}
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
 
-.loader {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    position: absolute;
-    width: 100%;
-    top: 0;
-    z-index: 1;
-    pointer-events: none;
-}
-.loader__dot {
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
-  border-radius: 50%;
-  background-color: #4285f4;
-  animation-name: loader__dot;
-  animation-duration: 1.5s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-}
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.4;
+        }
 
-.loader__dot:nth-child(2) {
-  animation-delay: -1.0s;
-}
+        @media (max-width: 1024px) {
+            .earth-container {
+                right: -20%;
+            }
+            .earth {
+                width: 600px;
+                height: 600px;
+            }
+            .atmosphere {
+                width: 650px;
+                height: 650px;
+            }
+        }
 
-.loader__dot:nth-child(3) {
-  animation-delay: -0.5s;
-}
-
-@keyframes loader__dot {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(0.1);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-div#call_messages {
-    position: absolute;
-    margin-top: 55px;
-    
-}
-
-div#replay-animation {
-    position: absolute;
-    width: 100%;
-    height: 100vh;
-    opacity: 0.5;
-    top: -2vh;
-    display:none;
-}
-
-div#replay-animation img {
-    width: 100%;
-    height: auto;
-}
-
-a#global-view {
-    background: #ca4e00;
-    border: #ca4e00;
-    margin-right: 15px;
-    margin-top: 15px;
-}
-</style>
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+            .content {
+                left: 5%;
+                right: 5%;
+                max-width: none;
+            }
+            .earth-container {
+                right: -40%;
+                opacity: 0.5;
+            }
+            .header {
+                padding: 1rem 1.5rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <div class="loading_div">
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="messages"> Connecting....</div>
-    </div>
-    <div class="content-wrapper">
-        <div class="g-lf-params" param="no2"></div>
-        <header class="wrapper bg-soft-primary">
-            <nav class="navbar navbar-expand-lg center-logo transparent position-absolute navbar-dark">
-                <div class="container justify-content-between align-items-center">
-                    <div class="d-flex flex-row w-100 justify-content-between align-items-center d-lg-none">
-                        <div class="navbar-brand-title"><a href="index">
-                                GEOS CF Localised Forecasts
-                            </a></div>
-                        <div class="navbar-other ms-auto">
-                            <ul class="navbar-nav flex-row align-items-center">
-                                <li class="nav-item d-lg-none">
-                                    <button class="hamburger offcanvas-nav-btn"><span></span></button>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="navbar-collapse-wrapper d-flex flex-row align-items-center w-100">
-                        <div class="navbar-collapse offcanvas offcanvas-nav offcanvas-start">
-                            <div class="offcanvas-header mx-lg-auto order-0 order-lg-1 d-lg-flex px-lg-15">
-                                <a href="#" class="transition-none d-none d-lg-flex"><img class="logo-dark"
-                                        src="parametres/haqast_logo.png" srcset="parametres/haqast_logo.png 2x" alt="" />
-                                    <img class="logo-light" src="parametres/haqast_logo.png"
-                                        srcset="parametres/haqast_logo.png 2x" alt="" /></a>
-                                <h3 class="text-white fs-30 mb-0 d-lg-none"></h3>
-                                <button type="button" class="btn-close btn-close-white d-lg-none" data-bs-dismiss="offcanvas"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="w-100 order-1 order-lg-0 d-lg-flex offcanvas-body">
-                                <ul class="navbar-nav ms-lg-auto">
-                                    <li class="nav-item">
-                                        <a class="nav-link nl_wave_routing" href="about.html">About</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="https://gmao.gsfc.nasa.gov/weather_prediction/GEOS-CF/">Data</a>
-                                    </li>
-        
-                                </ul>
-                            </div>
-                            <div class="w-100 order-3 order-lg-2 d-lg-flex offcanvas-body">
-                                <ul class="navbar-nav me-lg-auto">
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="https://gmao.gsfc.nasa.gov/weather_prediction/GEOS-CF/pubs/">Publications</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="https://github.com/GEOS-CF/MLpred">Documentation</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a id="global-view" class="nav-link btn btn-primary replay_model" href="#">Replay</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link btn btn-primary upload-your-data">Upload Your Local Data</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-        
-                </div>
-            </nav>
-        </header>
-        <section class="wrapper image-wrapper bg-image bg-overlay bg-overlay-300">
-            <div id='map'></div>
-            <div id='replay-animation'>
-                <img src="geos-cf.gif"/>
-            </div>
-            
-
-            
-        </section>
-
-    </div>
-    <div class="forecasts_container">
-      
-    </div>
-    <footer class="bg-dark text-inverse">
-        
-
-        <div class="swiper-container-desc dots-closer blog grid-view mb-1" data-margin="0" data-dots="true"
-            data-items-md="5" data-items-xs="1">
-            <ul class="pollutant_param list-inline mb-0">
-                
-                <li class="list-inline-item"><a href="#" lf-param="no2" class="routing_pollutant_param"
-                        class="btn btn-soft-ash btn-sm rounded ">Nitrogen Dioxide (NO<sub>2</sub>)</a>
-                </li>
-                <!--
-                <li class="list-inline-item"><a href="#" lf-param="o3" class="routing_pollutant_param"
-                        class="btn btn-soft-ash btn-sm rounded "><b>Ozone</b> (O<sub>3</sub>)</a>
-                </li>
-                
-                <li class="list-inline-item"><a href="#" lf-param="pm25" class="routing_pollutant_param"
-                        class="btn btn-soft-ash btn-sm rounded ">Fine Particles (PM <sub>2.5</sub>)</a>
-                </li>
-                -->
-            </ul>
-            <input type="text" id="filter-input" placeholder="Enter location name" />
-            <div class="pollutants-banner">
-                <div class="pollutant-banner-o row gx-md-8 gy-8  swiper-desactivated"> </div>
-            </div>
-    
-    
-        </div>
-    
-        <div class="container">
-            <div class="d-md-flex align-items-center justify-content-between">
-    
-                <p class="mb-2 mb-lg-0"></p>
-                <p class="mb-2 mb-lg-0">Version: 1.1</p>
-            </div>
+    <section class="hero">
+        <div class="stars">
+            <div class="star" style="top: 5%; left: 10%;"></div>
+            <div class="star" style="top: 12%; left: 25%;"></div>
+            <div class="star" style="top: 8%; left: 45%;"></div>
+            <div class="star" style="top: 20%; left: 5%;"></div>
+            <div class="star" style="top: 35%; left: 15%;"></div>
+            <div class="star" style="top: 45%; left: 8%;"></div>
+            <div class="star" style="top: 60%; left: 3%;"></div>
+            <div class="star" style="top: 75%; left: 12%;"></div>
+            <div class="star" style="top: 85%; left: 25%;"></div>
+            <div class="star" style="top: 15%; left: 35%;"></div>
+            <div class="star" style="top: 28%; left: 42%;"></div>
+            <div class="star" style="top: 5%; left: 60%;"></div>
+            <div class="star" style="top: 92%; left: 40%;"></div>
         </div>
 
-        
-    </footer>
-    
-    <script src="./assets/js/plugins.js?v=1.2.2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.11/jquery.csv.min.js"></script>
-    <script src="./assets/js/theme.js?v=1.2.2"></script>
 
-    
-    <script src="local_forecasts.js?v=1.4.0"></script>
-    <script src="local_forecasts_assets.js?v=1.4.0"></script>
-    
+        <div class="content">
+            <div class="badge">Repository Relocated</div>
+            <h1 class="main-title">Localized Forecasts</h1>
+            <p class="description">
+                This project is now managed by GEOS-ESM (Goddard Earth Observing System - Earth System Modeling). 
+                The repository has been transferred to provide better support and continued development.
+            </p>
+            <a href="https://geos-esm.github.io/SNWG_Localized_Forecasts/" class="cta-button">
+                Explore
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="earth-container">
+            <canvas id="earth-canvas"></canvas>
+        </div>
+
+        <nav class="footer-nav">
+            <a href="https://geos-esm.github.io/SNWG_Localized_Forecasts/">New Repo</a>
+            <a href="https://github.com/GEOS-ESM">GitHub</a>
+            <a href="https://gmao.gsfc.nasa.gov/">NASA GMAO</a>
+            <a href="https://geos-esm.github.io/">GEOS-ESM</a>
+            <a href="https://marroninstitute.nyu.edu/">NYU Marron Institute</a>
+        </nav>
+    </section>
 
     <script>
-    $(document).on('click', '.btn-close', function(e) {
-        $('.forecasts_container').css('display', 'none');
-    });
+        const container = document.getElementById('earth-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 2.5;
+
+        const renderer = new THREE.WebGLRenderer({ canvas: container, antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        const ambientLight = new THREE.AmbientLight(0x333333, 1);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        directionalLight.position.set(5, 3, 5);
+        scene.add(directionalLight);
+
+        const textureLoader = new THREE.TextureLoader();
+        const earthTexture = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg');
+        const bumpMap = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-topology.png');
+        const specularMap = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-water.png');
+
+        const earthGeometry = new THREE.SphereGeometry(1, 64, 64);
+        const earthMaterial = new THREE.MeshPhongMaterial({
+            map: earthTexture,
+            bumpMap: bumpMap,
+            bumpScale: 0.05,
+            specularMap: specularMap,
+            specular: new THREE.Color(0x333333),
+            shininess: 5
+        });
+        const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+        scene.add(earth);
+
+        const atmosphereGeometry = new THREE.SphereGeometry(1.02, 64, 64);
+        const atmosphereMaterial = new THREE.MeshPhongMaterial({
+            color: 0x88ccff,
+            transparent: true,
+            opacity: 0.15,
+            side: THREE.BackSide
+        });
+        const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+        scene.add(atmosphere);
+
+        const cloudGeometry = new THREE.SphereGeometry(1.01, 64, 64);
+        const cloudTexture = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-clouds.png');
+        const cloudMaterial = new THREE.MeshPhongMaterial({
+            map: cloudTexture,
+            transparent: true,
+            opacity: 0.4
+        });
+        const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
+        scene.add(clouds);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            earth.rotation.y += 0.001;
+            clouds.rotation.y += 0.0012;
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
     </script>
 </body>
 
